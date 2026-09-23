@@ -1,0 +1,15 @@
+{
+  "investigator": "Minh Thi Phan",
+  "decks": [
+    { "id": 2836, "role": "cluever", "secondaryRole": "support", "archetypes": ["skills matter", "card draw"], "summary": "Draw-everything Minh: Laboratory Assistant, Strange Solution, Preposterous Sketches and cycling skills keep a full hand, so Analytical Mind and her ability boost her own and her partner's tests every round." },
+    { "id": 25076, "role": "cluever", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Minh built on The Necronomicon and skills: Drawing Thin and Grisly Totem turn commits into money and draw, Mr. \"Rook\" and Studious dig for pieces, and the guide lists ten variants." },
+    { "id": 37360, "role": "cluever", "secondaryRole": null, "archetypes": ["discard recursion", "skills matter"], "summary": "Beginner Minh from Core through Edge of the Earth who oversucceeds with skills to Scavenge her items back, investigates with Milan and Magnifying Glass, and pays with Schoffner's Catalogue." },
+    { "id": 12038, "role": "cluever", "secondaryRole": "fighter", "archetypes": ["skills matter"], "summary": "Hard-mode Minh who draws huge hands with Drawing Thin, Grisly Totem and Mr. \"Rook\" and cashes them into Ancient Stone damage, while her skills handle the clues." },
+    { "id": 43311, "role": "flex", "secondaryRole": null, "archetypes": ["card draw"], "summary": "True solo Minh with near-infinite loops: Grim Memoir and Knowledge is Power give clues, fights and moves again and again while Cryptic Research and Practice Makes Perfect keep cards flowing; too strong for most tables." },
+    { "id": 43062, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter", "card draw"], "summary": "Rules-edge combo Minh that commits skills under The King in Yellow with Practice Makes Perfect, drawing through Unrelenting, Survey the Area and Cryptic Research; a novelty build." },
+    { "id": 8852, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw", "skills matter"], "summary": "Cheap, fast Forgotten Age Minh who draws her deck with Preposterous Sketches, Working a Hunch and Madame Labranche, commits freely, and carries the clues in a two-player game." },
+    { "id": 52817, "role": "support", "secondaryRole": "cluever", "archetypes": ["healing"], "summary": "Command-center Minh running a mobile field hospital: Alchemical Distillation heals the team, Survival Technique moves her Barricade, and Professor Webb and In the Know take clues from where she sits." },
+    { "id": 37845, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Spanish-language Carcosa Minh built purely as a multiplayer clue specialist, with Milan, Magnifying Glass, Newspaper and Archaic Glyphs to upgrade; not for solo." },
+    { "id": 50489, "role": "support", "secondaryRole": "cluever", "archetypes": ["skills matter"], "summary": "Commit-support Minh who pushes teammates' investigations up to +5 with Sharp Vision and Grisly Totem through Analytical Mind, saving her own commits with Fieldwork and Mouse Mask." }
+  ]
+}

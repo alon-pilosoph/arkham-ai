@@ -1,0 +1,15 @@
+{
+  "investigator": "Sefina Rousseau",
+  "decks": [
+    { "id": 5311, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Level 0 Rogue/Mystic Sefina who keeps a big hand of events under her card, dodges or fights enemies with Painted World copies of spells, and handles objectives alone while a Guardian or Seeker holds the line." },
+    { "id": 37359, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Beginner cluever Sefina from Core through Edge of the Earth: Rite of Seeking, Drawn to the Flame and Painted World copies for clues, with Dario El-Amin and \"Watch this!\" for money." },
+    { "id": 4401, "role": "cluever", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Level 0 Sefina who uses Arcane Initiate to dig through ten spells, Lone Wolf and Emergency Cache for money, and Rite of Seeking with Drawn to the Flame for clues, leaving big enemies to a Roland." },
+    { "id": 29103, "role": "flex", "secondaryRole": null, "archetypes": ["evasion", "fight events"], "summary": "Agility Sefina for Expert true solo: she evades rather than kills, Backstabs and Sneak Attacks what must die, and takes clues with Lockpicks and Breaking and Entering, all events The Painted World can copy." },
+    { "id": 37371, "role": "flex", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Stat-stick Sefina who declares Geas for high stats, turns Suggestion and Lockpicks tests into Gregory Gry and Lucky Cigarette Case payoffs, and doubles Parallel Fates to dig out Star of Hyades." },
+    { "id": 18851, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Four-player Forgotten Age Sefina who shoots an Ornate Bow and reloads with Haste, casts Spectral Razor and Read the Signs, and spends Hot Streak money on Streetwise." },
+    { "id": 45910, "role": "flex", "secondaryRole": null, "archetypes": ["actions matter"], "summary": "Flex Sefina built for Haste: Sixth Sense and Sword Cane guarantee a free action each turn, Leo De Luca makes five-action turns, and Black Market with Easy Mark keeps events and money flowing." },
+    { "id": 49761, "role": "flex", "secondaryRole": null, "archetypes": ["curse"], "summary": "Curse Sefina built to pair with a Carolyn deck: Rod of Carnamagos floods test windows with tokens so Read the Signs and Spectral Razor keep coming back, while Astral Mirror and Eye of the Djinn add actions." },
+    { "id": 13907, "role": "cluever", "secondaryRole": null, "archetypes": ["events matter"], "summary": "A Mythos Busters challenge deck that plays Drawn to the Flame all game: De Vermis Mysteriis, Double, Double and The Painted World replay it for clue after clue." },
+    { "id": 2978, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Consistency-first Sefina who avoids enemies and gathers clues on the side, with Arcane Initiate digging through eleven spells and an upgrade path through Streetwise and Hot Streak." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "investigator": "Nathaniel Cho",
+  "decks": [
+    { "id": 48985, "role": "fighter", "secondaryRole": null, "archetypes": ["bless", "fight events"], "summary": "Blessing Cho who stocks the bag with Ancestral Token and Favor of the Sun to trigger Blessing of Isis, punching with Boxing Gloves and fight events like One-Two Punch and Radiant Smite." },
+    { "id": 25071, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "Wushu Cho who wears Boxing Gloves and The Hungering Blade together thanks to Bandolier, softening enemies with fight events and finishing them with the Blade." },
+    { "id": 25130, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "Weaponless Cho with Boxing Gloves to draw Spirit events after each kill, Clean Them Out, Monster Slayer and One-Two Punch to kill, and \"Get over here!\" to pull enemies in." },
+    { "id": 38814, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "Fantasy Flight's official Nathaniel Cho starter deck: Boxing Gloves and a repertoire of fight events like Monster Slayer and One-Two Punch, with Grete Wagner and Relentless." },
+    { "id": 25023, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "A streamlined version of Nathaniel's starter deck for a multiplayer monster-slayer role, adding Emergency Cache and Evidence! for money and a few clues." },
+    { "id": 25024, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "The core-only variant of Nat Comes Out Swinging: Nathaniel's pack plus the Core Set, fight events and Boxing Gloves, with Guts and Overpower in place of the rest." },
+    { "id": 33610, "role": "fighter", "secondaryRole": "support", "archetypes": ["fight events"], "summary": "Bodyguard Cho built to pair with a matching Harvey Walters deck that keeps him stocked with cards, punching with Boxing Gloves and fight events and protecting Harvey with Safeguard." },
+    { "id": 25505, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "Double Boxing Gloves Cho made possible by Bandolier, with Randall Cho and Backpack to assemble the kit, Mano a Mano and upgraded Counterpunch, and Spiritual Resolve for Dim Carcosa." },
+    { "id": 46244, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "A Spanish-language example Nathaniel: Boxing Gloves and fight events as the specialist combatant, with Grete Wagner, Flesh Ward and Safeguard." },
+    { "id": 40988, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "True solo Cho who investigates at 7 to 9 through Bruiser and the Hyperphysical Shotcaster, fighting with Timeworn Brand and events like Grievous Wound." }
+  ]
+}

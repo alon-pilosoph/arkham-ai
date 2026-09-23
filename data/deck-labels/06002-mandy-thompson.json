@@ -1,0 +1,15 @@
+{
+  "investigator": "Mandy Thompson",
+  "decks": [
+    { "id": 18227, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Taboo-compliant standard Mandy who digs with Mr. \"Rook\", Research Librarian and No Stone Unturned, investigates with Fingerprint Kit and Hawk-Eye Folding Camera, and handles enemies with Read the Signs." },
+    { "id": 32297, "role": "cluever", "secondaryRole": null, "archetypes": ["curse", "secrets"], "summary": "Curse-and-secrets Mandy: Cryptic Grimoire and Guided by the Unseen feed on curses from Stirring Up Trouble and Tempt Fate, while Eldritch Sophist moves secrets for Truth from Fiction and more." },
+    { "id": 44030, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Post-taboo value Mandy with no combo: Guided by the Unseen, Grim Memoir and Occult Evidence on a deep draw engine, with Unearth the Ancients and Winging It for testless clues." },
+    { "id": 25494, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Deck-cycling Mandy who draws through her whole deck every turn with Practice Makes Perfect, Three Aces, Cryptic Research and Knowledge is Power, collecting Segments of Onyx and The Necronomicon." },
+    { "id": 17102, "role": "cluever", "secondaryRole": "support", "archetypes": [], "summary": "Secret-agent Mandy who makes money with Astounding Revelation and Crack the Case to pay for testless clues, damage and evasion through Intel Report, Small Favor and Decoy, recycling Art Students with Calling in Favors." },
+    { "id": 21535, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Lean 9 XP standalone Mandy who cycles her deck many times with Mr. \"Rook\", Practice Makes Perfect and Three Aces, assembling the Pendant of the Queen from Segments of Onyx." },
+    { "id": 32326, "role": "cluever", "secondaryRole": null, "archetypes": ["secrets"], "summary": "The level 0 Spooky Mandy: a traditional cluever for three or four players who plays Old Book of Lore early and searches out Astounding Revelation, Occult Evidence and Fortuitous Discovery." },
+    { "id": 16296, "role": "cluever", "secondaryRole": "support", "archetypes": ["card draw"], "summary": "Fast-cycling Mandy who races through her deck to reshuffle and assemble the Pendant of the Queen, investigating with Magnifying Glass and helping intellect tests with her ability." },
+    { "id": 19181, "role": "cluever", "secondaryRole": "support", "archetypes": ["card draw"], "summary": "Myriad Mandy who tears through her deck with Mr. \"Rook\", Practice Makes Perfect and Three Aces to fetch Segments of Onyx for the Pendant of the Queen, then resets and does it again." },
+    { "id": 33909, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "A deliberately absurd 94-card Mandy built on Forced Learning and Ancestral Knowledge with every Seeker toy she can hold; a joke deck by its author's own account." }
+  ]
+}

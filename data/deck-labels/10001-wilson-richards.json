@@ -1,0 +1,15 @@
+{
+  "investigator": "Wilson Richards",
+  "decks": [
+    {"id": 47005, "role": "flex", "secondaryRole": null, "archetypes": ["tools"], "summary": "Introductory Hemlock Vale Wilson with a path from 0 to 40 XP: Chainsaws, Fingerprint Kit, Microscope and Old Keyring on a Tool Belt, Matchboxes and Fire Extinguisher, with Ad Hoc and Tinker."},
+    {"id": 51340, "role": "cluever", "secondaryRole": null, "archetypes": ["tools"], "summary": "Cluever Wilson who builds an asset-heavy table of Lockpicks, Magnifying Glass, Fingerprint Kit and Thieves' Kit on Tool Belts to investigate at 5 from his second turn."},
+    {"id": 58983, "role": "flex", "secondaryRole": null, "archetypes": ["tools"], "summary": "Balanced flex Wilson with Sledgehammers, Fingerprint Kits and Flashlights, Cleaning Kits and Fire Extinguishers, and Stand Together; the guide also covers cluever and fighter builds."},
+    {"id": 46904, "role": "flex", "secondaryRole": null, "archetypes": ["tools"], "summary": "Solo toolbox Wilson who treats his hand slots as disposable: Flashlight, Lantern and Old Keyring for clues, Pitchforks and Sledgehammers thrown at enemies, and Pushed to the Limit to reuse them."},
+    {"id": 47481, "role": "flex", "secondaryRole": null, "archetypes": ["tools"], "summary": "Ancient Evils' level 0 Wilson updated after a Hemlock Vale run: Old Keyrings, Fingerprint Kit and Microscope for clues, Pitchforks and Gravedigger's Shovels for enemies, and Tinker and Ad Hoc for slots."},
+    {"id": 47500, "role": "fighter", "secondaryRole": "cluever", "archetypes": ["tools"], "summary": "True solo Hemlock Vale lumberjack Wilson who fights hard with Enchanted Blade and Pitchforks, finds clues with Flashlight and Old Keyring, and keeps Tetsuo Mori and Wolf Mask for safety."},
+    {"id": 47512, "role": "fighter", "secondaryRole": null, "archetypes": ["tools"], "summary": "Two-box Wilson building toward a Shotgun with Cleaning Kit (3), using Tinker and Occult Reliquary to solve slot problems, with Flashlight and Magnifying Glass for clues."},
+    {"id": 48643, "role": "fighter", "secondaryRole": null, "archetypes": ["tools"], "summary": "Fire Extinguisher Wilson who reuses the Extinguisher forever through Pushed to the Limit to beat non-elite enemies at 7 and exhaust bosses, with Taunt and Guard Dogs."},
+    {"id": 52761, "role": "fighter", "secondaryRole": "support", "archetypes": ["tools"], "summary": "Innsmouth and Hemlock two-box Wilson who enchants communal Pitchforks and Hatchets so teammates hit with his willpower, backed by Katanas, Machetes and Beat Cops."},
+    {"id": 51757, "role": "flex", "secondaryRole": null, "archetypes": ["tools"], "summary": "Asset-heavy flex Wilson built around a fully upgraded Pocket Multi Tool, Geared Up for a fast start, and Chemistry Set, Lantern and Hatchets covering clues and enemies."}
+  ]
+}

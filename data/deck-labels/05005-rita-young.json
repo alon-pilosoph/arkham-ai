@@ -1,0 +1,15 @@
+{
+  "investigator": "Rita Young",
+  "decks": [
+    { "id": 43610, "role": "flex", "secondaryRole": null, "archetypes": ["discard recursion"], "summary": "Agility-for-everything Rita: the Hyperphysical Shotcaster lets her 5 agility fight, investigate and evade, Ice Pick (3) with Scavenging (2) adds damage and clues, and Peter Sylvestre takes the horror." },
+    { "id": 13547, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Expert multiplayer enemy handler Rita who evades and chips enemies with her ability, Cheap Shot and Meat Cleaver so the clue gatherers can work, surviving on Peter Sylvestre and Cherished Keepsake." },
+    { "id": 10068, "role": "flex", "secondaryRole": null, "archetypes": ["evasion"], "summary": "True solo Hard Rita built for flexibility: Waylay and her ability handle enemies, Flashlight, Winging It and \"Look what I found!\" take clues, and Track Shoes and Peter Sylvestre keep her moving." },
+    { "id": 50005, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Low-XP fighter Rita: Bewitching holds Dirty Fighting, Sweeping Kick and Easy Mark, then evading, her ping, Meat Cleaver and Hatchets kill most enemies; almost no clues." },
+    { "id": 38005, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion", "succeed by X"], "summary": "Crowd-control Rita: Crafty pays for Slip Away, Cheap Shot, Close Call and Sweeping Kick, and Enchanted Bow and Tennessee Sour Mash neutralize enemies rather than kill them." },
+    { "id": 11374, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Circle Undone Rita on a knife edge: her ping and Track Shoes turn evades into damage and double moves, Fire Axe and Gravedigger's Shovel fight, and Flashlight and \"Look what I found!\" take clues." },
+    { "id": 42685, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Boss-killer Rita who evades, pings with her ability, then swings Sledgehammer (4) through Dirty Fighting, boosted by Peter Sylvestre (2) and Track Shoes." },
+    { "id": 9540, "role": "flex", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Solo Circle Undone Rita who outruns everything at agility 7 or 8 with Trench Coat, Peter Sylvestre and Track Shoes, uses Waylay on tough enemies and Winging It for clues." },
+    { "id": 9447, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Ornate Bow Rita who fights with agility at 9, pings weak enemies with her ability, Cheap Shot and Stunning Blow, and avoids reloading with Lucky! and Live and Learn." },
+    { "id": 48369, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Enemy-management Rita: Bewitching holds Dirty Fighting and Easy Mark, Hatchets and Pitchfork deal damage, Makeshift Traps and False Surrender weaken enemies, and Survival Technique recycles cards." }
+  ]
+}

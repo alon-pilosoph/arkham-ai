@@ -1,0 +1,15 @@
+{
+  "investigator": "Daniela Reyes",
+  "decks": [
+    { "id": 34854, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Retaliation Daniela who makes enemies attack with Mechanic's Wrench and Toe to Toe to trigger her ping, heals the fallout with Flesh Ward and Hallowed Mirror, and later removes agenda doom; almost no clues." },
+    { "id": 35588, "role": "fighter", "secondaryRole": "support", "archetypes": ["allies"], "summary": "Two-box Daniela from the Revised Core and Edge of the Earth who tanks behind four Sled Dogs, Guard Dogs and Stray Cats and takes hits for the team with \"Get behind me!\"; cannot investigate." },
+    { "id": 34205, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Dependable Daniela who deals 2 to 4 testless damage a round through her ability, Guard Dog and Aquinnah, fights with Timeworn Brand, and evades Massive enemies automatically." },
+    { "id": 53194, "role": "cluever", "secondaryRole": null, "archetypes": ["difficulty reduction"], "summary": "Cluever Daniela built against type: Old Keyrings and Shed a Light at shroud 0, Survival Technique to move her upgrades, and Crafty and Plucky to pay for tests; self-described jank." },
+    { "id": 46431, "role": "flex", "secondaryRole": null, "archetypes": ["difficulty reduction"], "summary": "Door-smashing Daniela who drops shroud to 0 with Matchbox and Breach the Door so Old Keyring (3) always takes two clues, while Timeworn Brand and her ability handle enemies." },
+    { "id": 42518, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Two-box bruiser Daniela with .45 Automatics, Knives and Guard Dogs, Heavy Furs and Talisman of Protection to take hits, and \"Get behind me!\" and Toe to Toe to draw attacks." },
+    { "id": 35645, "role": "fighter", "secondaryRole": null, "archetypes": ["allies"], "summary": "Spanish-language Core and Edge of the Earth Daniela who kills everything with Machete and four Sled Dogs, provokes attacks with Toe to Toe, and settles for two clues with Evidence!." },
+    { "id": 34729, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "A Revised Core and Edge of the Earth starter Daniela built to share cards with four sibling starter decks: a spread of weapons, Sled Dogs, Mechanic's Wrench and Toe to Toe." },
+    { "id": 33137, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Multiplayer Daniela who wants to be attacked: Mechanic's Wrench and Toe to Toe draw hits, Tetsuo Mori and Flesh Ward soak them, and .45 Automatics and Enchanted Blade finish enemies." },
+    { "id": 43835, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Scarlet Keys hunter Daniela with Old Hunting Rifles, Timeworn Brand and Clean Them Out for reliable 3-damage hits, Will to Survive to beat the bag, and Toe to Toe for bosses." }
+  ]
+}

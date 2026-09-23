@@ -1,0 +1,15 @@
+{
+  "investigator": "Michael McGlen",
+  "decks": [
+    {"id": 53853, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms", "succeed by X"], "summary": "Guide Michael who shoots with Derringers, Lugers and Mausers from the \"Viola\" Case for money on every shot, oversucceeding with Lucky Cigarette Case and \"Watch this!\" and funding Underworld Market."},
+    {"id": 53373, "role": "cluever", "secondaryRole": "fighter", "archetypes": ["firearms"], "summary": "Hipster Pilfer Michael who investigates with Pilfer (3) and Sleight of Hand instead of shooting, paying with Well Connected, Money Talks and Chuck Fergus while .45 Thompsons stay as backup."},
+    {"id": 54709, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "A beginner level 0 Michael built from the 2026 environment: .41 Derringers, .45 Automatics, Lugers and Remingtons with Robert Castaigne, Bum's Rush and Primed for Action."},
+    {"id": 57844, "role": "fighter", "secondaryRole": "cluever", "archetypes": ["firearms"], "summary": "True solo singleton Michael with a gun in each hand from the \"Viola\" Case, and Lockpicks with Trigger Man for clues, backed by Lonnie Ritter and Robert Castaigne."},
+    {"id": 54302, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms", "succeed by X"], "summary": "Spanish-podcast level 0 Michael with ten firearms from .32 Colt to Remington, Lonnie Ritter to reload, and \"Watch this!\" and Lucky Cigarette Case to oversucceed."},
+    {"id": 53092, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Singleton Hemlock Vale gunfighter Michael with a firearm for every hand, from .18 Derringer to Sawed-Off Shotgun (5), Joey Vigil and Anna Kaslow, for the last two scenarios of a campaign."},
+    {"id": 54315, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Snake Hands Michael who stacks hand slots with the \"Viola\" Case, Stylish Coat and two Hidden Pockets, then fires Mausers, Remingtons and Derringers with Joey Vigil paying."},
+    {"id": 57000, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms", "succeed by X"], "summary": "Beginner Drowned City Michael with Lugers, Mausers and Remingtons from the \"Viola\" Case, Robert Castaigne and Investments, and Lucky Cigarette Case and \"Watch this!\" for extra value."},
+    {"id": 53613, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Ascetic Gatling Gun Michael who buys the Gatling from the first scenario and recycles it with Joey Vigil and Mob Connections, funded by Bank Job, Contraband and 21 or Bust."},
+    {"id": 53535, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "A simple level 0 first deck for Michael: ten firearms, Custom Modifications and One in the Chamber, Lonnie Ritter and Robert Castaigne, and Sleight of Hand to replay guns."}
+  ]
+}

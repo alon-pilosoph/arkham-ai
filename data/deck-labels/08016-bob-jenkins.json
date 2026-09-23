@@ -1,0 +1,15 @@
+{
+  "investigator": "Bob Jenkins",
+  "decks": [
+    { "id": 34416, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Fast main-cluever Bob for Easy and Standard: Old Keyrings and Flashlights for clues, Scavenging and Lucky Cigarette Case to recycle and draw, and Leo De Luca and Track Shoes to cover ground." },
+    { "id": 35511, "role": "cluever", "secondaryRole": null, "archetypes": ["discard recursion"], "summary": "Two-box Bob who mills a junk pile with Short Supply and oversucceeds to Scavenge the items back, adding rare relics as he upgrades." },
+    { "id": 41797, "role": "cluever", "secondaryRole": "support", "archetypes": ["tools", "difficulty reduction"], "summary": "Tool-heavy Bob who straps on Tool Belts, Thieves' Kits and Flashlight (3), equips items for free with Joey \"The Rat\" Vigil, and clears enemies with Damning Testimony and Shed a Light." },
+    { "id": 33256, "role": "cluever", "secondaryRole": "support", "archetypes": ["discard recursion"], "summary": "Salesman Bob as a support clue finder: he pushes Lanterns, Old Keyrings and Pocket Telescope as fast plays, recycles them with Scavenging and Short Supply, and hands items to his partner." },
+    { "id": 52193, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Monster-slayer Bob who keeps the guns for himself: .45 Thompsons, .18 Derringers and Baseball Bats, Lonnie Ritter boosts, and Pushed to the Limit to fire from the discard pile, on the way to the Beretta M1918." },
+    { "id": 34209, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "A YouTube Edge of the Earth Bob from the Revised Core, starter packs and Edge of the Earth: Old Keyrings, Scavenging and Schoffner's Catalogue, played beside a Lily Chen deck." },
+    { "id": 35639, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Spanish-language Core and Edge of the Earth Bob who finds clues fast with item support and Scavenging, avoids enemies, and uses .41 Derringers when things turn ugly." },
+    { "id": 36260, "role": "cluever", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Dark Horse Bob who stays broke while Crafty pays for Lanterns, Mariner's Compasses and trick events, gathering clues and slipping enemies with Bait and Switch and Ethereal Slip." },
+    { "id": 33613, "role": "cluever", "secondaryRole": "support", "archetypes": ["discard recursion"], "summary": "Bob built to pair with a matching Dexter Drake deck: he finds clues with Lanterns and Old Keyrings, recycles items with Scavenging, and plays and pays for Dexter's items." },
+    { "id": 34735, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "A Revised Core and Edge of the Earth starter Bob built to share cards with four sibling starter decks: Baseball Bats and Knives, Flashlights, Schoffner's Catalogue and Professor Webb." }
+  ]
+}

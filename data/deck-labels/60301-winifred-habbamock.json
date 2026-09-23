@@ -1,0 +1,15 @@
+{
+  "investigator": "Winifred Habbamock",
+  "decks": [
+    { "id": 50926, "role": "flex", "secondaryRole": null, "archetypes": ["parley", "succeed by X"], "summary": "Vamp-and-Snitch Winifred who commits two cards to every test to draw and recover them, parleys with Vamp and Snitch, and takes clues with Lockpicks on Pickpocketing money." },
+    { "id": 44534, "role": "cluever", "secondaryRole": null, "archetypes": ["succeed by X", "actions matter"], "summary": "Action-machine Winifred for Hard who chains Swift Reflexes, Leo De Luca and Honed Instinct, investigates with Thieves' Kits, and shops the Underworld Market for Pilfer and Easy Mark." },
+    { "id": 36155, "role": "cluever", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Full-power clue-beast Winifred with two Chuck Fergus, Lockpicks and Pilfer (3) for big clue turns, and Ace in the Hole and Quick Thinking for extra actions." },
+    { "id": 29294, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter", "succeed by X"], "summary": "Level 0 Winifred with .25 Automatics and Lockpicks, Lonnie Ritter and Leather Jacket to cover her willpower, and skills like Daredevil and Hatchet Man to commit and recover." },
+    { "id": 43489, "role": "fighter", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Old Shotgun Winifred who oversucceeds with Lucky Cigarette Case (3) and Quick Thinking and shoots through Dirty Fighting, with Pickpocketing and Streetwise for economy." },
+    { "id": 35153, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Solo billionaire Winifred who depletes her deck fast with Underworld Support, piles up money with Unscrupulous Loan, and spends it on The Black Fan, The Red Clock and Chuck Fergus." },
+    { "id": 38812, "role": "flex", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Fantasy Flight's official Winifred starter deck: Lockpicks, Mauser C96 and Switchblade, and Cheap Shot, Pilfer and Slip Away rewarding the big successes her overcommitting produces." },
+    { "id": 25360, "role": "fighter", "secondaryRole": null, "archetypes": ["succeed by X", "evasion"], "summary": "Simple Forgotten Age Winifred who handles monsters by evading and hitting with Cheap Shot, Backstab and Mauser C96, feeding extra cards into tests through Crystallizer of Dreams." },
+    { "id": 57391, "role": "flex", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Revised Core and starter-pack Winifred who reaches an effective 7 agility with Cat Burglars and Charisma, investigating with Lockpicks and Pilfer and striking with Backstab." },
+    { "id": 30941, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter", "succeed by X"], "summary": "A skill-heavy remix of Harder. Better. Faster. Stronger.: .25 Automatics, Lockpicks and Lonnie Ritter, with plenty of skills to commit and recover." }
+  ]
+}

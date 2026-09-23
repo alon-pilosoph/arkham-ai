@@ -1,0 +1,15 @@
+{
+  "investigator": "Silas Marsh",
+  "decks": [
+    { "id": 37084, "role": "fighter", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Fighter Silas who commits Brute Force, Stunning Blow and Overpower and calls them back with his ability and Sea Change Harpoon, boosting with Ice Pick (3) and drawing through Drawing Thin and Unrelenting." },
+    { "id": 25909, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Solo generalist Silas leaning to enemy management: Meat Cleaver and the Harpoon fight, Old Keyring and \"Look what I found!\" cheat clues, and his ability returns Quick Thinking and Daring." },
+    { "id": 11780, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Solo Silas built on True Understanding committed to scenario tests for clues and recycled by his ability, with Meat Cleaver to fight and Grisly Totem to boost commits." },
+    { "id": 22063, "role": "fighter", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Flexible enemy-management Silas who fights or evades as needed with Old Hunting Rifles and a Fire Axe, recovering skills with Eucatastrophe, True Survivor and his ability." },
+    { "id": 26205, "role": "fighter", "secondaryRole": null, "archetypes": ["dark horse", "skills matter"], "summary": "Dark Horse Silas who starts on Fire Axe and Madame Labranche, recovers skills with his ability, and backs a dedicated clue gatherer on the way to Timeworn Brand." },
+    { "id": 45391, "role": "fighter", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Low-XP bruiser Silas whose Sea Change Harpoon and ability recycle Overpower, Daring and Stunning Blow every turn, with Drawing Thin and Take Heart for money and draw; easy to pilot." },
+    { "id": 5929, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse", "skills matter"], "summary": "Solo Normal Silas running lean on Dark Horse, Fire Axe and Baseball Bat, recycling skills like Eureka! and Last Chance with his ability, with \"Look what I found!\" for clues." },
+    { "id": 11129, "role": "fighter", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Multiplayer enemy killer and evader Silas with Fire Axe and Meat Cleaver, Track Shoes and Peter Sylvestre, and plenty of skills to return with his ability; no clue help." },
+    { "id": 26602, "role": "fighter", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Stable fighter Silas for Standard and Hard: Meat Cleaver, Fire Axe and the Harpoon, Mariner's Compass for a few clues, and his ability returning Overpower and Quick Thinking." },
+    { "id": 26636, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Fantasy Flight's sample starter Silas: Baseball Bats and the Harpoon to fight, Flashlight and \"Look what I found!\" for clues, and a small bless package with Keep Faith and Beloved." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "investigator": "Lucius Galloway",
+  "decks": [
+    {"id": 53981, "role": "cluever", "secondaryRole": null, "archetypes": ["evasion", "succeed by X"], "summary": "Guide Lucius who evades by 2 or more every turn with String Along, Pickpocketing and Alton O'Connell for clues and cards, and turns oversuccess into value with Antikythera and Fine Tuning."},
+    {"id": 53699, "role": "cluever", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Oversucceeding Lucius on a Fine-Tuned Antikythera and Microscope, boosting tests with Steady-Handed, Inquisitive and Deduction, and evading with Pickpocketing and String Along."},
+    {"id": 54446, "role": "cluever", "secondaryRole": null, "archetypes": ["secrets"], "summary": "Solo Ascetic Lucius who refreshes The Necronomicon with Library Pass and Scroll of Secrets every turn, recharging with Ariadne's Twine and charging Eon Chart with Truth from Fiction."},
+    {"id": 60089, "role": "cluever", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Two-player level 0 main cluever Lucius who evades every turn with String Along and Pickpocketing for a resource, card and clue, investigating with Forensic Kit and Thieves' Kit."},
+    {"id": 54593, "role": "fighter", "secondaryRole": "cluever", "archetypes": ["succeed by exactly", "succeed by X"], "summary": "Katana Lucius at 41 XP who fights at combat 1 by hitting exactly 2 with Eye of the Djinn, Occult Reliquary, Steady-Handed and Inquisitive, with Versatile to reach the Katana."},
+    {"id": 53090, "role": "cluever", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "The first published Lucius, at 0 XP: Fingerprint and Thieves' Kits with Milan, Grim Memoir and Lucky Cigarette Case to draw off big successes, and Sneak By to evade and move."},
+    {"id": 53515, "role": "flex", "secondaryRole": "cluever", "archetypes": ["succeed by X"], "summary": "True solo level 0 Lucius for The Drowned City who oversucceeds with Magnifying Glass, Grim Memoir and \"Watch this!\", and handles enemies with British Bull Dogs and Sneak Attack."},
+    {"id": 53278, "role": "cluever", "secondaryRole": null, "archetypes": ["actions matter"], "summary": "Extra-action Lucius with two Leo De Lucas, Haste and Pathfinder, sweeping locations with Archaic Glyphs and Higher Education, fuelled by The Red Clock, Eldritch Sophist and Easy Mark."},
+    {"id": 55964, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Red Clock Lucius who moves a charge each turn with Eldritch Sophist onto Archaic Glyphs or Blur for +3, evading by 2 for his clue or sweeping clues when no enemy is around."},
+    {"id": 53585, "role": "cluever", "secondaryRole": null, "archetypes": ["secrets"], "summary": "Librarionomicon Lucius who loops The Necronomicon through Library Pass and Scroll of Secrets, refilled by Ariadne's Twine and Eldritch Sophist, with Research Librarians to find the pieces."}
+  ]
+}

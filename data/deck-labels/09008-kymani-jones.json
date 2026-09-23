@@ -1,0 +1,15 @@
+{
+  "investigator": "Kymani Jones",
+  "decks": [
+    { "id": 39762, "role": "flex", "secondaryRole": null, "archetypes": ["evasion", "succeed by X"], "summary": "Underworld Kymani who evades constantly with Pickpocketing, Stealth and Blur to discard enemies with their ability, shooting .25 Automatics through Dirty Fighting and shopping the Underworld Market." },
+    { "id": 47977, "role": "flex", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Microscope (4) Kymani who adds evidence with every double evade for big clue turns, discards enemies with Stealth (3) evades, and pays with Easy Mark and Bank Job." },
+    { "id": 42155, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Fighter Kymani who kills with .25 Automatics, Dirty Fighting and Delilah O'Rourke or discards enemies with their ability, reliably finding weapons through the Underworld Market." },
+    { "id": 53741, "role": "flex", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Replacement-ready Kymani starting with 18 XP through Ascetic: Stealth (3) and Streetwise for evades and tests, and Forensic Kit with Thieves' Kit and Grappling Hook to investigate with agility." },
+    { "id": 41177, "role": "flex", "secondaryRole": null, "archetypes": ["tools"], "summary": "Two-box Kymani from the Revised Core and The Scarlet Keys with a Tool Belt of Thieves' Kit, Pocket Multi Tool and Magnifying Glass, twelve skills, and Underworld Market for the rest." },
+    { "id": 50339, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Ornate Bow Kymani heading for two Bows kept loaded by Cleaning Kits and Emergency Cache, with Fox Mask and Gregory Gry for money; the guide is a short upgrade note." },
+    { "id": 48092, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Ornate Bow Kymani who cheats the Bow out with \"I'll take that!\" and almost never reloads thanks to Cleaning Kit and Contraband, killing small enemies with their ability until it arrives." },
+    { "id": 40305, "role": "flex", "secondaryRole": null, "archetypes": ["tools"], "summary": "True solo Kymani who puts weapons and clue tools in the Underworld Market and uses Tool Belt and Hidden Pocket to juggle hand items like Thieves' Kit, Lockpicks and .25 Automatics." },
+    { "id": 40079, "role": "flex", "secondaryRole": null, "archetypes": ["evasion", "succeed by X"], "summary": "True solo Kymani with Lockpicks and Blur from bonus XP, Crafty paying for tools and tricks, and Slip Away and Cheap Shot to discard or hurt enemies; updated after a Dunwich run." },
+    { "id": 39298, "role": "flex", "secondaryRole": null, "archetypes": ["evasion"], "summary": "One-shot Kymani who discards enemies with their ability and investigates with agility, boosted by Gené Beauregard, Haste, Trench Coat and Moxie; a good third investigator." }
+  ]
+}

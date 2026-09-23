@@ -1,0 +1,15 @@
+{
+  "investigator": "Gloria Goldberg",
+  "decks": [
+    {"id": 38554, "role": "flex", "secondaryRole": "support", "archetypes": [], "summary": "Guide Gloria who reads the encounter deck with Alyssa Graham, Scrying and Foresight to bury its worst cards, investigates with Read the Signs, and digs with Astronomical Atlas."},
+    {"id": 28629, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "True solo level 0 Gloria who throws enemies out of the encounter deck with Alyssa Graham and Scroll of Secrets before they arrive, fighting with Shrivelling and Spectral Razor when one slips through."},
+    {"id": 54370, "role": "support", "secondaryRole": null, "archetypes": [], "summary": "Jailor Gloria for three or more players who locks up to seven enemies away beneath her, in Binder's Jars and the victory display via Blood of K'n-yan, with Eye of Ghatanothoa to dodge her weakness."},
+    {"id": 29370, "role": "cluever", "secondaryRole": "flex", "archetypes": [], "summary": "Waking-side Dream-Eaters Gloria built beside a Yorick, weeding the encounter deck with Alyssa Graham and Scroll of Secrets, investigating with Read the Signs and fighting with Sword Cane."},
+    {"id": 26866, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "A solo first constructed Gloria for Dunwich, pairing Shrivelling and Spectral Razor with Seeker clues, and Alyssa Graham, Scrying and Scroll of Secrets to manage the encounter deck."},
+    {"id": 27523, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Punk Rock Grandma: a hipster solo Gloria with the full ten Rogue cards, from \"Watch this!\" and Quick Thinking to Think on Your Feet, around Alyssa Graham, Sword Cane and Shrivelling."},
+    {"id": 53031, "role": "support", "secondaryRole": "flex", "archetypes": [], "summary": "Spanish-podcast level 0 Gloria with a Guardian splash of First Watch, Stand Together, \"Let me handle this!\" and Self-Sacrifice, plus Scrying, Sixth Sense and Sword Cane."},
+    {"id": 33614, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Dynamic Duo Gloria built to pair with a Mind's Eye Norman Withers, massaging the encounter deck with Alyssa Graham and Scroll of Secrets while Sixth Sense and Shrivelling do the work."},
+    {"id": 50140, "role": "fighter", "secondaryRole": "flex", "archetypes": [], "summary": "Heavy Reading Gloria who fights with \"Throw the Book at Them!\" and slings spells from her hand through True Magick, sniping with Enchanted Bow and boosted by Cat Mask."},
+    {"id": 55179, "role": "flex", "secondaryRole": "cluever", "archetypes": [], "summary": "Level 0 encounter-control Gloria who peeks every turn with Alyssa Graham and Scroll of Secrets, investigating with Clairvoyance and Rite of Seeking and fighting with Shrivelling."}
+  ]
+}

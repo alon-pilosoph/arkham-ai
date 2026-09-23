@@ -1,0 +1,15 @@
+{
+  "investigator": "Agatha Crane",
+  "decks": [
+    {"id": 54925, "role": "cluever", "secondaryRole": null, "archetypes": ["events matter"], "summary": "Guide Seeker Agatha who plays Insight events like Seeking Answers, Cryptic Writings and Preposterous Sketches, then replays them from the discard after Ocula Obscura or Eyes of the Dreamer handle a token."},
+    {"id": 55029, "role": "cluever", "secondaryRole": null, "archetypes": ["secrets"], "summary": "Archibald MacVeigh Agatha who pays for Insight events with secrets from Forbidden Knowledge, Scroll of Secrets and Grim Memoir, looping The Necronomicon through Library Pass."},
+    {"id": 55930, "role": "cluever", "secondaryRole": null, "archetypes": ["secrets"], "summary": "Bookworm Agatha on The Necronomicon, Library Pass and Scroll of Secrets, feeding charges to Archaic Glyphs with Eldritch Sophist for 6+ clues a turn and Research Librarians to find them."},
+    {"id": 53506, "role": "cluever", "secondaryRole": "support", "archetypes": ["spell events", "parley"], "summary": "Hard Return to Forgotten Age Agatha who investigates with Farsight and Forbidden Tomes, replays Voice of Ra and Cosmic Revelation, and sends enemies away with String of Curses and Confound."},
+    {"id": 60486, "role": "support", "secondaryRole": "cluever", "archetypes": ["seal"], "summary": "Harmony Bag Agatha who seals the chaos bag nearly empty with three Signs of Xelotaph, Sign Magick and Eldritch Sophist charges, investigating with Magnifying Glasses on the side."},
+    {"id": 53599, "role": "cluever", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Precision Agatha on Antikythera and Fine Tuning who stacks safe draws with Scroll of Secrets and Library Pass to keep Glimpse the Void away, then reads the bag with Ocula Obscura."},
+    {"id": 55433, "role": "cluever", "secondaryRole": "flex", "archetypes": [], "summary": "A Highlander thought experiment: singleton Seeker Agatha with Forced Learning and Ancestral Knowledge, running thirty different Insight and Spell events for her ability to recur."},
+    {"id": 53645, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Level 0 Insight Agatha who triggers her ability with Premonition and then replays Deep Knowledge for a flood of cards, with Rod of Carnamagos against Glimpse the Void."},
+    {"id": 57475, "role": "cluever", "secondaryRole": null, "archetypes": ["tools"], "summary": "Level 0 Seeker Agatha who hoovers clues with Fingerprint Kits, Magnifying Glasses and Milan, and recurs Working a Hunch, Mind over Matter and Drawn to the Flame each round via Ocula Obscura."},
+    {"id": 56739, "role": "cluever", "secondaryRole": null, "archetypes": ["secrets"], "summary": "Dedicated cluever Agatha at up to 10 intellect with Magnifying Glass, Grim Memoir, Whitton Greene and Mouse Mask, refilling secrets with Correlate All Its Contents."}
+  ]
+}

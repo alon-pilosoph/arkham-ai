@@ -1,0 +1,15 @@
+{
+  "investigator": "Amina Zidane",
+  "decks": [
+    {"id": 39613, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Multiplayer doom Amina who plays assets cheaply with doom and manages it with Elle Rubash, Moonlight Ritual and Ghastly Possession, fighting with Ceremonial Sickle and Summoned Servitor."},
+    {"id": 55463, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "True solo doom Amina who won The Scarlet Keys: David Renfield, Alyssa Graham and Ceremonial Sickle feed on doom, Elle Rubash and Moonlight Ritual keep it safe, and Summoned Servitor and Dowsing Rod do the work."},
+    {"id": 51641, "role": "flex", "secondaryRole": null, "archetypes": ["doom", "allies"], "summary": "Summoned Hound Amina whose Hounds investigate at 6 and fight at 5 while giving her extra actions, with Sin-Eater and Ceremonial Sickle handling the doom her assets bring."},
+    {"id": 52959, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Spanish-podcast doom Amina with Ceremonial Sickle, Elle Rubash and Living Ink, Power Word and Spectral Razor for enemies, and Dowsing Rod for clues."},
+    {"id": 43682, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Servitor Amina who lets a fully upgraded Summoned Servitor do the heavy lifting, with David Renfield money, Empower Self stats, and Sin-Eater to clear doom."},
+    {"id": 39546, "role": "flex", "secondaryRole": null, "archetypes": ["parley", "doom"], "summary": "Puppet-master Amina who attaches and reattaches Power Word to enemies with Prophetic money and Robes of Endless Night discounts, commanding them to fight and find clues for her."},
+    {"id": 47503, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "True solo Amina whose fully upgraded Summoned Servitor gives five-action turns while Empower Self, Living Ink and Crystalline Elder Signs lift her base stats to 4 or more."},
+    {"id": 45778, "role": "flex", "secondaryRole": null, "archetypes": ["doom", "allies"], "summary": "Sled Dog Amina who plays a full pack of dogs cheaply with doom on them, uses Elle Rubash and Sin-Eater to manage that doom, and investigates with Dowsing Rod and Read the Signs."},
+    {"id": 53043, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Spanish-podcast doom Amina with Ceremonial Sickles, Dayana Esperence and Martyr's Vambrace, Dowsing Rod for clues, and Sin-Eater and Moonlight Ritual to keep the doom in check."},
+    {"id": 43173, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Expert Amina who leans on Arcane Research and Down the Rabbit Hole for upgrades, investigates with Clairvoyance, Rite of Seeking and Sixth Sense, and fights with Dragon Pole and Eye of Chaos."}
+  ]
+}

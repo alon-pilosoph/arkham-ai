@@ -1,0 +1,15 @@
+{
+  "investigator": "Harvey Walters",
+  "decks": [
+    { "id": 36796, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Beginner Harvey from the Revised Core, Dunwich and Edge of the Earth who draws hard with Cryptic Research and Jeremiah Kirby, plays Laboratory Assistants through Unearth the Ancients, and takes clues with Divination and Eon Chart." },
+    { "id": 25827, "role": "cluever", "secondaryRole": null, "archetypes": ["big hand"], "summary": "Big-hand Harvey who holds fifteen or more cards with Dream-Enhancing Serum, Laboratory Assistant and Vault of Knowledge, cashing them into Celaeno Fragments and Extensive Research." },
+    { "id": 39960, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Hard-mode Harvey who keeps drawing with Laboratory Assistants, Research Librarians and Burning the Midnight Oil, and takes clues with Connect the Dots, Working a Hunch and Milan." },
+    { "id": 38813, "role": "cluever", "secondaryRole": null, "archetypes": ["big hand"], "summary": "Fantasy Flight's official Harvey Walters starter deck: Vault of Knowledge and Laboratory Assistant for a big hand, Celaeno Fragments and Forbidden Tome to cash it in, and Higher Education for tests." },
+    { "id": 57734, "role": "cluever", "secondaryRole": null, "archetypes": ["big hand"], "summary": "Revised Core and starter-pack Harvey who plays two Magnifying Glasses fast, builds a big hand with Vault of Knowledge, and uses Farsight for turns worth up to 10 clues." },
+    { "id": 54381, "role": "cluever", "secondaryRole": null, "archetypes": ["succeed by exactly"], "summary": "Ascetic high-tempo Harvey who uses Artistic Inspiration and Steady-Handed to hit exact results on Antikythera for cards, money and clue compression, with Grim Memoir and Whitton Greene." },
+    { "id": 30069, "role": "fighter", "secondaryRole": null, "archetypes": ["secrets"], "summary": "Primary-fighter Harvey with a reverse-engineered alien gun: Acidic Ichor and Ancient Stone kept loaded by Truth from Fiction and Ariadne's Twine, and huge draw to find them." },
+    { "id": 33611, "role": "cluever", "secondaryRole": "support", "archetypes": ["secrets"], "summary": "Harvey built to pair with a matching Nathaniel Cho deck, keeping him stocked with cards while Eldritch Sophist and Scroll of Secrets feed his own investigations." },
+    { "id": 31924, "role": "cluever", "secondaryRole": null, "archetypes": ["big hand"], "summary": "Level 0 big-hand Harvey with Dream-Enhancing Serum, Laboratory Assistants and Vault of Knowledge, heading toward The Necronomicon and Library Docents by 29 XP." },
+    { "id": 36226, "role": "fighter", "secondaryRole": null, "archetypes": ["secrets"], "summary": "Rambo Harvey who loads Ancient Stone with secrets from Ariadne's Twine for Blood-Rite hits of up to 5 damage, and shoots Acidic Ichor at 8 with Overpower." }
+  ]
+}

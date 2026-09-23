@@ -1,0 +1,15 @@
+{
+  "investigator": "Carolyn Fern",
+  "decks": [
+    { "id": 12218, "role": "cluever", "secondaryRole": "support", "archetypes": ["healing"], "summary": "Taboo-friendly Carolyn built to pair with a matching Agnes deck: she finds the clues with Magnifying Glass, Hawk-Eye Folding Camera and Scene of the Crime and heals Agnes's horror for money." },
+    { "id": 42742, "role": "cluever", "secondaryRole": "support", "archetypes": ["healing"], "summary": "Campaign Carolyn who heals Field Agents and the team with Ancient Stone: Minds in Harmony and Hallowed Mirror, turning each heal into money and clues; a standalone Power Word variant is in the guide." },
+    { "id": 19724, "role": "cluever", "secondaryRole": "support", "archetypes": ["healing"], "summary": "Hard-mode Carolyn who makes healing passive with Ancient Stone and Solemn Vow so her actions go to investigating, with Mr. \"Rook\" and Pathfinder for speed; best at three or four players." },
+    { "id": 49760, "role": "fighter", "secondaryRole": null, "archetypes": ["curse"], "summary": "Guardian-side Carolyn who kills with Wicked Athame, recharges the Pendant of the Queen with it, and turns curses into money with The Key of Solomon; pairs with the CurSefina deck." },
+    { "id": 45147, "role": "support", "secondaryRole": "cluever", "archetypes": ["healing"], "summary": "Carcosa support Carolyn who finds clues with Magnifying Glass and Scene of the Crime and keeps the team alive with Archive of Conduits, First Aid and Ancient Stone; played beside a Lily Chen fighter." },
+    { "id": 10094, "role": "cluever", "secondaryRole": "support", "archetypes": [], "summary": "Two-to-three-player Carolyn who skips the usual horror healers for Fingerprint Kit clues, Peter Sylvestre soak with \"Let me handle this!\", and Shrivelling for defence." },
+    { "id": 7593, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Carolyn from the Drawn to the Flame podcast who leans on willpower for everything but clues, with Shrivelling, Mists of R'lyeh, Forbidden Knowledge and St. Hubert's Key." },
+    { "id": 34382, "role": "flex", "secondaryRole": null, "archetypes": ["healing"], "summary": "Synergy Carolyn with three classes in play from turn one, funding Keen Eye, Meat Cleaver and Toe to Toe with the money her horror healing makes; a hybrid fighter and investigator." },
+    { "id": 9798, "role": "support", "secondaryRole": "cluever", "archetypes": ["healing"], "summary": "Support Carolyn who heals the team's sanity for money with Clarity of Mind and First Aid, finds clues with Fingerprint Kit and Magnifying Glass, and spends the cash on Connect the Dots." },
+    { "id": 40395, "role": "support", "secondaryRole": "cluever", "archetypes": ["healing"], "summary": "Everything-bagel Carolyn who heals with Ancient Stone, Liquid Courage and Peter Sylvestre, takes remote clues with Pocket Telescope, and fights a little with Toe to Toe." }
+  ]
+}

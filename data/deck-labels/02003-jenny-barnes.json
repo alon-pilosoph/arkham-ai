@@ -1,0 +1,15 @@
+{
+  "investigator": "Jenny Barnes",
+  "decks": [
+    { "id": 1179, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Solo-proven Jenny who turns her extra income, Lone Wolf and Burglary into Hard Knocks and Arcane Studies boosts, fights with her Twin .45s and gains actions from Leo De Luca; just as good in multiplayer." },
+    { "id": 36548, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Beginner Jenny from Core, Dunwich and Edge of the Earth who makes money with Lone Wolf and pays it into Hard Knocks and Arcane Studies to pass any test, with Derringers and the Twin .45s to fight." },
+    { "id": 22128, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Dunwich-era generalist Jenny with Derringers and the Twin .45s, Leo De Luca and Milan, Lone Wolf money and Quick Thinking for extra actions." },
+    { "id": 11644, "role": "flex", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Infinite-combo Jenny: Premonition fixes the next token so every test oversucceeds, and Quick Thinking, \"Watch this!\" and Double or Nothing turn each test into more actions and money; needs 10 XP." },
+    { "id": 1337, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "One Core Set plus Dunwich Jenny who piles up money with Lone Wolf and Emergency Cache, digs for the Twin .45s with Prepared for the Worst, and doubles their ammo with Contraband." },
+    { "id": 4969, "role": "flex", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Balanced Jenny who pays her way through tests with Physical Training, turns oversuccess into money with \"Watch this!\" and Quick Thinking, and carries the Green Man Medallion instead of her Twin .45s." },
+    { "id": 5757, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "True solo Expert Dunwich Jenny who avoids tests where she can: Art Student, Drawn to the Flame and Flashlight for clues, Elusive and Narrow Escape to get away, Backstab and the Twin .45s to kill." },
+    { "id": 280, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Jenny with Burglary and Hard Knocks money, Arcane Studies boosts, Machete and the Twin .45s, and Pickpocketing for draw; the guide is a single line." },
+    { "id": 36461, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Big-money Underworld Support Jenny: The Black Fan, High Roller and Well Connected turn a pile of resources into stat boosts, and Eldritch Sophist keeps The Red Clock charged for six-action turns." },
+    { "id": 57252, "role": "cluever", "secondaryRole": null, "archetypes": ["events matter", "big hand"], "summary": "Double, Double Jenny who replays True Awakening for four cards and two testless clues, fuels Extensive Research with a Dream-Enhancing Serum hand, and handles horror with Peter Sylvestre." }
+  ]
+}

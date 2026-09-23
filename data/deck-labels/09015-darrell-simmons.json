@@ -1,0 +1,15 @@
+{
+  "investigator": "Darrell Simmons",
+  "decks": [
+    { "id": 39472, "role": "cluever", "secondaryRole": null, "archetypes": ["clue drop"], "summary": "Clue-drop Darrell who drops clues with Quick Study and Captivating Discovery for Research Notes and Press Pass, collects evidence to lower test difficulty, and recycles items with Scavenging; complex but fun." },
+    { "id": 47719, "role": "cluever", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Permanent Dark Horse Darrell with a two-Mariner's-Compass and Fine Tuning engine for up to six clues a turn, boosted by Mouse Mask, Death XIII and Madame Labranche." },
+    { "id": 39322, "role": "cluever", "secondaryRole": null, "archetypes": ["difficulty reduction", "discard recursion"], "summary": "Setup-light zero-difficulty Darrell: his evidence and Exploit Weakness bring tests to 0 for Shed a Light, and True Survivor and Scrounge for Supplies recycle the pieces." },
+    { "id": 39471, "role": "cluever", "secondaryRole": null, "archetypes": ["difficulty reduction", "discard recursion"], "summary": "Test-at-0 Darrell who makes every investigation difficulty 0 with Old Keyring (3), Gumption and his evidence, firing Shed a Light for three or more clues and recycling with Scavenging and True Survivor." },
+    { "id": 40149, "role": "cluever", "secondaryRole": "support", "archetypes": ["difficulty reduction"], "summary": "Beginner Darrell built beside a Mark Harrigan: he collects evidence with the Kodak, Empirical Hypothesis and Dissection Tools, spends it to lower tests for Shed a Light, and heals his partner." },
+    { "id": 41309, "role": "cluever", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Standalone Dark Horse Darrell with no cash and no cards: Empirical Hypothesis and Madame Labranche reward emptying his hand, Ice Pick (3) and Mariner's Compass take clues, and Scavenging recycles." },
+    { "id": 48755, "role": "cluever", "secondaryRole": null, "archetypes": ["discard recursion"], "summary": "Will to Survive Darrell who replays it through True Survivor and Resourceful, passing tests by whatever margin Empirical Hypothesis and Scavenging want without looking at the bag; 30 XP." },
+    { "id": 43198, "role": "cluever", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Expert multiplayer Dark Horse Darrell with Mariner's Compasses, Hawk-Eye Folding Cameras and Research Notes, and Shed a Light for big clue turns; not for solo." },
+    { "id": 39622, "role": "cluever", "secondaryRole": null, "archetypes": ["clue drop"], "summary": "Research Notes Darrell who drops clues with Quick Study, Captivating Discovery and Bizarre Diagnosis to fuel his evidence, then picks them back up with Newspapers and Shed a Light." },
+    { "id": 58312, "role": "cluever", "secondaryRole": null, "archetypes": ["difficulty reduction", "succeed by exactly"], "summary": "Scarlet Keys to Drowned City Darrell who mixes 0-difficulty investigations with Old Keyring (3) and Shed a Light and exact successes with Steady-Handed and Alton O'Connell." }
+  ]
+}

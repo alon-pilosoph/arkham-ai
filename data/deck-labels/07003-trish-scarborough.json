@@ -1,0 +1,15 @@
+{
+  "investigator": "Trish Scarborough",
+  "decks": [
+    { "id": 25748, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Testless-clue Trish who turns free clues from Working a Hunch and Lola Santiago into extra clues or free evades, funded by Easy Mark and Another Day, Another Dollar; no combat." },
+    { "id": 40943, "role": "cluever", "secondaryRole": null, "archetypes": ["events matter"], "summary": "Event-doubling Trish who uses The Raven Quill to double Double, Double and Crystallizer of Dreams to double again, replaying Captivating Discovery and Easy Mark for huge clue turns; very complex." },
+    { "id": 25793, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Myriad Trish at 13 XP who cycles her deck every few turns with Mr. \"Rook\", Three Aces and Surprising Find, assembles the Pendant of the Queen by turn three, and vacuums clues across the map." },
+    { "id": 25741, "role": "cluever", "secondaryRole": null, "archetypes": ["evasion"], "summary": "True solo Innsmouth Trish who moves fast and investigates beside enemies to trigger her extra clue or free evade, with Milan, Hawk-Eye Folding Camera and Obfuscation." },
+    { "id": 52385, "role": "cluever", "secondaryRole": null, "archetypes": ["actions matter", "card draw"], "summary": "Combo Trish who stays In the Shadows with Ace in the Hole every turn after her first deck cycle, taking six actions and drawing back everything she plays; 12 XP." },
+    { "id": 43519, "role": "cluever", "secondaryRole": null, "archetypes": ["clue drop"], "summary": "Clue-drop Trish who places clues with Quick Study, Bizarre Diagnosis and Captivating Discovery for Research Notes and Press Pass payoffs, gaining an extra clue or evade whenever enemies are near." },
+    { "id": 45804, "role": "cluever", "secondaryRole": "support", "archetypes": ["card draw"], "summary": "No-skill Trish who cycles her deck fast to replay Call for Backup over and over, keeping the team healthy while Grim Memoir and Whitton Greene's tomes take clues; 19 XP." },
+    { "id": 42953, "role": "cluever", "secondaryRole": null, "archetypes": ["events matter"], "summary": "8 XP infinite-combo Trish who loops Friends in Low Places with Easy Mark, Cheat the System and Hit and Run for endless actions, testless clues, money and healing." },
+    { "id": 29342, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "The 19 XP taboo version of Trish Goes Brrrr!: Lucky Cigarette Case (3), Whitton Greene and Three Aces assemble the Pendant of the Queen from Segments of Onyx while Lockpicks vacuum clues." },
+    { "id": 26638, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Fantasy Flight's sample starter Trish: .25 Automatics and Switchblade, Cryptographic Cipher and Obfuscation to trigger her ability safely, and Milan and Magnifying Glass for clues." }
+  ]
+}

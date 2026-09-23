@@ -1,0 +1,15 @@
+{
+  "investigator": "Joe Diamond",
+  "decks": [
+    { "id": 9994, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Mixed clue-and-combat Joe for Hard: Milan and Magnifying Glass for clues, Machete, the .45 and Beat Cop for enemies, and a hunch deck of Working a Hunch, Scene of the Crime and No Stone Unturned." },
+    { "id": 43675, "role": "flex", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Draw-heavy Joe who plays Laboratory Assistants through Unearth the Ancients, keeps a big hand with Dream-Enhancing Serum, and answers enemies with One in the Chamber and \"Fool me once...\"." },
+    { "id": 9603, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Pure solo Joe who recycles hunch events with Detective's Colt 1911s, discovers clues without tests through Working a Hunch, Scene of the Crime and Vantage Point, and hides behind Art Students and Maleson." },
+    { "id": 9564, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "The first P.I. Staker: Joe for clues and combat, tested on Hard in Dunwich and Carcosa, with Milan, Magnifying Glass and Fingerprint Kit for clues and Machete and the .45 for enemies." },
+    { "id": 19141, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Money-saving Joe: Charles Ross makes Magnifying Glass, Fine Clothes and the .45 cheap or free, Fingerprint Kit and Deduction take clues, and Interrogate and Persuasion handle Humanoids." },
+    { "id": 9448, "role": "cluever", "secondaryRole": "fighter", "archetypes": [], "summary": "A standard, efficient clue-first Joe: Milan, Magnifying Glass and Fingerprint Kit with Deduction, a hunch deck of No Stone Unturned and Scene of the Crime, and Machete for enemies." },
+    { "id": 23630, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "True solo Joe whose Dream Diary covers his weak willpower and agility, with Mr. \"Rook\" and Astounding Revelation for money and tutoring and Enchanted Blade for enemies." },
+    { "id": 18271, "role": "flex", "secondaryRole": null, "archetypes": ["parley"], "summary": "Police-themed Joe with Alice Luxley: testless clues from Working a Hunch, Scene of the Crime and Interrogate trigger her damage, and Handcuffs, Blackjack and Persuasion deal with Humanoids." },
+    { "id": 41586, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Combo fighter Joe who studies with Gray's Anatomy, Ancient Stone and Empirical Hypothesis for 8 damage off a (1) intellect test, set up by The Raven Quill." },
+    { "id": 45022, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Two-box Joe from the Revised Core and The Circle Undone: five guns, Milan and Magnifying Glass, Grisly Totem to boost commits, and Delay the Inevitable to survive." }
+  ]
+}

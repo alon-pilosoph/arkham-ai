@@ -1,0 +1,15 @@
+{
+  "investigator": "Father Mateo",
+  "decks": [
+    { "id": 5564, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Forgotten Age Mateo who starts fast on his stat line, passes treacheries with St. Hubert's Key, clears high-value locations with Drawn to the Flame, and saves up for Seal of the Elder Sign." },
+    { "id": 42430, "role": "cluever", "secondaryRole": null, "archetypes": ["token manipulation", "discard recursion"], "summary": "Codex Mateo who Scavenges The Codex of Ages for repeated elder signs, reveals extra tokens with Olive McBride and Crystal Pendulum, and investigates with Sixth Sense and Rite of Seeking; very complex." },
+    { "id": 5655, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Token-hunting Mateo who reveals extra tokens with Dark Prophecy and Ritual Candles to find elder signs, casts Song of the Dead and Shrivelling, and passes treacheries with St. Hubert's Key." },
+    { "id": 19027, "role": "flex", "secondaryRole": null, "archetypes": ["seal"], "summary": "Seal Mateo who pulls bad tokens with The Chthonian Stone and Seal of the Seventh Sign, gathers clues with Sixth Sense, and slips enemies with Ethereal Form and Mists of R'lyeh." },
+    { "id": 44961, "role": "support", "secondaryRole": null, "archetypes": ["bless", "seal"], "summary": "Multiplayer support Mateo who floods the bag with bless from Priest of Two Faiths, Keep Faith and Tempt Fate and seals bad tokens with The Chthonian Stone and Nkosi Mabati; helps with clues, never fights." },
+    { "id": 34203, "role": "support", "secondaryRole": null, "archetypes": ["bless", "seal"], "summary": "The original Bless is More: support Mateo rigging the bag for the whole team with bless from Priest of Two Faiths and Keep Faith, Sacred Covenant to keep it, and sealing with The Chthonian Stone and Nkosi Mabati." },
+    { "id": 40523, "role": "support", "secondaryRole": null, "archetypes": ["bless", "curse"], "summary": "Mateo who fills the bag with bless and curse and spends it on Hallow and A Watchful Peace to skip Mythos draws and stall the agenda, with Armageddon and Eye of Chaos as his spells." },
+    { "id": 30853, "role": "support", "secondaryRole": "cluever", "archetypes": ["bless"], "summary": "Mostly-support Mateo who banks bless for the team with Rite of Sanctification and Keep Faith, takes clues with Rite of Seeking and Read the Signs, and helps teammates draw with Scroll of Prophecies." },
+    { "id": 53644, "role": "support", "secondaryRole": null, "archetypes": ["bless", "seal"], "summary": "Parallel Mateo starting with 18 XP through Ascetic: his seal abilities and Ancient Covenant keep Read the Signs and Spectral Razor coming back while he floods the bag with bless and heals the team." },
+    { "id": 8822, "role": "support", "secondaryRole": null, "archetypes": ["seal"], "summary": "Seal support Mateo for Easy and Normal: The Chthonian Stone and Protective Incantation clean the bag, Flashlight and Alyssa Graham give some clues, and Time Warp lets him scout; cannot fight." }
+  ]
+}

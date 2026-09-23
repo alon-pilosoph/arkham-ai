@@ -1,0 +1,15 @@
+{
+  "investigator": "Rex Murphy",
+  "decks": [
+    { "id": 36402, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Beginner Rex from Core, Dunwich and Edge of the Earth: Milan, Magnifying Glass and Flashlight push every investigation past 2 for his extra clue, with Scavenging and Shortcut; a pure clue vacuum." },
+    { "id": 21596, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Dunwich-era Rex on Milan, Magnifying Glass and Old Book of Lore, oversucceeding for extra clues, with Dodge and Ward of Protection to survive." },
+    { "id": 530, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Hard-tested Rex meant for a fighter partner: Milan, Magnifying Glass and Hyperawareness for double clues, Burglary money for Fire Axe, and Arcane Studies to cover willpower." },
+    { "id": 1259, "role": "cluever", "secondaryRole": "fighter", "archetypes": [], "summary": "A 9 XP standalone Rex pushing his ability with Higher Education and Milan money, Lone Wolf for cash, and Shrivelling and Rite of Seeking borrowed from Mystic to fight and investigate." },
+    { "id": 1336, "role": "cluever", "secondaryRole": "fighter", "archetypes": [], "summary": "One Core Set plus Dunwich Rex who funds Fire Axe with Burglary, recycles items with Scavenging and oversucceeds with Hyperawareness for clues; best beside Zoey." },
+    { "id": 48331, "role": "cluever", "secondaryRole": null, "archetypes": ["tools"], "summary": "Fingerprint Kit Rex who keeps it supplied with Cleaning Kit and Emergency Cache (3) for four-clue investigations, uses Acidic Ichor on enemies, and pays for No Stone Unturned with Down the Rabbit Hole." },
+    { "id": 706, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "A beginner demo-set Rex: an evasive clue hunter with Milan, Magnifying Glass and Hyperawareness, Elusive and Shortcut to get around, and Working a Hunch for more." },
+    { "id": 16825, "role": "cluever", "secondaryRole": null, "archetypes": ["remote clues", "secrets"], "summary": "Multiplayer Rex who stays put and takes clues remotely with In the Know, refilled by Truth from Fiction, while Charles Ross makes his items cheap and Scavenging recycles Segments of Onyx." },
+    { "id": 2373, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Clue-hoover Rex aiming for four clues a turn with Milan, Magnifying Glass and Hyperawareness, Burglary for money and Scavenging to recover items; needs a killer nearby." },
+    { "id": 45250, "role": "cluever", "secondaryRole": null, "archetypes": ["secrets", "card draw"], "summary": "Necronomicon Rex who churns his deck with Preposterous Sketches, Practice Makes Perfect and Eldritch Sophists to pile secrets on The Necronomicon, then spends them to pass tests and take clues." }
+  ]
+}

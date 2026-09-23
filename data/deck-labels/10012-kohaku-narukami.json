@@ -1,0 +1,15 @@
+{
+  "investigator": "Kōhaku Narukami",
+  "decks": [
+    {"id": 47001, "role": "flex", "secondaryRole": null, "archetypes": ["curse", "bless"], "summary": "Blurse-juggling flex Kōhaku who adds curses with Gabriel Carillo and Faustian Bargain, stores them on Favor of the Moon, and cashes them in through Armageddon and The Key of Solomon; the guide covers every role."},
+    {"id": 47541, "role": "flex", "secondaryRole": null, "archetypes": ["curse", "bless"], "summary": "Hard and Expert solo Kōhaku reaching 10+ skill values with Read the Signs, Spectral Razor and Fey while Favor of the Sun and Moon, Blasphemous Covenant and Eye of the Djinn exploit the blurse."},
+    {"id": 46614, "role": "cluever", "secondaryRole": null, "archetypes": ["curse"], "summary": "Eye of Chaos Kōhaku who squeezes two resources, a card and two clues out of each investigation through Blasphemous Covenant, Fey and The Key of Solomon."},
+    {"id": 48437, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Two-box Hemlock Vale Kōhaku who recycles Absolution and Drain Essence through Book of Living Myths, backed by Shrivelling, Wicked Athame and Drawn to the Flame."},
+    {"id": 53165, "role": "flex", "secondaryRole": null, "archetypes": ["bless"], "summary": "Spanish-podcast bless Kōhaku with Spirit of Humanity, Favor of the Sun and Holy Rosary, investigating with Sixth Sense and Read the Signs."},
+    {"id": 53166, "role": "flex", "secondaryRole": null, "archetypes": ["curse"], "summary": "Spanish-podcast curse Kōhaku who piles curses on Favor of the Moon and spends them through Armageddon (4), Dawn Star and Rod of Carnamagos, with Prismatic Spectacles for clues."},
+    {"id": 46443, "role": "flex", "secondaryRole": null, "archetypes": ["curse", "bless"], "summary": "Theorycrafted blursed folklorist Kōhaku with Eye of Chaos and Wicked Athame, Flashlight for clues, and Paradoxical Covenant rewarding the mix of bless and curse."},
+    {"id": 46685, "role": "flex", "secondaryRole": null, "archetypes": ["curse", "bless"], "summary": "Thematic blursed Kōhaku with Armageddon and Eye of Chaos, Olive McBride and Dark Prophecy to pick tokens, and Paradoxical Covenant and Rite of Sanctification balancing the bag."},
+    {"id": 48178, "role": "flex", "secondaryRole": null, "archetypes": ["curse"], "summary": "Curse Kōhaku who turns curses into blesses for his teammates with Tides of Fate, fights with Armageddon and Spectral Razor, and investigates with Read the Signs."},
+    {"id": 51301, "role": "flex", "secondaryRole": null, "archetypes": ["curse"], "summary": "Level 0 Kōhaku with Shrivelling and Storm of Spirits, Drawn to the Flame for clues, and Rod of Carnamagos and Control Variable; the guide is a short upgrade list."}
+  ]
+}

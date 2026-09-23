@@ -1,0 +1,15 @@
+{
+  "investigator": "Roland Banks",
+  "decks": [
+    { "id": 20344, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Core Set Roland who kills enemies to discover clues with Machete, the .45 and Guard Dog, adding Evidence! and Working a Hunch; the first step of a cycle-by-cycle upgrade series." },
+    { "id": 33937, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "The Revised Core starter rebuilt: Machete and the .45 for enemies, Magnifying Glass and Flashlight for clues, Barricade and First Aid for safety; with a partner it leans on enemy management." },
+    { "id": 6942, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Two-core-set Roland built to share a collection with four sibling decks: weapons, Beat Cop and Guard Dog to fight, Evidence! and Working a Hunch to turn kills into clues." },
+    { "id": 180, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Core Roland running eleven skills as pumps: one weapon, Magnifying Glass and Beat Cop out early, then investigate when the room is clear and fight when an enemy shows up." },
+    { "id": 20868, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Dunwich-era Roland who adds Dr. William T. Maleson, Art Student and Laboratory Assistant as soak and treachery insurance, and Prepared for the Worst to find Machete; still kills for clues." },
+    { "id": 5310, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Level 0 Guardian/Seeker Roland who gets clues by killing: On the Hunt and Maleson steer the encounter deck toward enemies, and \"Let me handle this!\" pulls them off a Survivor or Mystic partner." },
+    { "id": 2381, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "An earlier version of Sleuth Enforcer: level 0 Roland who kills for clues with Machete and the .38, Maleson and Shortcut for tempo, built to protect a Survivor or Mystic partner." },
+    { "id": 42335, "role": "flex", "secondaryRole": "support", "archetypes": ["allies"], "summary": "Ally-army Roland: Motivational Speech and Charisma field Beat Cops and Field Agents for skill boosts and soak, Hallowed Mirror and Trusted keep them healed, and Enchanted Blade does the fighting." },
+    { "id": 22527, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Carcosa-era Roland using Calling in Favors to replay Art Student and Maleson, Logical Reasoning for horror and Eureka! for draw, still turning each kill into a clue." },
+    { "id": 40739, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "A Revised Core starter padded with skill icons so a missing asset hurts less: the .45, Knife and Beat Cop to fight, Magnifying Glass and Flashlight to investigate, Barricade to hold rooms." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "investigator": "Ursula Downs",
+  "decks": [
+    { "id": 5558, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Hit-the-ground-running Ursula for Hard: Milan, Magnifying Glass and Hyperawareness boost her quickly, Shortcut and Unearth the Ancients trigger her free investigation, and evasion keeps her out of fights." },
+    { "id": 21685, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Mythos Busters' solo Ursula who sets up in under three actions with Hawk-Eye Folding Camera, Maleson and Fieldwork, then moves and investigates every turn, passing only the tests that matter." },
+    { "id": 37318, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Combo Ursula who feeds Archaic Glyphs from The Red Clock with Eldritch Sophist and keeps recurring Jeremiah Kirby, for fast clues and a big hand; complex to pilot." },
+    { "id": 5751, "role": "cluever", "secondaryRole": null, "archetypes": ["relics"], "summary": "Relic Ursula without Milan: Dr. Elli Horowitz and Backpack fetch The Chthonian Stone, Tooth of Eztli and Decorated Skull, with Archaic Glyphs and Strange Solution to upgrade." },
+    { "id": 24727, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Expert true solo Ursula who rushes the act deck: Magnifying Glass and Fieldwork, Mr. \"Rook\" to dig, Astounding Revelation and Crack the Case for money, Archaic Glyphs to upgrade." },
+    { "id": 45309, "role": "cluever", "secondaryRole": null, "archetypes": ["relics"], "summary": "Combo Ursula who assembles The Pendant of the Queen from three Segments of Onyx and recharges it forever with Eldritch Sophist, for a free testless clue, evade or move every turn." },
+    { "id": 14300, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "YouTube Forgotten Age Ursula who races to remote locations with Fingerprint Kit and Deduction, digs with Mr. \"Rook\", evades with Trench Coat and Hyperawareness, and leaves monsters to others." },
+    { "id": 23759, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Event-heavy co-op Ursula with almost no assets: Connect the Dots, Vantage Point and Crack the Case keep her moving and investigating so the act deck finishes before the Mythos catches up." },
+    { "id": 20515, "role": "cluever", "secondaryRole": null, "archetypes": ["movement"], "summary": "Standalone Ursula with Pathfinder, Hemispheric Map and Shortcut for constant free moves, Deciphered Reality and Milan for big clue turns, and Trench Coat to evade; 19 XP." },
+    { "id": 5547, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Solo Forgotten Age Ursula who powers through scenarios before they can kill her, with Hyperawareness for oversuccess, Tooth of Eztli against treacheries, and a few tricks for small enemies." }
+  ]
+}

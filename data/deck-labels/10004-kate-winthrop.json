@@ -1,0 +1,15 @@
+{
+  "investigator": "Kate Winthrop",
+  "decks": [
+    {"id": 47002, "role": "cluever", "secondaryRole": null, "archetypes": ["tools", "card draw"], "summary": "Introductory Hemlock Vale Kate who moves clues onto Fingerprint Kits, Magnifying Glasses and Empirical Hypothesis for bonuses, drawing hard with Dream-Enhancing Serum and Laboratory Assistants."},
+    {"id": 47065, "role": "cluever", "secondaryRole": null, "archetypes": ["tools"], "summary": "The level 0 start of Kate Doesn't Need Roads: Fingerprint Kit, Magnifying Glass and Empirical Hypothesis powered by Flux Stabilizer clues, with Tinker for slots and Preposterous Sketches for draw."},
+    {"id": 49257, "role": "cluever", "secondaryRole": null, "archetypes": ["tools"], "summary": "Science-kit Kate with Chemistry Sets, Microscopes, Alchemical Distillation and Magnifying Glasses on Tinker, drawing fast with Dream-Enhancing Serum and paid for by Milan."},
+    {"id": 46902, "role": "cluever", "secondaryRole": null, "archetypes": ["clue drop"], "summary": "Clue-shuffling Kate who drops clues with Captivating Discovery for Research Notes, freeing her Science and Tool assets for Flux Stabilizer's bonus again; built for a four-player Hard run."},
+    {"id": 51039, "role": "cluever", "secondaryRole": null, "archetypes": ["tools"], "summary": "Two-box Hemlock Vale Kate who gains hand slots from Dr. Charles West III to run two Microscopes, Magnifying Glass and Flashlight, with Ravenous Myconid and Chemistry Set as extra Science."},
+    {"id": 52219, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Feed the Mind Kate at 9 XP who uses card advantage to solve problems: Practice Makes Perfect, Cryptic Writings and Burning the Midnight Oil, with Higher Education for tests."},
+    {"id": 47878, "role": "support", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Story-mode Kate who sits at one location and blanks treacheries with Prophesiae Profana while killing enemies through Ancient Stone draws, leaving most clues to her friends."},
+    {"id": 53686, "role": "cluever", "secondaryRole": null, "archetypes": ["tools", "succeed by exactly"], "summary": "Thematic science Kate with up to 14 Science and Tool assets: Fine Tuning on Chemistry Set or Antikythera, and Inquisitive and Steady-Handed to hit the exact results they pay for."},
+    {"id": 47965, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "A \"One for All\" template Kate built from a single shared card collection, with generic Seeker tools and filler upgrades; more a collection exercise than a tuned deck."},
+    {"id": 46705, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Standalone cartographer Kate who draws a big hand with Cryptic Research, Practice Makes Perfect and Laboratory Assistants, oversucceeds with Magnifying Glass, and fires events through Farsight."}
+  ]
+}

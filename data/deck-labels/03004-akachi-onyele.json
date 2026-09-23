@@ -1,0 +1,15 @@
+{
+  "investigator": "Akachi Onyele",
+  "decks": [
+    { "id": 37358, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Beginner Akachi from Core through Edge of the Earth: extra charges on Shrivelling and Rite of Seeking, Dragon Pole and Alchemical Transmutation, and Spirit-Speaker to reset spells." },
+    { "id": 3187, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Well-rounded Akachi with tools for everything: Shrivelling and Rite of Seeking, Alchemical Transmutation money, Alyssa Graham and Scrying to see ahead, and Moonlight Ritual ready for Blood Pact." },
+    { "id": 4519, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Grotesque Statue Akachi: Spirit-Speaker bounces the Statue to refill it, so she draws two tokens for every test, with Spirit Athame and Holy Rosary to boost willpower; wants a partner for heavy fighting." },
+    { "id": 25081, "role": "fighter", "secondaryRole": null, "archetypes": ["seal"], "summary": "Battle-mage Akachi for Hard: Seal of the Seventh Sign, The Chthonian Stone and Empty Vessel seal away the worst tokens while Shrivelling (5), Spectral Razor and Twila keep the damage coming." },
+    { "id": 5696, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Combo Akachi who lets her own allies die to charge Decorated Skull, then spends those charges through Torrent of Power, with Shrivelling and Rite of Seeking as the core; better in multiplayer." },
+    { "id": 20516, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Simple standalone Akachi: Shrivelling and Rite of Seeking kept charged by Twila Katherine Price and Spirit-Speaker, with Grotesque Statue and Spectral Razor; built for new players and the Blob." },
+    { "id": 16052, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Combat-mage Akachi as the team's fighter: Shrivelling, Enchanted Blade and Mists of R'lyeh charged up by her ability, with Arcane Research for cheap upgrades; great beside Carolyn Fern." },
+    { "id": 18025, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Fantasy Flight's sample starter for Akachi: a spread of charge spells, Arcane Initiate and Uncage the Soul to find and play them, Spirit-Speaker to reset them, and Astral Travel to move." },
+    { "id": 41079, "role": "support", "secondaryRole": "cluever", "archetypes": ["skills matter"], "summary": "Bestow Resolve Akachi who commits dual skills like Occult Theory as all-wild icons to any investigator's tests, recharging the Ritual endlessly with Spirit-Speaker for huge oversuccess." },
+    { "id": 55726, "role": "fighter", "secondaryRole": null, "archetypes": ["parley"], "summary": "Bangle of Jinxes and Spectral Shield turn enemies into harmless followers, Drain Essence and String of Curses finish them, and Runic Axe is both her weapon and her charge battery; a short guide." }
+  ]
+}

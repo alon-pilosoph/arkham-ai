@@ -1,0 +1,15 @@
+{
+  "investigator": "Jacqueline Fine",
+  "decks": [
+    { "id": 32578, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Generalist Jacqueline on Sign Magick for five actions a round, spending them on Sixth Sense and Wither, with Olive McBride, Crystal Pendulum and Dark Prophecy steering the bag." },
+    { "id": 51002, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation", "spell events"], "summary": "Cancel-queen Jacqueline who predicts and cancels tokens with Olive McBride, Ritual Candles and Dark Prophecy, fighting with Azure Flame and Spectral Razor and investigating with Clairvoyance and Read the Signs." },
+    { "id": 31648, "role": "flex", "secondaryRole": null, "archetypes": ["actions matter"], "summary": "Sign Magick Jacqueline who gets two spell uses per action, pairing Wither or Sixth Sense with Shrivelling and Clairvoyance, recharged by Recharge (4)." },
+    { "id": 25722, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Dreamlands-tested Jacqueline with Azure Flame (5), Shards of the Void and Sixth Sense (4), Robes of Endless Night for cheap spells, and Ritual Candles and Recall the Future for the bag." },
+    { "id": 25026, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Fantasy Flight's official Jacqueline Fine starter deck: Azure Flame and Clairvoyance, Crystal Pendulum and Scrying Mirror to foresee tokens, and Dark Prophecy and Parallel Fates." },
+    { "id": 42956, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Revised Core plus starter-pack Jacqueline: Clairvoyance for clues, Azure Flame, Ineffable Truth and Hypnotic Gaze for enemies, and Ward of Protection against the Mythos." },
+    { "id": 27327, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Every Mystic Deck Ever: a generic video-guide Mystic list with Shrivelling, Sixth Sense and Rite of Seeking that works for almost any Mystic, here on Jacqueline." },
+    { "id": 28139, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "League Circle Undone Jacqueline with Azure Flame (5), Sixth Sense and Sword Cane, David Renfield and The Black Book for tempo, and upgraded Deny Existence and Ward of Protection." },
+    { "id": 25059, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Standalone Jacqueline who fishes tokens for Shards of the Void and Sixth Sense (4), with Scrying Mirror, Crystal Pendulum and Parallel Fates to shape what comes up." },
+    { "id": 36931, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Core, Dunwich and Edge of the Earth Jacqueline who investigates with Clairvoyance and Rite of Seeking, fights with Azure Flame and Shrivelling, and pairs with an Ashcan Pete fighter." }
+  ]
+}

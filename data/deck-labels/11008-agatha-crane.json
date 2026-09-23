@@ -1,0 +1,15 @@
+{
+  "investigator": "Agatha Crane",
+  "decks": [
+    {"id": 54153, "role": "cluever", "secondaryRole": "flex", "archetypes": ["spell events"], "summary": "Guide Mystic Agatha who replays Read the Signs, Voice of Ra and String of Curses from the discard, digging with Astronomical Atlas and Research Librarian and fighting with Eldritch Brand."},
+    {"id": 53880, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "True solo level 0 Agatha on willpower spells: Breath of the Sleeper and Eyes of the Dreamer to fight and investigate, Chthonian Stone and Katarina to trigger her, and Spectral Razor and Read the Signs to replay."},
+    {"id": 54710, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "A beginner starter-style Mystic Agatha at 0 XP with Magnifying Glass, Flashlight and Mortar and Pestle, replaying Drawn to the Flame and Working a Hunch for clues."},
+    {"id": 54551, "role": "cluever", "secondaryRole": null, "archetypes": ["spell events", "seal"], "summary": "Ascetic Agatha who triggers her ability every turn with three Signs of Xelotaph and Ocula Obscura, replaying Drawn to the Flame, Working a Hunch and Read the Signs as a free extra action."},
+    {"id": 53746, "role": "cluever", "secondaryRole": "support", "archetypes": ["spell events"], "summary": "53 XP Mystic Agatha who investigates with Clairvoyance and Read the Signs, blocks damage and treacheries with Spectral Shield on Eyes of the Dreamer, and reloads charges with Call the Beyond."},
+    {"id": 53149, "role": "flex", "secondaryRole": "cluever", "archetypes": ["spell events"], "summary": "Four-player standalone Agatha who replays cheap events like Deep Knowledge, Voice of Ra and Spectral Razor each round, investigating with Clairvoyance (5) and cancelling tokens with Olive McBride."},
+    {"id": 53548, "role": "support", "secondaryRole": "cluever", "archetypes": ["seal", "spell events"], "summary": "Seal Me Up Agatha built beside Sister Mary, sealing negative tokens with three Signs of Xelotaph, Protective Incantation and Chthonian Stone, and replaying String of Curses and Read the Signs."},
+    {"id": 53584, "role": "cluever", "secondaryRole": null, "archetypes": ["token manipulation", "spell events"], "summary": "Read the Signs Agatha who replays it each round after Katarina Sojka or Olive McBride touch the bag, with Mortar and Pestle and Robes of Endless Night to pay and Ritual Candles for symbols."},
+    {"id": 53826, "role": "flex", "secondaryRole": null, "archetypes": ["spell events", "doom"], "summary": "Spell-heavy witch Agatha who recurs Drain Essence, Spectral Razor and Explosive Ward, playing doom-laden Arcane Initiates and Familiar Spirits with St. Hubert's Key and Robes."},
+    {"id": 54245, "role": "cluever", "secondaryRole": null, "archetypes": ["token manipulation", "spell events"], "summary": "Multiplayer clue Agatha who fetches symbol tokens with Katarina Sojka and cashes them in on Sixth Sense (4), Jewel of Aureolus, Ritual Candles and Read the Signs (2)."}
+  ]
+}

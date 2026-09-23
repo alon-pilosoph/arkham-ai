@@ -1,0 +1,15 @@
+{
+  "investigator": "\"Ashcan\" Pete",
+  "decks": [
+    { "id": 381, "role": "cluever", "secondaryRole": "fighter", "archetypes": [], "summary": "Lean, cheap Pete who almost never clicks for money: Duke fights and investigates, Magnifying Glass and Scavenging keep him testing well, and Peter Sylvestre soaks horror; played beside a combat Zoey." },
+    { "id": 4857, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Solo Dark Horse Pete kept almost broke for the stat boost, stacking Madame Labranche, St. Hubert's Key and Magnifying Glass on top, with Fire Axe for damage and Duke doing the rest." },
+    { "id": 21846, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Dunwich-era Pete built around Duke and Dark Horse, with Beat Cop and Fire Axe to fight, Oops! and Lucky! to save tests, and Peter Sylvestre for horror." },
+    { "id": 36538, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse", "discard recursion"], "summary": "Beginner flex Pete from Core, Dunwich and Edge of the Earth: Dark Horse for boosts, Scavenging and his ability to recycle items and ready Duke, Milan and Magnifying Glass for clues." },
+    { "id": 54484, "role": "flex", "secondaryRole": null, "archetypes": ["discard recursion"], "summary": "True solo Pete updated through The Drowned City: Short Supply and Scrounge for Supplies land Leo De Luca early, Ice Picks and Wolf Mask handle tests and enemies, and cheap skills feed his ability." },
+    { "id": 36735, "role": "flex", "secondaryRole": null, "archetypes": ["allies"], "summary": "Ally-loop Pete who recurs Jeremiah Kirby with A Chance Encounter and Calling in Favors, fields Miss Doyle's cats with Charisma, and dips into Dark Horse and Scavenging for Ice Picks." },
+    { "id": 789, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "One Core Set plus Dunwich solo Pete with four premium allies, Peter Sylvestre to protect his sanity, Duke for tempo, and Flashlight and Magnifying Glass for clues." },
+    { "id": 4114, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Twenty-skill solo Pete: Dark Horse, Magnifying Glass and Peter Sylvestre push his stats to 6/7/6/5 so Duke tests almost for free, and the skills are there to commit or to discard to ready Duke." },
+    { "id": 1368, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "The original solo Dark Horse Duke: asset-heavy Pete who stays near zero resources for the boost, pumps Fire Axe through Forbidden Knowledge, and heals that horror with Peter Sylvestre." },
+    { "id": 1167, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Lone Wolf money spent on Fire Axe and, once bought, Scrapper to pump Duke's attack, with Scavenging and Magnifying Glass; built for solo or two-player." }
+  ]
+}

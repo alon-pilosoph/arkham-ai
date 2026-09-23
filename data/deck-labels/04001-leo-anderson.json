@@ -1,0 +1,15 @@
+{
+  "investigator": "Leo Anderson",
+  "decks": [
+    { "id": 6454, "role": "fighter", "secondaryRole": "cluever", "archetypes": ["big money", "actions matter"], "summary": "Keen Eye Leo who banks Lone Wolf money and extra actions from Leo De Luca and Quick Thinking for five-to-eight-action power turns at +3 or +4, killing bosses; strong from just 7 XP." },
+    { "id": 41631, "role": "fighter", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Sledgehammer Leo who oversucceeds for Quick Thinking and Lucky Cigarette Case draws, uses Honed Instinct and Leo De Luca for extra swings, and finally makes Relentless worth drawing." },
+    { "id": 14743, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Hard and Expert Leo built to get a big gun into play with 15 or more ammo through Venturer and Contraband, with Beat Cops, Guard Dogs and Trusted as a wall of soak." },
+    { "id": 5537, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Multiplayer Leo who grows into a Shotgun-only fighter, with Venturer for ammo and Beat Cops and Guard Dogs made cheap by his ability; little clue help, best at three players or more." },
+    { "id": 44067, "role": "fighter", "secondaryRole": null, "archetypes": ["allies"], "summary": "Consistent Sled Dog Leo: Rod of Animalism and his free ally play land three or four Sled Dogs and Guard Dogs, backed by Machete, Enchanted Blade and Stand Together for the team." },
+    { "id": 9466, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Fist-fighter Leo who punches with Knuckleduster and hits back with two Survival Knives, with Beat Cop, Guard Dog and Trusted keeping him standing and Taunt to draw enemies in." },
+    { "id": 13370, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Solo Leo who earns with Investments, Lone Wolf and \"Watch this!\" to pay for Alice Luxley, Beat Cop and eventually Agency Backup, with Scene of the Crime and Intel Report for clues." },
+    { "id": 7221, "role": "fighter", "secondaryRole": null, "archetypes": ["succeed by X"], "summary": "Knifemaster Leo who pushes his fight toward 10 with Beat Cops and Hired Muscle and stabs over and over with Switchblade (2), Survival Knives and Quick Thinking; no clues, all protection." },
+    { "id": 37431, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Springfield M1903 Leo who snipes enemies at other locations, keeps them off himself with \"You handle this one!\" and Elusive, and funds it with Easy Mark and Black Market; no clues." },
+    { "id": 51353, "role": "flex", "secondaryRole": null, "archetypes": ["allies"], "summary": "Unkillable true solo Leo who swarms the board with Beat Cops, Guard Dogs, Alice Luxley and Medical Student for soak and boosts, with Flashlight and Scene of the Crime for clues." }
+  ]
+}

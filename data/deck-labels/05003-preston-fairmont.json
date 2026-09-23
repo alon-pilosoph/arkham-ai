@@ -1,0 +1,15 @@
+{
+  "investigator": "Preston Fairmont",
+  "decks": [
+    { "id": 13828, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "All-rounder Poorston: Dark Horse and Fire Axe make him a reliable damage dealer, Flashlight, \"Look what I found!\" and Intel Report take clues, and Dig Deep with Leo De Luca covers treacheries." },
+    { "id": 19722, "role": "flex", "secondaryRole": null, "archetypes": ["big money", "events matter"], "summary": "Double, Double Preston who doubles Easy Mark, Emergency Cache and Hot Streak to build wealth, then doubles Intel Report, Small Favor and Sneak Attack for big plays; needs a team." },
+    { "id": 9908, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse", "fail forward"], "summary": "Solo Poorston built on Dark Horse, failure mitigation with Live and Learn and Lucky!, and tempo from Leo De Luca and Think on Your Feet, racing to Streetwise at 3 XP." },
+    { "id": 9484, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Dark Horse Preston who spends everything each turn, plays items for free through Joey \"The Rat\" Vigil, swings a Fire Axe, and buys clues with Lola Santiago and Streetwise." },
+    { "id": 40767, "role": "cluever", "secondaryRole": null, "archetypes": ["difficulty reduction", "events matter"], "summary": "Double, Double Preston who brings tests down to zero with Flashlight, Old Keyring, Gumption and Stealth to fire Exploit Weakness and Shed a Light, recurring events with Scrounge for Supplies." },
+    { "id": 45234, "role": "flex", "secondaryRole": null, "archetypes": ["big money", "events matter"], "summary": "Preston who refuses to take tests: Double, Double doubles Intel Report, Small Favor, Sneak Attack and Hot Streak, and Money Talks and Friends in Low Places buy the rest." },
+    { "id": 11698, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Hard-mode generalist Preston who pours his money into Well Connected and Money Talks for guaranteed successes, with Lone Wolf, Dario El-Amin and Drawing Thin feeding the pile." },
+    { "id": 30289, "role": "cluever", "secondaryRole": null, "archetypes": ["bless", "succeed by X"], "summary": "Blessed Preston who seals bless on Favor of the Sun and Ancient Covenant to auto-succeed huge all-in turns with Eye of the Djinn, Lucky Cigarette Case and Quick Thinking; can be the only cluever." },
+    { "id": 14402, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse", "fail forward"], "summary": "Taboo-friendly Poorston: Dark Horse, Fire Axe and Dig Deep, Trial by Fire and Intel Report to spend everything, and Live and Learn and Lucky! to save tests." },
+    { "id": 35026, "role": "cluever", "secondaryRole": null, "archetypes": ["fail forward", "events matter"], "summary": "Draw-engine Preston who fails tests on purpose with Drawing Thin, Rabbit's Foot and Take Heart, takes clues with Old Keyring and \"Look what I found!\", and doubles Black Market with Double, Double." }
+  ]
+}

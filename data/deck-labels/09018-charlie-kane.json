@@ -1,0 +1,15 @@
+{
+  "investigator": "Charlie Kane",
+  "decks": [
+    { "id": 41461, "role": "flex", "secondaryRole": null, "archetypes": ["allies"], "summary": "Flexible Charlie who swings from primary clue getter to near-primary fighter by exhausting stat-boost allies, filling his board with Charisma, Calling in Favors and A Chance Encounter; best at three or four players." },
+    { "id": 41425, "role": "flex", "secondaryRole": null, "archetypes": ["allies"], "summary": "S-Team Charlie led by Bonnie Walsh, Lonnie Ritter, Michael Leigh and Trigger Man, fighting with Enchanted Blade and Switchblade (2) and recruiting with Motivational Speech." },
+    { "id": 39311, "role": "fighter", "secondaryRole": null, "archetypes": ["allies"], "summary": "Expert multiplayer combat Charlie who fights with Meat Cleaver and Guard Dogs, takes clues through Summoned Hounds, and recurs allies with A Chance Encounter and Short Supply." },
+    { "id": 40433, "role": "support", "secondaryRole": null, "archetypes": ["allies"], "summary": "A joke deck of nearly fifty different allies brought in through Forced Learning; theme over function." },
+    { "id": 55291, "role": "flex", "secondaryRole": null, "archetypes": ["allies", "parley"], "summary": "Flex Charlie who passes any test by exhausting allies, recruits with upgraded Motivational Speech, and kills through parley with Whispers of Doom doubled by Eldritch Tongue." },
+    { "id": 39834, "role": "cluever", "secondaryRole": null, "archetypes": ["allies", "succeed by X"], "summary": "Drawn to the Flame podcast Charlie who smashes one test a turn by exhausting allies for Quick Thinking and Lucky Cigarette Case payoffs, taking clues with Old Keyrings and \"Look what I found!\"." },
+    { "id": 50698, "role": "flex", "secondaryRole": null, "archetypes": ["allies"], "summary": "True solo Carcosa Charlie who gets allies out fast with Motivational Speech and Calling in Favors, funded by Lone Wolf and Easy Mark, and fights with Runic Axe and Machete." },
+    { "id": 37912, "role": "cluever", "secondaryRole": null, "archetypes": ["allies", "discard recursion"], "summary": "Pure-cluever Charlie who mills allies with Short Supply and replays them with A Chance Encounter, succeeds by 2 for Scavenging and Newspapers, and buys clues with Lola Santiago." },
+    { "id": 39313, "role": "cluever", "secondaryRole": null, "archetypes": ["allies"], "summary": "Detective Charlie with Milan, Abigail Foreman and Summoned Hounds boosting his investigations, Practice Makes Perfect and At a Crossroads for draw, and The Raven Quill for clues." },
+    { "id": 45071, "role": "flex", "secondaryRole": null, "archetypes": ["allies"], "summary": "Combo Charlie who finds Bonnie Walsh, Summoned Hounds and Miss Doyle fast to reach huge skill values on any test, recycling allies with A Chance Encounter and Calling in Favors." }
+  ]
+}

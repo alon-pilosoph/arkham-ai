@@ -1,0 +1,15 @@
+{
+  "investigator": "George Barnaby",
+  "decks": [
+    {"id": 53502, "role": "cluever", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Guide Ascetic George with two dozen skills like Grim Resolve, Unrelenting and Sharp Vision to discard beneath him and commit later, with Nautical Charts and Lawrence Carlisle for clues."},
+    {"id": 56304, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter", "discard recursion"], "summary": "Super-high-draw flex George who spams skills, recurs A Glimmer of Hope, and fights with Fire Axe under Dark Horse and Madame Labranche; tested through a Drowned City blind run."},
+    {"id": 57317, "role": "cluever", "secondaryRole": null, "archetypes": ["difficulty reduction", "actions matter"], "summary": "Heist George who pairs Quick Learner with Leo De Luca for two -2 difficulty actions a turn, cutting shroud to 0 with Flashlight, Old Keyring, Matchbox, Gumption and Shed a Light."},
+    {"id": 53601, "role": "cluever", "secondaryRole": "flex", "archetypes": ["discard recursion", "skills matter"], "summary": "Level 0 Forced Learning George who discards Nautical Charts, Glimmer of Hope and Winging It for 2 to 4 clues an action, with Occult Lexicon, Hand Hook and Pushed to the Limit."},
+    {"id": 53615, "role": "cluever", "secondaryRole": "flex", "archetypes": ["discard recursion", "skills matter"], "summary": "The 16 XP follow-up to Forcibly Learning to Sail: Scavenging returns Nautical Charts every turn, with Cornered, Gift of Nodens and Sharp Vision, for three clues and a card per action."},
+    {"id": 53270, "role": "flex", "secondaryRole": null, "archetypes": ["discard recursion", "skills matter"], "summary": "Three-domain George who uses hand, the cards beneath him and the discard pile, drawing two a round with Forced Learning and replaying A Glimmer of Hope and Scrounge for Supplies."},
+    {"id": 53096, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter", "dark horse"], "summary": "Pre-release level 0 George on Forced Learning who stays poor for Dark Horse and Madame Labranche, swinging Fire Axe and Meat Cleaver and committing skills from beneath him."},
+    {"id": 55798, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "A deliberately silly Ascetic George who exiles Burn After Reading, Flare and A Test of Will from the start and buys them back with Déjà Vu, burning Signum Crucis for doom removal."},
+    {"id": 55856, "role": "fighter", "secondaryRole": "cluever", "archetypes": ["skills matter", "discard recursion"], "summary": "Infinite Boat George who loops Brute Force, Sharp Vision and Long Shot through Gift of Nodens for 2 to 3 clues or 3+ damage, raising his hand size with Cornered and Artistic Inspiration."},
+    {"id": 54683, "role": "cluever", "secondaryRole": null, "archetypes": ["skills matter", "discard recursion"], "summary": "A 34 XP take on George's Boatload of Skills with Research Librarians for Nautical Charts, True Survivor to replay skills, and Gift of Nodens and Scrapper at the top end."}
+  ]
+}

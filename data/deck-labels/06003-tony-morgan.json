@@ -1,0 +1,15 @@
+{
+  "investigator": "Tony Morgan",
+  "decks": [
+    { "id": 17487, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Taboo-compliant standard Tony who hunts bounty targets with his .38 Long Colts, Derringers and Knuckleduster, reloads with Contraband, and gains actions from Leo De Luca and Swift Reflexes." },
+    { "id": 32625, "role": "fighter", "secondaryRole": null, "archetypes": ["succeed by X", "actions matter"], "summary": "Miracle-Rogue Tony who takes six or seven Switchblade (2) attacks a turn through Haste, Leo De Luca, Garrote Wire and his bounty action, boosted by Lonnie Ritter, Delilah and Hard Knocks; built for Expert." },
+    { "id": 48228, "role": "fighter", "secondaryRole": null, "archetypes": ["actions matter", "succeed by X"], "summary": "Bewitching Tony who holds Ace in the Hole for twelve-action turns with Haste, Honed Instinct and Leo De Luca, oversucceeding with Switchblade (2) for damage and taking clues with Working a Hunch." },
+    { "id": 28027, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "Fight-event Tony who spends his free bounty attack on Clean Them Out, Monster Slayer, One-Two Punch and Coup de Grâce, pulling enemies in with \"Get over here!\" and boosting with Lonnie Ritter." },
+    { "id": 42364, "role": "fighter", "secondaryRole": null, "archetypes": ["big money"], "summary": "Big-money Tony who stacks Embezzled Treasure, Lone Wolf and Pay Day into Well Connected, shops the Underworld Market, and shoots with Derringers and a Lupara using Chuck Fergus's extra actions." },
+    { "id": 30564, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Expert dedicated fighter Tony with .45 Thompsons, Derringers and his Long Colts, Lonnie Ritter and Leather Jacket for his low sanity, and Live and Learn and Lucky! to land shots." },
+    { "id": 15838, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Flex Tony who shoots with Thompsons and his Long Colts while building Lone Wolf and Dario El-Amin money into Well Connected and testless clues from Intel Report and Working a Hunch." },
+    { "id": 26413, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events", "succeed by X"], "summary": "Primary-killer Tony for a Circle Undone Ironman run: Switchblade, Mauser and fight events like One-Two Punch and Counterpunch, plus Followed and Intel Report for the split-up scenarios." },
+    { "id": 57641, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Gatling Gun Tony dealing up to 36 damage a turn with Haste, Leo De Luca and his bounty action, reloading with Contraband and Extra Ammunition and protecting shots with Custom Modifications." },
+    { "id": 45098, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Seeker-splash Tony for three or four players: Switchblade (2) and Garrote Wire with Haste, a deep draw engine from Preposterous Sketches and Deep Knowledge, and Black Market to support the team." }
+  ]
+}

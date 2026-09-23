@@ -1,0 +1,15 @@
+{
+  "investigator": "Dexter Drake",
+  "decks": [
+    { "id": 42064, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Ranged-bolt Dexter who evades with Onyx Pentacle, Sword Cane and Pickpocketing to fire Dirty Fighting shots from Shrivelling, Azure Flame and Brand of Cthugha; a later ruling limits the trick." },
+    { "id": 26732, "role": "flex", "secondaryRole": null, "archetypes": ["actions matter"], "summary": "Big-rig Dexter compressing actions with Haste, Leo De Luca and his swap ability, tutoring with Molly Maxwell, and fighting and investigating with Switchblade, Sword Cane and Sixth Sense (4)." },
+    { "id": 47851, "role": "flex", "secondaryRole": "support", "archetypes": [], "summary": "True Magick Dexter who casts spells from his hand without playing them, tutored by Molly Maxwell, as the problem solver of a four-player Hard group; 56 XP." },
+    { "id": 28050, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Circle Undone Dexter with Shrivelling (3), Sixth Sense (4) and Sword Cane, Lone Wolf and David Renfield money, and Lucky Cigarette Case and Quick Thinking to keep the cards coming." },
+    { "id": 21182, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Asset-heavy Dexter who sets up a combat spell, a clue spell and a willpower boost, then swaps spells in and out with his ability, cycling Arcane Initiate and Scroll of Prophecies for draw." },
+    { "id": 38475, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Fighter Dexter who swaps assets every turn with his ability and Showmanship, using Abyssal Tome, Enchanted Blade and Colt Vest Pocket as they enter play, with Molly Maxwell and Haste for tempo." },
+    { "id": 43251, "role": "fighter", "secondaryRole": "cluever", "archetypes": ["actions matter"], "summary": "Action-economy Dexter who plays ten fast assets for free through his ability, adds actions with Sign Magick and Leo De Luca, and hits 7 or more with upgraded spells under Grounded." },
+    { "id": 29617, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Shadow Gunslinger Dexter who evades into Pickpocketing draws and shoots .25 Automatics, vanishing with Mists of R'lyeh (4) and Ineffable Truth and reloading with Swift Reload." },
+    { "id": 46942, "role": "flex", "secondaryRole": null, "archetypes": ["curse"], "summary": "Curse Dexter who floods the bag with Wicked Athame, Priest of Two Faiths and Faustian Bargain, then recharges Armageddon and Eye of Chaos off the curses, fetched by Molly Maxwell." },
+    { "id": 33479, "role": "flex", "secondaryRole": null, "archetypes": ["actions matter"], "summary": "Cyclopean Hammer Dexter who frees an arcane slot for Close the Circle, taking up to six actions a round with Leo De Luca, and investigates with Rite of Seeking recharged by Winds of Power." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "investigator": "Alessandra Zorzi",
+  "decks": [
+    { "id": 47003, "role": "flex", "secondaryRole": null, "archetypes": ["parley"], "summary": "Introductory Hemlock Vale Alessandra who parleys every turn with Beguile, Grift, Snitch and Vamp, takes clues through Fake Credentials and Lola Santiago, and uses Fine Clothes for easier parleys." },
+    { "id": 49294, "role": "fighter", "secondaryRole": null, "archetypes": ["parley"], "summary": "Enemy-handling Alessandra who deals with foes through parley: British Bull Dog, Stir the Pot, String of Curses and Vamp, with Eyes of Valusia charging up for burst damage; works in true solo." },
+    { "id": 49527, "role": "cluever", "secondaryRole": null, "archetypes": ["events matter", "card draw"], "summary": "Deck-cycling Alessandra who draws tricks and favors with Friends in Low Places and Black Market, sets weaknesses aside, and vacuums clues with Snitch and Intel Report while Beguile holds enemies." },
+    { "id": 52805, "role": "flex", "secondaryRole": null, "archetypes": ["parley"], "summary": "Low-XP Alessandra who funds herself with Bank Job, Grift and Bianca, manipulates enemies with Beguile and Power Word, and takes clues with Lockpicks and Fake Credentials." },
+    { "id": 49202, "role": "flex", "secondaryRole": null, "archetypes": ["parley"], "summary": "Parley-queen Alessandra who talks her way through everything with Beguile, Drain Essence, Persuasion, Power Word and Vamp, doubled by Eldritch Tongue and eased by Fine Clothes." },
+    { "id": 47522, "role": "flex", "secondaryRole": null, "archetypes": ["parley", "evasion"], "summary": "Two-player flex Alessandra from 0 to 34 XP: parley events for her bonus action, Stall for Time and Beguile to stay safe, British Bull Dog and Stir the Pot for damage, and Lola Santiago for clues." },
+    { "id": 47494, "role": "fighter", "secondaryRole": null, "archetypes": ["parley"], "summary": "The earlier Goon Alessandra: British Bull Dog, Stir the Pot and String of Curses handle enemies through parley, with Backpack and Sleight of Hand for tempo and Bewitching as the top upgrade." },
+    { "id": 57869, "role": "flex", "secondaryRole": null, "archetypes": ["parley", "doom"], "summary": "True solo curse-whisperer Alessandra who controls enemies with Beguile and loads doom on them with String of Curses and Whispers of Doom, replayed by Eldritch Tongue, while Lockpicks take clues." },
+    { "id": 54711, "role": "flex", "secondaryRole": null, "archetypes": ["parley"], "summary": "Heist-leader Alessandra who shrinks her deck to about 15 cards by replaying parley events through Eldritch Tongue, with Walter Fitzpatrick, Snitch and Vamp from The Drowned City." },
+    { "id": 49429, "role": "flex", "secondaryRole": null, "archetypes": ["parley"], "summary": "Two-box Hemlock Vale Alessandra built to work without Fine Clothes: Beguile, Grift and Stir the Pot for enemies, Flashlights and Fake Credentials for clues, and Leo De Luca for tempo." }
+  ]
+}

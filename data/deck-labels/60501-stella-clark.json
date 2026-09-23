@@ -1,0 +1,15 @@
+{
+  "investigator": "Stella Clark",
+  "decks": [
+    { "id": 25117, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward", "dark horse"], "summary": "Hard-mode fail-forward Stella who profits from every failure with Live and Learn, Lucky! and Old Keyring, stays poor for Dark Horse and Madame Labranche, and shoots .18 Derringers." },
+    { "id": 39832, "role": "cluever", "secondaryRole": null, "archetypes": ["difficulty reduction", "fail forward"], "summary": "Scarlet Keys Stella who lowers late-turn tests with two Quick Learners and Gumption to fire Shed a Light and Old Keyring at 0, recycling the pieces with Scavenging and Short Supply." },
+    { "id": 27155, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Solo Expert Forgotten Age Stella with Will to Survive, Live and Learn and Lucky!, .18 Derringers and Old Keyrings, and Peter Sylvestre and Track Shoes to stay mobile." },
+    { "id": 38874, "role": "fighter", "secondaryRole": null, "archetypes": ["fail forward", "discard recursion"], "summary": "Main-fighter Stella for Edge of the Earth who fails on purpose with Drawing Thin and Rabbit's Foot, shoots Old Hunting Rifles and .18 Derringer (2), and replays skills with True Survivor." },
+    { "id": 38810, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Fantasy Flight's official Stella Clark starter deck: an .18 Derringer and Old Keyring that fail safely, Live and Learn, Oops! and Dumb Luck, and Granny Orne and Grimm's Fairy Tales." },
+    { "id": 26349, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Cheap, draw-heavy Stella who turns fails into cards and actions with Rabbit's Foot, Take Heart and Live and Learn, using Track Shoes for testless moves; beat Dunwich on Hard." },
+    { "id": 40959, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Revised Core plus starter-pack Stella for beginners: an .18 Derringer and Old Keyring that fail safely, Rabbit's Foot and Grit Your Teeth, and Mysterious Raven and Granny Orne." },
+    { "id": 57607, "role": "fighter", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Chainsaw Stella who misses on purpose under two Quick Learners, then retries with Live and Learn for up to 15 damage; built from the Revised Core and starter packs." },
+    { "id": 25030, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "The first upload of Stella's official starter deck straight from the pack, with A Chance Encounter standing in for A Test of Will." },
+    { "id": 29725, "role": "flex", "secondaryRole": "support", "archetypes": ["fail forward", "discard recursion"], "summary": "Three-or-four-player flex Stella built to recur A Watchful Peace and freeze the encounter deck, with Meat Cleaver, Old Keyring and Flashlight doing the work in between." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "investigator": "Agnes Baker",
+  "decks": [
+    { "id": 4321, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Expert multiplayer Agnes who turns horror into damage with Painkillers and Peter Sylvestre, fights with Shrivelling and Baseball Bat and investigates with Rite of Seeking; strong but draw-dependent." },
+    { "id": 20532, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Core Set Agnes built on her horror-into-damage ability, with Forbidden Knowledge to trigger it at will, Shrivelling and Baseball Bat to fight and Arcane Initiate to find spells; the first step of a series." },
+    { "id": 33944, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "The Revised Core Agnes rebuilt to kill with Shrivelling, Baseball Bat and Forbidden Knowledge pings, with Arcane Studies and a Flashlight so she can investigate as well." },
+    { "id": 6940, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Two-core-set Agnes sharing a collection with four sibling decks: Shrivelling, Baseball Bat and Forbidden Knowledge pings for enemies, Blinding Light and Cunning Distraction to get away." },
+    { "id": 21271, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Dunwich-era Agnes adding Rite of Seeking for willpower clues and Painkillers and Peter Sylvestre to cycle horror into damage." },
+    { "id": 136, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo core Agnes who pings enemies at will through Forbidden Knowledge, fetches Shrivelling with Arcane Initiate and takes clues with Flashlight and \"Look what I found!\"; high risk, high reward." },
+    { "id": 14695, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "True solo Agnes turning horror into damage, with Sixth Sense and Rite of Seeking for clues, Shrivelling and Meat Cleaver to fight, and Arcane Research to upgrade her spells for almost nothing." },
+    { "id": 12219, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Taboo-friendly Agnes built to pair with a matching Carolyn Fern deck: she pings enemies through Forbidden Knowledge and Painkillers while Carolyn heals her and finds the clues." },
+    { "id": 47436, "role": "fighter", "secondaryRole": "support", "archetypes": ["bless", "healing"], "summary": "Bless-powered Agnes: Spirit of Humanity and The Key of Solomon turn bless tokens into damage and team healing while Jessica Hyde and Sparrow Mask absorb the cost, pinging with her ability every phase." },
+    { "id": 1409, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Multiplayer Agnes for Hard Dunwich: Painkillers and Peter Sylvestre trade damage and horror for pings, Fire Axe and Shrivelling fight, and Rite of Seeking takes clues." }
+  ]
+}

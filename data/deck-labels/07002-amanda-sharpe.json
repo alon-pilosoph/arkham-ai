@@ -1,0 +1,15 @@
+{
+  "investigator": "Amanda Sharpe",
+  "decks": [
+    { "id": 33107, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw", "skills matter"], "summary": "Red-Gloved Man Amanda who draws half her deck a turn with Cryptic Research, Dream-Enhancing Serum and Laboratory Assistants, committing Deduction and Perception under her to win every test." },
+    { "id": 36029, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw", "skills matter"], "summary": "Edge of the Earth Amanda built for the most tests per turn: Eon Chart and Hiking Boots for movement, Ice Pick (3) and Scientific Theory for stats, and Practice Makes Perfect to cycle her deck." },
+    { "id": 25869, "role": "cluever", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Classic clue-gathering Amanda for three or four players who reuses one Deduction or Perception under her for three investigations, with Milan, Magnifying Glass, Higher Education and Grisly Totem." },
+    { "id": 53539, "role": "cluever", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Drowned City Amanda who supercharges two Eon Charts with upgraded Enraptured for five investigate actions, committing Deduction (2) to each for up to 21 clues in a turn." },
+    { "id": 40199, "role": "fighter", "secondaryRole": null, "archetypes": ["skills matter", "card draw"], "summary": "Fighter Amanda who draws half her deck a turn and fights with the Hyperphysical Shotcaster, committing Fighting Lessons, Stunning Blow and Vicious Blow under her to every attack." },
+    { "id": 54880, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter", "secrets"], "summary": "Flex Amanda who keeps upgraded Enraptured under herself to recharge Ancient Stone, Divination, Eon Chart and the Pendant of the Queen on every test, for kills and tempo." },
+    { "id": 55362, "role": "flex", "secondaryRole": null, "archetypes": ["curse"], "summary": "True solo curse Amanda who fills the bag with curses from Gabriel Carillo and Stirring Up Trouble, stores them on Favor of the Moon, and cashes them into Dawn Star and Gaze of Ouraxsh." },
+    { "id": 30781, "role": "cluever", "secondaryRole": null, "archetypes": ["big hand"], "summary": "Expert big-hand Amanda with Dream-Enhancing Serum, Occult Lexicon and Celaeno Fragments, buying her tests through Higher Education with Astounding Revelation and Crack the Case money." },
+    { "id": 25883, "role": "fighter", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "The level 0 start of a damage-dealing Amanda who loads Strange Solution with practiced skills and heads toward The Necronomicon, Ancient Stone and Segments of Onyx for passive damage." },
+    { "id": 36028, "role": "cluever", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "The level 0 start of Theory to Practice: Milan, Pocket Telescopes and Hiking Boots, Practice Makes Perfect to cycle, and Deduction and Enraptured under her for repeated investigations." }
+  ]
+}

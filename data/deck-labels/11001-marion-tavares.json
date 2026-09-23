@@ -1,0 +1,15 @@
+{
+  "investigator": "Marion Tavares",
+  "decks": [
+    {"id": 53705, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events", "events matter"], "summary": "Guide Marion who punches with One-Two Punch, Glory and Improvised Weapon, chains events through The Book of War and Tetsuo Mori, and recurs A Glimmer of Hope for cheap triggers."},
+    {"id": 54200, "role": "flex", "secondaryRole": "cluever", "archetypes": ["events matter"], "summary": "Field Agent Marion who replays Soothing Melody from a Hallowed Mirror to heal her Field Agents for testless clues, fighting with Blessed Blade and Machete; solo and multiplayer."},
+    {"id": 54120, "role": "flex", "secondaryRole": null, "archetypes": ["events matter", "discard recursion"], "summary": "Quick-rig flex Marion on events and skills, recycling A Glimmer of Hope, Scrounge for Supplies and Pushed to the Limit, with Blessed Blade, Mk 1 Grenades and Enchant Weapon for damage."},
+    {"id": 53619, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Gunbit Marion who plays, discards and replays Remington Model 1858 for free shots, using Prepared for the Worst, Act of Desperation and Pushed to the Limit to keep it cycling."},
+    {"id": 60168, "role": "fighter", "secondaryRole": null, "archetypes": ["healing", "soak"], "summary": "Soul Sanctification Marion who turns Second Wind, Ready for Anything and Soothing Melody into tempo, soaking with Spiritual Resolve and fighting with Fire Axe, Hunter's Mark and Sweeping Kick."},
+    {"id": 53764, "role": "cluever", "secondaryRole": "flex", "archetypes": ["discard recursion"], "summary": "Cluever Marion who discards A Glimmer of Hope and Winging It to Reliable-upgraded Nautical Charts for two to four clues a round, with Alice Luxley and Scene of the Crime."},
+    {"id": 55979, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "Hard Drowned City Marion at 3 XP who hunts with On the Hunt, Toe to Toe, Dynamite Blast and Sweeping Kick, backed by Machetes, Guard Dogs and a long campaign guide."},
+    {"id": 56107, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events", "events matter"], "summary": "Wizard Marion whose Book of War returns Tactic events like One-Two Punch, Counterpunch and Glory, with Brand of Cthugha to fight and a Tinkered Crowbar for spare clues."},
+    {"id": 55207, "role": "flex", "secondaryRole": null, "archetypes": ["events matter"], "summary": "Double-and-Bold Marion who plays Bank Job, Task Force and Toe to Toe as her first action for the bonus, cycling Remingtons and Books of War with Act of Desperation."},
+    {"id": 55674, "role": "fighter", "secondaryRole": "support", "archetypes": ["fight events"], "summary": "Level 0 Gambit Marion built to pair with a cluever George, kicking the door in with Kicking the Hornet's Nest, One-Two Punch and Clean Them Out and stabbing with a Machete."}
+  ]
+}

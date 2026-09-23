@@ -1,0 +1,15 @@
+{
+  "investigator": "Luke Robinson",
+  "decks": [
+    { "id": 19422, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Taboo-compliant standard Luke who plays events at connecting locations and through the Dream-Gate: Drawn to the Flame and Read the Signs for clues, Shrivelling and Sixth Sense in play, Mr. \"Rook\" to dig." },
+    { "id": 17073, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Hard-mode Luke who digs with Mr. \"Rook\" and Astounding Revelation, investigates remotely with Drawn to the Flame and Rite of Seeking, and fights with Shrivelling and Storm of Spirits." },
+    { "id": 16082, "role": "cluever", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Dream-Gate Luke who takes nearly every clue from the safety of the Dream-Gate at shroud 0 or 1, controlling the bag with Olive McBride, Dark Prophecy and Premonition; full of rules questions." },
+    { "id": 43767, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Innsmouth fighter Luke from Ancient Evils who snipes into any location with Enchanted Bows kept charged by Twila and Prophetic, backed by Spectral Razor and String of Curses." },
+    { "id": 27334, "role": "cluever", "secondaryRole": "fighter", "archetypes": [], "summary": "Testless-clue Luke for any difficulty: Drawn to the Flame, Vantage Point, Working a Hunch and Seeking Answers played from connecting locations, with Spectral Razor and Shrivelling to fight." },
+    { "id": 45671, "role": "flex", "secondaryRole": "support", "archetypes": [], "summary": "True Magick Luke who activates spells from his hand without paying or using slots, covering clues with Clairvoyance, damage with Shrivelling (5), evasion, and endless healing; complex." },
+    { "id": 18677, "role": "fighter", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Sniper Luke built as a pure fighter: the Gate Box and Shortcut get him anywhere, and Spectral Razor, Storm of Spirits and Shrivelling strike enemies from connecting locations." },
+    { "id": 33128, "role": "fighter", "secondaryRole": null, "archetypes": ["curse"], "summary": "Optimized Luke who keeps the Pendant of the Queen and Gate Box charged with Recharge, stores curses on Favor of the Moon, and nukes enemies with Storm of Spirits (3) and Spectral Razor." },
+    { "id": 38904, "role": "cluever", "secondaryRole": null, "archetypes": ["events matter"], "summary": "All-event Luke who skips stat boosts entirely: testless events like Drawn to the Flame, Read the Signs and Deny Existence played remotely and replayed with De Vermis Mysteriis and Dayana Esperence." },
+    { "id": 43676, "role": "support", "secondaryRole": "cluever", "archetypes": ["remote clues"], "summary": "Command-center Luke who sits in the Dream-Gate and helps from afar: Power Word commands enemies, Summoned Servitor fights and gathers, and Pocket Telescope and Astronomical Atlas feed him clues." }
+  ]
+}

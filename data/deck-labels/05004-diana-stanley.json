@@ -1,0 +1,15 @@
+{
+  "investigator": "Diana Stanley",
+  "decks": [
+    { "id": 15209, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Pure-caster Diana for Hard: cancels from Deny Existence, Ward of Protection and Dark Prophecy stack willpower under her, then Shrivelling, Sixth Sense and Storm of Spirits do the work; complex." },
+    { "id": 14103, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "The first Practicing Safe Hex: Diana cancels treacheries to grow her willpower, draws heavily through Arcane Initiate, and fights and investigates with Shrivelling, Rite of Seeking and Enchanted Blade." },
+    { "id": 10739, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Eldritch Knight Diana who fights with Machete and Beat Cop while nine cancel effects feed her ability, and Prepared for the Worst finds weapons and Twilight Blade to reuse cancels." },
+    { "id": 9476, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Slow-burn multiplayer Diana who cancels surgically instead of constantly, leaning on Flashlight and the .45 early and unleashing Shrivelling once her willpower has grown." },
+    { "id": 19120, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Eldritch Knight revisited: Empower Self, Well Prepared, The Hungering Blade and Twilight Blade build to repeatable high-damage attacks, with Ever Vigilant and Uncage the Soul to set up fast." },
+    { "id": 26064, "role": "fighter", "secondaryRole": null, "archetypes": ["firearms"], "summary": "Gun-fu Diana who ignores willpower: .35 Winchesters, Thompsons and Bandoliers with Grete Wagner and \"Eat lead!\", and cancel-triggering cards like Marksmanship and Olive McBride feeding her ability." },
+    { "id": 14125, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Hard-mode Diana built to reach 5 or 6 willpower reliably with ten cancel effects and Arcane Initiate, then power Shrivelling, Sixth Sense and Wither." },
+    { "id": 9527, "role": "fighter", "secondaryRole": "support", "archetypes": [], "summary": "Tank Diana on Guardian cards: .45 Automatics, Guard Dog and Survival Knives fight while her cancels grow her willpower, and \"Let me handle this!\" and Delay the Inevitable protect the team." },
+    { "id": 54220, "role": "flex", "secondaryRole": null, "archetypes": ["seal"], "summary": "Combo Diana who seals every token but the elder sign, Transfigures into Winifred and uses Katarina Sojka to reveal it on every test for endless draw and damage; a thought experiment more than a deck." },
+    { "id": 56505, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Maximum Empower Diana: Lucid Dreaming finds all three Empower Selves, Well Prepared and Twilight Blade stack on them, and Enchanted Armor and Bind Monster handle what attacks her." }
+  ]
+}

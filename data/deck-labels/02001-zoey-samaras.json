@@ -1,0 +1,15 @@
+{
+  "investigator": "Zoey Samaras",
+  "decks": [
+    {"id": 294, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "The designated hitter beside a dedicated clue finder: Machete, Kukri and Beat Cop kill everything, Leo De Luca adds actions, and her ability pays her for every enemy she engages."},
+    {"id": 21325, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Dunwich-era Zoey who engages everything for money and one-shots big enemies with Machete, the .45 and Double or Nothing, carrying Ward of Protection for treacheries."},
+    {"id": 36478, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Beginner Zoey from Core, Dunwich and Edge of the Earth: .45 Automatics, Machete, Beat Cop and Guard Dog clear enemies, Prepared for the Worst finds the guns, Emergency Aid and Bandages keep her standing."},
+    {"id": 48444, "role": "fighter", "secondaryRole": null, "archetypes": ["bless"], "summary": "Deck-thinning Zoey: Underworld Support, Stick to the Plan and Short Supply shrink her deck to ten cards so Prepared for the Worst always finds Cyclopean Hammer, with a light bless package for Nephthys."},
+    {"id": 7731, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Blades-and-zealotry Zoey for Hard: Timeworn Brand and Machete for burst damage, Brother Xavier to soak and Blood Eclipse to cash him in, On the Hunt to pull enemies to her."},
+    {"id": 1381, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "One Core Set plus Dunwich Zoey as the killing machine beside a Seeker or Pete, with plenty of horror healing and a Shrivelling for the fights melee cannot handle."},
+    {"id": 35159, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "A 21-card Zoey that uses Underworld Support and Stick to the Plan to find Cyclopean Hammer on turn one, then hunts enemies down with On the Hunt and \"Get over here!\"."},
+    {"id": 1299, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Zoey kept cheap and fast: Machete and the .45 for enemies, Flashlight, Drawn to the Flame and Evidence! for clues, and many skills; tested on Hard in Dunwich."},
+    {"id": 43917, "role": "fighter", "secondaryRole": "support", "archetypes": ["relics"], "summary": "Relic Zoey who fights like Daniela: Hunter's Armor, Guard Dog and Zoey's Cross punish every attack without tests, Runic Axe finishes the job, and Dr. Elli Horowitz fetches the relics; no clues."},
+    {"id": 7506, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "A deckbuilding tutorial: one Core plus Dunwich Zoey built as the fighter half of a classic pair with Daisy Walker, with a spread of weapons and Taunt to protect her."}
+  ]
+}

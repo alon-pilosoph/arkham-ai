@@ -1,0 +1,15 @@
+{
+  "investigator": "Finn Edwards",
+  "decks": [
+    { "id": 5870, "role": "cluever", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Hard-mode clue-and-evade Finn: Flashlight and Lockpicks for clues, Pickpocketing (2) and Lone Wolf money paying for Streetwise, and Backstab and Sneak Attack for the kills he cannot avoid." },
+    { "id": 6407, "role": "cluever", "secondaryRole": null, "archetypes": ["succeed by X", "discard recursion"], "summary": "Scavenging and Lucky Cigarette Case Finn who oversucceeds with Lockpicks to recycle items and draw every turn, then commits the spare items to anyone's tests." },
+    { "id": 43176, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion", "succeed by X"], "summary": "Thompson Finn who evades to trigger Pickpocketing, Lucky Cigarette Case and Dirty Fighting for money, cards and damage every turn, reloading with Swift Reload." },
+    { "id": 5687, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "High-clue, high-evasion Finn for Hard: Milan and Burglary money pays for Streetwise and Lola Santiago's automatic clues, with Double or Nothing for big plays; meant to sit beside a fighter." },
+    { "id": 19441, "role": "flex", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Evade-then-kill Finn: Pickpocketing, Sneak Attack and Hatchet Man turn his free evade into damage on the way to Delilah O'Rourke, while Milan and Flashlight keep him investigating." },
+    { "id": 9075, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Full cluever Finn built around Milan money feeding Lola Santiago, with Lockpicks and Flashlight in both hands and Double or Nothing on Deduction; leaves combat to others." },
+    { "id": 10143, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Primary-seeker Finn for four-player Hard Forgotten Age: Milan, Fingerprint Kit and Sleight of Hand for big clue bursts, Scavenging to recycle items, and Slip Away and Elusive to escape." },
+    { "id": 57181, "role": "flex", "secondaryRole": null, "archetypes": ["difficulty reduction", "evasion"], "summary": "Ghost-hunter Finn who drops shroud to zero with Matchboxes and Old Keyring for free clues from Alton O'Connell and Lola Santiago, and shoots evaded enemies with .25 Automatics and Dirty Fighting." },
+    { "id": 12005, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Forgotten Age Finn built beside a Leo Anderson: Milan and Magnifying Glass for clues, Lucky Cigarette Case and Pickpocketing for draw, and Slip Away and Elusive to handle enemies without fighting." },
+    { "id": 46342, "role": "flex", "secondaryRole": null, "archetypes": ["discard recursion"], "summary": "Damning Testimony Finn who exposes and discards enemies up to 5 health, then recycles the Testimony with Joey \"The Rat\" Vigil and Scavenging to do it again, clearing monsters for the whole team." }
+  ]
+}

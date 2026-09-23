@@ -1,0 +1,15 @@
+{
+  "investigator": "Wendy Adams",
+  "decks": [
+    { "id": 20379, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Core Set Wendy built on two-card combos: her Amulet replays Lucky! and Backstab, Scavenging recovers items and Leo De Luca adds actions; the first step of a cycle-by-cycle series." },
+    { "id": 33945, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "The Revised Core Wendy rebuilt as an evasive cluever: Leo De Luca on turn one, Flashlight and \"Look what I found!\" for clues, Pickpocketing and Cunning Distraction to slip enemies; not for solo." },
+    { "id": 6939, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Two-core-set Wendy sharing a collection with four sibling decks: she evades with Elusive and Pickpocketing, strikes with Sneak Attack, and finds clues with Flashlight and \"Look what I found!\"." },
+    { "id": 35461, "role": "flex", "secondaryRole": "support", "archetypes": ["events matter", "discard recursion"], "summary": "Advanced-Amulet Wendy who replays events from her discard pile, covers five classes for Cheat the System and Strength in Numbers, and passes almost any test; complex, flexible, and generous with Black Market." },
+    { "id": 21199, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Dunwich-era Wendy heading for Will to Survive, with Lone Wolf and Fine Clothes, Fire Axe for cheap kills, and Double or Nothing to double her best events." },
+    { "id": 43011, "role": "flex", "secondaryRole": null, "archetypes": ["events matter", "discard recursion"], "summary": "Daredevil Darling updated for The Scarlet Keys: Salvage replays items, Makeshift Trap and Friends in Low Places add customizable events, and Talisman of Protection with Pocket Telescope covers classes for Cheat the System." },
+    { "id": 22575, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Carcosa-era Wendy still built toward Will to Survive, adding Fight or Flight to power Backstab and Fire Axe, and Quick Thinking and Resourceful for tempo." },
+    { "id": 5300, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Expert Wendy tuned for Carcosa's Curtain Call: Baseball Bat and Backstab with Double or Nothing for burst damage, Leo De Luca and Lone Wolf for tempo and money, Fine Clothes for the campaign's tests." },
+    { "id": 43765, "role": "cluever", "secondaryRole": null, "archetypes": ["events matter"], "summary": "Original-Amulet Wendy who dual-wields Lockpicks for clues and orders her events so the Amulet replays Nothing Left to Lose, Black Market and Easy Mark from the top of her discard pile." },
+    { "id": 622, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Solo Hard Night of the Zealot combo Wendy: Leo De Luca, Will to Survive, Backstab and Double or Nothing aim to kill Umôrdhoth in a single turn, with the Amulet reusing the pieces." }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "investigator": "\"Skids\" O'Toole",
+  "decks": [
+    { "id": 20471, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Core Set Skids who fights with Machete and Backstab, evades on his 4 agility and buys extra actions with his ability; the first step of a cycle-by-cycle series." },
+    { "id": 6938, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Two-core-set Skids sharing a collection with four sibling decks: Derringers and Switchblades to fight, Burglary and Hard Knocks for money, Leo De Luca for the extra action." },
+    { "id": 33943, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "The Revised Core Skids rebuilt as a combat-leaning generalist: the .45, Derringers and Beat Cop to fight, Burglary and Hard Knocks for money, Sneak Attack and Elusive for tempo." },
+    { "id": 130, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo core Skids who does it all: Machete, Backstab and Sneak Attack for damage, Leo De Luca for actions, Burglary and his elder sign for money, a Flashlight for clues." },
+    { "id": 30714, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion", "succeed by X"], "summary": "Parallel Skids who evades as his engine: Pickpocketing draws, dual .25 Automatics shoot each enemy he evades, and Hatchet Man and Delilah O'Rourke finish them; almost no clues." },
+    { "id": 21232, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Dunwich-era Skids adding Lone Wolf, Prepared for the Worst to find Machete and the .45, and Double or Nothing for big Backstab turns." },
+    { "id": 925, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "One Core Set plus Dunwich Skids for pair play: a weapon and a Flashlight, Leo De Luca and Burglary as the mulligan targets, Taunt and Teamwork to cover a clue-finding partner." },
+    { "id": 47569, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Ornate Bow Skids who fires every action by restocking it from Cleaning Kit, Emergency Cache (3) and Contraband, while Fox Mask and Cat Burglar raise his agility to evade; up to 12 damage a turn." },
+    { "id": 3773, "role": "cluever", "secondaryRole": "fighter", "archetypes": [], "summary": "Solo scout Skids who moves fast collecting clues, evades or cuts down whatever shows up with Machete and Backstab, and uses Lone Wolf and Double or Nothing for money and big swings." },
+    { "id": 169, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Daisy's bodyguard, built to share a location with a matching Daisy deck: Skids engages and kills with Derringers and the .45 or evades and Sneak Attacks, turning kills into clues with Evidence!." }
+  ]
+}

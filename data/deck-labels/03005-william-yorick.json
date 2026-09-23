@@ -1,0 +1,15 @@
+{
+  "investigator": "William Yorick",
+  "decks": [
+    { "id": 4351, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Hard-tested tank Yorick who recurs soak assets and Guard Dogs with his ability and fights with Machete, the .32 Colt and Gravedigger's Shovel; built to pair with a Seeker." },
+    { "id": 11881, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "The Circle Undone update of Nervous Wrecking Machine: Enchanted Blade and Meat Cleaver recurred by his ability, Act of Desperation for burst, Drawing Thin and Take Heart for money, and a Flashlight for clues." },
+    { "id": 37357, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Beginner Yorick from Core through Edge of the Earth who digs Baseball Bats and Cherished Keepsakes back out of his discard pile, with Schoffner's Catalogue money and On the Hunt to find enemies." },
+    { "id": 3125, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Lean recycle-everything Yorick: Knife and Gravedigger's Shovel to kill, Lantern and \"Look what I found!\" for clues, all of it brought back by his ability and Resourceful." },
+    { "id": 44345, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Chainsaw and Runic Axe Yorick who chops through enemies, finds clues through Precious Memento and Well Prepared, and survives on Plucky and Take Heart." },
+    { "id": 28743, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Expert true solo level 0 Yorick: Enchanted Blade recharged each time his ability replays it, Flashlight, Evidence! and Scene of the Crime for clues, and Lucky! to cheat the bag." },
+    { "id": 3186, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Straightforward Yorick who takes on most of the combat with Machete, the .45 and Beat Cop, treating his ability as a bonus rather than the plan, with Lantern for free damage." },
+    { "id": 26402, "role": "fighter", "secondaryRole": null, "archetypes": ["allies", "bless"], "summary": "Thematic pet-cemetery Yorick who revives Stray Cats, Ravens and Guard Dogs with his ability and A Chance Encounter, blesses the bag with Rite of Sanctification, and fights with a Chainsaw." },
+    { "id": 20998, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Standalone ranged Yorick: Old Hunting Rifles and Enchanted Blades recurred by his ability, Police Badges for extra actions, and Eucatastrophe and Lucky! to beat the bag; 29 XP." },
+    { "id": 51880, "role": "fighter", "secondaryRole": null, "archetypes": ["discard recursion"], "summary": "Old Shotgun Yorick who kills with events so his ability replays the Shotgun loaded from his discard pile, backed by Salvage, Cleaning Kit and Derringers; no clues." }
+  ]
+}

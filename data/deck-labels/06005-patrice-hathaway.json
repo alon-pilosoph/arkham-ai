@@ -1,0 +1,15 @@
+{
+  "investigator": "Patrice Hathaway",
+  "decks": [
+    { "id": 15698, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Deck-cycling Patrice who uses her five-card refresh to find desperate skills like Desperate Search, Reckless Assault and Last Chance every turn, crushing tests with Sixth Sense and Mists of R'lyeh." },
+    { "id": 41338, "role": "flex", "secondaryRole": null, "archetypes": ["difficulty reduction", "discard recursion"], "summary": "Expert-ready Patrice who lowers tests with Old Keyrings, Flashlights and Gumption, fights with Ice Pick (3) recycled by Scavenging, and handles enemies with Exploit Weakness and Shed a Light." },
+    { "id": 17679, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Taboo-compliant standard Patrice built around her Violin and five-card refresh: Shrivelling, Sixth Sense and Fire Axe, Madame Labranche money, and plenty of skills to commit." },
+    { "id": 30257, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Fast deckbuilder-style Patrice with Mind's Eye, On Your Own and Cornered, casting Read the Signs and Spectral Razor and moving through Open Gate; tested on Hard." },
+    { "id": 26417, "role": "support", "secondaryRole": "flex", "archetypes": [], "summary": "Support Patrice for a Circle Undone Ironman run who cancels treacheries with Alter Fate for free under Robes of Endless Night, fights with Shrivelling and Azure Flame, and saves tests with Live and Learn." },
+    { "id": 15737, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Multiplayer Expert Patrice who leans on her huge card draw: Rite of Seeking, Shrivelling and Flashlight, Lucky! and Live and Learn to save tests, and Deny Existence and Ward of Protection against the Mythos." },
+    { "id": 30003, "role": "flex", "secondaryRole": null, "archetypes": ["allies"], "summary": "Critter Patrice with two Charismas of Stray Cats, Ravens, Summoned Hounds and Miss Doyle's cats, Mind's Eye and Sword Cane as backups, and A Chance Encounter to bring allies back." },
+    { "id": 42680, "role": "support", "secondaryRole": "cluever", "archetypes": ["bless", "difficulty reduction"], "summary": "Blessed support Patrice who adds bless with Keep Faith and Ward of Radiance and cancels Mythos cards with A Watchful Peace, while Old Keyrings and Flashlights take clues and Scavenging recycles them." },
+    { "id": 26155, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Balanced Hard and Expert Patrice who treats her five cards as her whole rig: Rite of Seeking, Shrivelling and Azure Flame, Madame Labranche and Dark Horse money, and Live and Learn to rescue tests." },
+    { "id": 53370, "role": "flex", "secondaryRole": null, "archetypes": ["parley"], "summary": "True solo parley Patrice who charms enemies with Power Word, Drain Essence, String of Curses and Stall for Time, paid by Hunting Jacket, and takes clues with Old Keyring and Read the Signs." }
+  ]
+}

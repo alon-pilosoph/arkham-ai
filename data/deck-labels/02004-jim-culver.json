@@ -1,0 +1,15 @@
+{
+  "investigator": "Jim Culver",
+  "decks": [
+    { "id": 1139, "role": "flex", "secondaryRole": "support", "archetypes": [], "summary": "Two-player flex Jim built to pass nearly every test: skulls count as 0, Holy Rosary and Lucky! push him over, Shrivelling and Rite of Seeking do the work, and Ward of Protection covers his Guardian partner." },
+    { "id": 36513, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Beginner flex Jim from Core, Dunwich and Edge of the Earth: Rite of Seeking and Shrivelling for clues and kills, Ritual Candles and his skull ability to pass tests, Research Librarian for tempo." },
+    { "id": 22268, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Dunwich-era Jim with Alyssa Graham and Milan, Lone Wolf money for Arcane Studies, Rite of Seeking and Shrivelling, and Painkillers to manage his health." },
+    { "id": 1948, "role": "cluever", "secondaryRole": "fighter", "archetypes": ["token manipulation", "discard recursion"], "summary": "Recycling Grotesque Statue Jim: Scavenging brings the Statue back as soon as it runs out, so he almost never fails, investigating with Milan and Rite of Seeking beside a Roland." },
+    { "id": 332, "role": "flex", "secondaryRole": "support", "archetypes": [], "summary": "The first version of Skill test?! PFFT: flex Jim who counts skulls as 0, boosts with Holy Rosary, Ritual Candles and Lucky!, and sets up the encounter deck for his partner with Scrying." },
+    { "id": 43070, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation", "spell events"], "summary": "Chaos-bag Jim who names tokens with Recall the Future and Crystal Pendulum, picks among them with Olive McBride, and fights and investigates with Brand of Cthugha, Sixth Sense and Spectral Razor." },
+    { "id": 22437, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation", "spell events"], "summary": "Covenant Live's Jim: Olive McBride and Ritual Candles chase skulls for Jim's Trumpet, Spectral Razor, Read the Signs and Uncage the Soul do the work, with Sixth Sense for clues and Lone Wolf for money." },
+    { "id": 8363, "role": "fighter", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Offensive caster Jim who fights with Shards of the Void and Song of the Dead, using Olive McBride, Dark Prophecy and Premonition to hit the tokens those spells reward." },
+    { "id": 48699, "role": "flex", "secondaryRole": "support", "archetypes": ["curse"], "summary": "Parallel Jim who fills the bag with curses from Faustian Bargain and Gabriel Carillo, stores them on Favor of the Moon and cashes them in with Armageddon, Dawn Star and Rod of Carnamagos; very complex." },
+    { "id": 10253, "role": "flex", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Spell-free Jim who tests at +0 to +2 and leans on his skull ability, fighting with Machete and later Timeworn Brand, investigating with Flashlight, and taming the bag with The Chthonian Stone and Dark Prophecy." }
+  ]
+}

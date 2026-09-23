@@ -1,0 +1,15 @@
+{
+  "investigator": "Daisy Walker",
+  "decks": [
+    { "id": 101, "role": "cluever", "secondaryRole": "fighter", "archetypes": [], "summary": "Solo-built Daisy on Old Book of Lore and Milan Christopher who clears locations fast and handles enemies herself with Shrivelling and Blinding Light, using Scrying to see the encounter deck coming." },
+    { "id": 20817, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Core Set Daisy built around Old Book of Lore and Milan Christopher, Arcane Studies for boosts, and Shrivelling and Ward of Protection as backup; the first step of a cycle-by-cycle series." },
+    { "id": 33942, "role": "cluever", "secondaryRole": "support", "archetypes": [], "summary": "The Revised Core Daisy rebuilt to gather clues and help the team: Old Book of Lore, Milan, Hyperawareness and Medical Texts, with Ward of Protection; not meant to handle enemies alone." },
+    { "id": 6941, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Two-core-set Daisy sharing a collection with four sibling decks: Tomes, Milan, Magnifying Glass and Hyperawareness make her the clue engine, and a partner handles the fighting." },
+    { "id": 21309, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Dunwich-era Daisy adding Shortcut, Delve Too Deep and Inquiring Mind to the Old Book of Lore and Milan core, keeping Shrivelling for emergencies." },
+    { "id": 25285, "role": "cluever", "secondaryRole": "support", "archetypes": ["secrets"], "summary": "Tome-engine Daisy with both Necronomicons, Library Docents and Pnakotic Manuscripts on free Tome actions and Enraptured refilling secrets; a fast cluever who feeds the team draw and treachery protection." },
+    { "id": 41197, "role": "cluever", "secondaryRole": null, "archetypes": ["clue drop"], "summary": "Clue-drop Daisy: Captivating Discovery and Quick Study place clues to power Research Notes and Press Pass while Archaic Glyphs empties whole locations; weak against enemies." },
+    { "id": 4263, "role": "cluever", "secondaryRole": "fighter", "archetypes": [], "summary": "Quick-rig Daisy who has Milan and Old Book of Lore out in a turn or two, then uses the money for a Shrivelling and Archaic Glyphs caster side, recharged by Book of Shadows; tested on Hard." },
+    { "id": 2481, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Multiplayer Daisy on 5 intellect, Old Book of Lore and Milan, with Strange Solution for draw and a single Shrivelling, so she needs a fighter beside her." },
+    { "id": 780, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "One Core Set plus Dunwich: Daisy digs for a Tome with Research Librarian and two Laboratory Assistants, moves fast with Shortcut, and leaves most skills to her fighter partner." }
+  ]
+}

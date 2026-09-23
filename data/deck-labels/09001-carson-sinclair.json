@@ -1,0 +1,15 @@
+{
+  "investigator": "Carson Sinclair",
+  "decks": [
+    { "id": 39586, "role": "support", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Support Carson who hands out actions and commits four-icon skills like Promise of Power, Desperate Search and Occult Theory made wild through Bestow Resolve, with Runic Axe and Hunter's Armor to hold his own." },
+    { "id": 42507, "role": "fighter", "secondaryRole": "support", "archetypes": ["firearms"], "summary": "Primary-fighter Carson who shoots a Lightning Gun kept loaded by Venturer and Custom Modifications and swings a Runic Axe, while still giving his partner extra actions." },
+    { "id": 44765, "role": "support", "secondaryRole": null, "archetypes": ["actions matter"], "summary": "Action-engine Carson who gives teammates extra actions with Police Badges and Leadership, recurs allies with A Chance Encounter, and sits behind Tetsuo Mori and Safeguard." },
+    { "id": 39695, "role": "support", "secondaryRole": null, "archetypes": ["soak"], "summary": "Self-sacrificing multiplayer Carson built to take every hit: Tetsuo Mori, True Grit, Solemn Vow and \"Let me handle this!\" pull damage and horror onto him while he hands out actions." },
+    { "id": 50830, "role": "support", "secondaryRole": null, "archetypes": ["soak", "healing"], "summary": "Ironman tank Carson who never tries to pass tests: he gives out three actions a turn, soaks with Hunter's Armor, Safeguard and Something Worth Fighting For, and heals allies with Emergency Aid." },
+    { "id": 44361, "role": "support", "secondaryRole": null, "archetypes": ["actions matter"], "summary": "Pure-support Carson for three or four players who avoids tests entirely, handing out actions boosted by Guidance and Leadership, with Girish Kadakia and Safeguard to stay with the team." },
+    { "id": 39728, "role": "support", "secondaryRole": null, "archetypes": [], "summary": "Full-support Carson who makes his team better with his actions, keeping only Sledgehammer, Hallowed Mirror, Girish Kadakia and Safeguard in play and using At a Crossroads and Nature of the Beast for value." },
+    { "id": 52961, "role": "support", "secondaryRole": null, "archetypes": ["bless"], "summary": "Blessed support Carson from a Spanish podcast: Rite of Sanctification, Keep Faith and Favor of the Sun bless the bag, a Runic Axe fights, and Girish and Trusted protect the team." },
+    { "id": 53772, "role": "fighter", "secondaryRole": "support", "archetypes": ["firearms"], "summary": "Bodyguard Carson who follows the clue finder, gives them extra actions and zaps enemies with Lightning Guns kept firing by Venturer, Cleaning Kit and Extra Ammunition." },
+    { "id": 45232, "role": "fighter", "secondaryRole": "support", "archetypes": ["firearms"], "summary": "Sniper Carson with Springfield M1903s, Custom Modifications and Venturer, shooting enemies across the map while supporting his team; the guide is a single line." }
+  ]
+}

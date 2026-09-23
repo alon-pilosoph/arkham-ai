@@ -1,0 +1,15 @@
+{
+  "investigator": "Calvin Wright",
+  "decks": [
+    { "id": 24391, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Expert solo Carcosa Calvin who takes damage and horror early for stats, stays alive with Peter Sylvestre, Cherished Keepsake and Until the End of Time, and swings with Meat Cleaver and Fight or Flight." },
+    { "id": 40806, "role": "flex", "secondaryRole": null, "archetypes": ["discard recursion"], "summary": "Charming Calvin who builds a 7-7-7-8 stat line with Five of Pentacles and Moon Pendant, survives on Talisman of Protection and Fine Clothes, and recycles Ice Pick (3) with Scavenging." },
+    { "id": 9789, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Knife's-edge Calvin kept at 1 to 3 health and sanity for huge stats and desperate skills, fighting with Fire Axe and Fight or Flight and holding on with Delay the Inevitable and Perseverance." },
+    { "id": 5761, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Horror-route Calvin for Hard Forgotten Age who explores to take horror on purpose, turns damage into horror with Painkillers, and fights with Fire Axe and Fight or Flight once his stats climb." },
+    { "id": 29377, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Do-a-bit-of-everything Calvin: Meat Cleaver to fight, Newspaper and \"Look what I found!\" for clues, Live and Learn and Trial by Fire for key tests, and Peter Sylvestre with Perseverance to survive." },
+    { "id": 36786, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Level 0 Calvin for anyone: Meat Cleaver, Peter Sylvestre and Track Shoes first, Solemn Vow to move his damage and horror around, and Toe to Toe and Trial by Fire for big turns." },
+    { "id": 5601, "role": "flex", "secondaryRole": null, "archetypes": ["discard recursion"], "summary": "Desperate-card Calvin who drops to 3 sanity for 7+ tests with Desperate Search and Reckless Assault, then replays them with Yaotl; Fire Axe and Newspaper cover fights and clues." },
+    { "id": 9020, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Live and Learn Calvin who fails tests on purpose for damage, horror or Oops! and \"Look what I found!\" value, then passes them on the retry, shooting with Old Hunting Rifle." },
+    { "id": 43014, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Two-box Calvin from the Revised Core and Forgotten Age with no allies: Leather Coat soaks, Scavenging recycles items, and Live and Learn and Take Heart lead toward On Your Own and Will to Survive." },
+    { "id": 5957, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Calvin built unlike other investigators: skills and soaks first, Fire Axe and Gravedigger's Shovel to fight, Flashlight and \"Look what I found!\" for clues; tested through Forgotten Age and Zealot." }
+  ]
+}

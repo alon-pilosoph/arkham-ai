@@ -1,0 +1,15 @@
+{
+  "investigator": "Lily Chen",
+  "decks": [
+    { "id": 34215, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Expert two-player Lily built beside a Monterey Jack for Edge of the Earth: the Alignment of Spirit Discipline, Dragon Pole and Enchanted Blade to fight, Sixth Sense for clues, and Ward of Protection." },
+    { "id": 33170, "role": "fighter", "secondaryRole": "cluever", "archetypes": [], "summary": "Hard-hitting Lily with Alignment of Spirit and Balance of Body, Dragon Pole, Azure Flame and Enchanted Blade to fight, Sixth Sense for clues, and David Renfield for money and willpower." },
+    { "id": 41076, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events", "spell events"], "summary": "Martial-arts Lily with a different weapon for every fight: Prophetic keeps Spectral Razor and Voice of Ra coming back, Brand of Cthugha, Machete and Sweeping Kick handle enemies, and Prescience of Fate steers her draws." },
+    { "id": 35460, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Two-box Lily from the Revised Core and Edge of the Earth as a willpower-and-agility battle mage: Dragon Pole and Brand of Cthugha, Beat Cops, and Drawn to the Flame for clues." },
+    { "id": 47879, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "Boxing Gloves Lily who uses Occult Reliquary to wield Blessed Blade too, drawing Spirit fight events like One-Two Punch, Sweeping Kick and Radiant Smite with each kill for big Balance of Body turns." },
+    { "id": 44522, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Dragon Pole Lily who empties her hand with fast cards and Bestow Resolve to keep flipping her Disciplines back, upgrading the Pole with Enchant Weapon and Reliable and guarding the team with Stand Together." },
+    { "id": 34210, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "A YouTube Edge of the Earth Lily from the Revised Core, starter packs and Edge of the Earth: Dragon Pole, Brand of Cthugha and Clairvoyance, played beside a Bob Jenkins deck." },
+    { "id": 35643, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Spanish-language Core and Edge of the Earth Lily as the team's enemy handler, with Shrivelling and Dragon Pole to fight and Drawn to the Flame and Evidence! for the odd clue." },
+    { "id": 34736, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "A Revised Core and Edge of the Earth starter Lily built to share cards with four sibling starter decks: Shrivelling, Dragon Pole, Knives and Guard Dogs, with Arcane Studies boosts." },
+    { "id": 33985, "role": "fighter", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Spellblade Lily who fights with Dragon Pole and Azure Flame, casts Spectral Razor, Storm of Spirits and Read the Signs, and heads for an enchanted Pole and Butterfly Swords around 10 XP." }
+  ]
+}

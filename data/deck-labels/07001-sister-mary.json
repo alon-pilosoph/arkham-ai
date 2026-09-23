@@ -1,0 +1,15 @@
+{
+  "investigator": "Sister Mary",
+  "decks": [
+    { "id": 40711, "role": "fighter", "secondaryRole": null, "archetypes": ["bless", "firearms"], "summary": "Winchester Mary who makes the .35 Winchester near endless with Custom Modifications, Enchant Weapon and Relentless, and feeds it bless from her ability, Favor of the Sun and Tempt Fate." },
+    { "id": 30638, "role": "fighter", "secondaryRole": "support", "archetypes": ["bless"], "summary": "Bless-focused Mary as a supportive enemy handler: .35 Winchesters and Blessed Blade, Rite of Sanctification and Ward of Radiance for more bless, and Ritual Candles and Olive McBride to tame the bag." },
+    { "id": 47284, "role": "flex", "secondaryRole": null, "archetypes": ["bless", "spell events"], "summary": "Spell-caster Mary who fights with Brand of Cthugha, Nephthys, Radiant Smite and Spectral Razor, takes clues with Sixth Sense and Read the Signs, and supercharges bless with Purified." },
+    { "id": 36870, "role": "fighter", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Mystic-first Mary who skips guns for Shrivelling, Armageddon, Spectral Razor and Storm of Spirits, stacking willpower with Holy Rosary and Robes of Endless Night from the first scenario." },
+    { "id": 28487, "role": "flex", "secondaryRole": null, "archetypes": ["bless"], "summary": "League-tested Mary who fights with Enchanted Blade, a .35 Winchester and Radiant Smite, investigates with Sixth Sense and Scene of the Crime, and shapes the bag with Recall the Future and Sacred Covenant." },
+    { "id": 51721, "role": "fighter", "secondaryRole": null, "archetypes": ["bless", "curse"], "summary": "Innsmouth and Hemlock two-box Mary mixing bless and curse: Blessed Blade, Armageddon and Shrivelling to fight, Rite of Sanctification and Tempt Fate for tokens, and Drain Essence for tough enemies." },
+    { "id": 31644, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Hard Innsmouth Mary built as the main enemy handler beside a Minh: .35 Winchesters, Enchanted Blade and Spectral Razor, with Scene of the Crime for clues and bless from Rite of Sanctification." },
+    { "id": 26045, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Solo Mary, since her bless tokens matter most with few players: Shrivelling, Azure Flame and Spectral Razor to fight, Sixth Sense and Flashlight for clues, and St. Hubert's Key for her intellect." },
+    { "id": 26027, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Monster-hunting knight Mary: Armor of Ardennes and Well Prepared push Enchanted Blade to 7 or 8, Lightning Guns handle bosses, Brother Xavier soaks, and Tempt Fate bless pays for Rite of Sanctification." },
+    { "id": 26635, "role": "support", "secondaryRole": null, "archetypes": ["bless"], "summary": "Fantasy Flight's sample support Mary who keeps the bag full of bless, uses Rite of Sanctification to help the team gear up, and borrows Shrivelling and Blinding Light from the Mystic pool." }
+  ]
+}

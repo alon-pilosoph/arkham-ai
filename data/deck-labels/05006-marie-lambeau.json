@@ -1,0 +1,15 @@
+{
+  "investigator": "Marie Lambeau",
+  "decks": [
+    { "id": 41525, "role": "flex", "secondaryRole": null, "archetypes": ["spell events", "doom"], "summary": "Power Word Marie who commands enemies with a fully upgraded Power Word, calls Summoned Hounds, keeps doom out with Ghastly Possession for her extra spell action, and investigates with Dowsing Rod." },
+    { "id": 56930, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Combo Marie who recharges Archaic Glyphs (Guiding Stones) through Lost Arcana for repeated big clue turns, supported by Spirit Athame and Eyes of the Dreamer." },
+    { "id": 5823, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Triple-threat Marie who fights with Shrivelling, investigates with Magnifying Glass and Drawn to the Flame, and keeps doom on David Renfield for her extra spell action." },
+    { "id": 11132, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Solo Marie feeding David Renfield's money into Arcane Studies and keeping doom on him for her extra spell action, with Shrivelling to fight and Flashlight and Magnifying Glass for clues." },
+    { "id": 38984, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Spell-event Marie casting Spectral Razor, Read the Signs, Occult Invocation and Blood Eclipse, replaying them with De Vermis Mysteriis, and passing tests with Prophetic." },
+    { "id": 14722, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Solo Marie built toward Dayana Esperence to replay bonded spells like Blood-Rite, with David Renfield holding the doom for her extra action and Hawk-Eye Folding Camera for clues." },
+    { "id": 19485, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Level 0 solo Marie reaching 7 willpower and 7 intellect with St. Hubert's Key and Mr. \"Rook\", casting Storm of Spirits, Read the Signs and Spectral Razor; her ability is a bonus, not the plan." },
+    { "id": 44058, "role": "flex", "secondaryRole": null, "archetypes": ["doom"], "summary": "Doom-and-action Marie who parks doom on assets that Elle Rubash lets her ignore, then spends the extra spell action on Clairvoyance, Divination and Shrivelling (5)." },
+    { "id": 13432, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Marie on Arcane Research upgrades, with Alyssa Graham and Arcane Initiate for doom, Archaic Glyphs and Hawk-Eye Folding Camera for clues, and Shrivelling to fight." },
+    { "id": 59663, "role": "flex", "secondaryRole": null, "archetypes": ["doom", "actions matter"], "summary": "Action-chaining Marie who juggles doom with Blood of Thoth, David Renfield and Cat Mask for Rogue-length turns, investigating with Dowsing Rod and Clairvoyance." }
+  ]
+}

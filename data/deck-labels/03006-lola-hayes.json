@@ -1,0 +1,15 @@
+{
+  "investigator": "Lola Hayes",
+  "decks": [
+    { "id": 2924, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Dark Horse Lola who fights and investigates equally well: Improvisation plays anything for free, passive boosts cut down on role switching, and Machete or Shrivelling handle enemies." },
+    { "id": 11493, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "The level 0 start of a Will to Survive Lola: Dark Horse boosts, Leo De Luca and Quick Thinking for extra actions, Fire Axe and Meat Cleaver to fight; tested on Hard in two-player." },
+    { "id": 3744, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Beginner Lola from one Core, Dunwich and Carcosa built for clues in multiplayer: Milan, Magnifying Glass, Flashlight and Rite of Seeking, with Improvisation to switch roles cheaply." },
+    { "id": 35318, "role": "fighter", "secondaryRole": null, "archetypes": ["allies"], "summary": "Edge of the Earth Lola who kills early with four Sled Dogs, Rod of Animalism and Boxing Gloves, using Synergy cards and In the Thick of It for a big jump by the second scenario." },
+    { "id": 11494, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse", "actions matter"], "summary": "The upgraded Miracle Lola: Will to Survive with Ace in the Hole, Borrowed Time and Leo De Luca for 7 to 12 action turns that pass every test, drawing her whole deck early." },
+    { "id": 28995, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse", "evasion"], "summary": "Solo Lola racing to install two Crystalline Elder Signs and Dark Horse for high stats, then evading and oversucceeding as a Rogue and Survivor; a short guide." },
+    { "id": 4615, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Balanced Dark Horse Lola who keeps Beat Cop and Milan boosts in any role, with Machete and Magnifying Glass, and A Chance Encounter to swap allies." },
+    { "id": 43423, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Infinite-draw Lola under Will to Survive: Knowledge is Power, Practice Makes Perfect and Three Aces loop through her deck for clues; very hard to pilot and weak against enemies." },
+    { "id": 45167, "role": "flex", "secondaryRole": null, "archetypes": ["allies"], "summary": "Ally-and-tome Lola: Charon's Obol with Whitton Greene, Art Students and Laboratory Assistants for a wide table, Luparas for enemies, and Schoffner's Catalogue for money." },
+    { "id": 11026, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Five-class solo Lola built to use every color: Crystalline Elder Signs and Ace of Swords for stats, Streetwise and \"Watch this!\" for money, Derringers and Knife to fight, Magnifying Glass for clues." }
+  ]
+}

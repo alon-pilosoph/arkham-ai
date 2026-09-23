@@ -1,0 +1,15 @@
+{
+  "investigator": "Norman Withers",
+  "decks": [
+    { "id": 33136, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Top-deck Norman who commits his revealed top card with Astronomical Atlas and Written in the Stars, finds Livre d'Eibon through Research Librarian, and investigates with Milan and Divination; very consistent." },
+    { "id": 35693, "role": "cluever", "secondaryRole": null, "archetypes": ["allies"], "summary": "Two-box Norman from the Revised Core and Edge of the Earth with a Miskatonic study group of Milan, Jeremiah Kirby, Professor Webb and Medical Students, four Sled Dogs, and Forced Learning to dig." },
+    { "id": 14910, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Solo and multiplayer Norman on Mr. \"Rook\", No Stone Unturned and Split the Angle to control his top card, with Hawk-Eye Folding Camera for clues and Shrivelling for defence." },
+    { "id": 4113, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Early solo Night of the Zealot Norman who cycles his deck with Split the Angle and No Stone Unturned, investigates with Magnifying Glass, and fights with Shrivelling and Anatomical Diagrams." },
+    { "id": 42506, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Simpler two-box Norman who stacks double-icon cards so Written in the Stars, Pocket Telescope and Livre d'Eibon hit his top-card combo more often, with Shrivelling for defence." },
+    { "id": 34734, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "A Revised Core and Edge of the Earth starter Norman built to share cards with four sibling starter decks: Old Book of Lore, Medical Texts, Livre d'Eibon, Professor Webb and a few Sled Dogs." },
+    { "id": 19763, "role": "cluever", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Elusive clue-finder Norman who plays fast cards off the top of his deck and uses Mind's Eye to test intellect for everything, evading with Blinding Light and Bind Monster." },
+    { "id": 35644, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Spanish-language Core and Edge of the Earth Norman built purely to find clues with Milan, Magnifying Glass and Written in the Stars, relying on a partner for enemies." },
+    { "id": 46726, "role": "cluever", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Written in the Stars Norman who reuses power skills across the extra tests Summoned Hounds give him, investigating at 7 with Magnifying Glass and St. Hubert's Key." },
+    { "id": 9394, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Fighting Seeker Norman who churns his deck to play Mind over Matter and Anatomical Diagrams reliably, fighting with Knives and Shrivelling and investigating with Fingerprint Kit and Milan." }
+  ]
+}

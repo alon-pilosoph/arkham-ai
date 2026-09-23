@@ -1,0 +1,15 @@
+{
+  "investigator": "Hank Samson",
+  "decks": [
+    { "id": 47006, "role": "fighter", "secondaryRole": "support", "archetypes": ["soak"], "summary": "PlayingBoardGames' tank Hank who takes damage and horror for the team with Cherished Keepsake, Hunting Jacket, Jessica Hyde and Peter Sylvestre, fighting with Baseball Bats, Hatchets and Pitchforks." },
+    { "id": 58411, "role": "fighter", "secondaryRole": null, "archetypes": ["discard recursion", "skills matter"], "summary": "Ascetic Hank built around Gift of Nodens, recycling skills and Improvised Weapons from his discard pile with Profane Idol and Short Supply, and fighting with Meat Cleavers." },
+    { "id": 47301, "role": "fighter", "secondaryRole": "support", "archetypes": ["soak", "discard recursion"], "summary": "Tank Hank who cancels damage and horror with Improvised Shield and Idol of Xanatos and replays Hatchets and Fire Extinguishers with Pushed to the Limit and Salvage; no clues." },
+    { "id": 47357, "role": "fighter", "secondaryRole": null, "archetypes": ["evasion"], "summary": "Two-box Hemlock Vale Hank who survives his Resolute side with Cunning Distraction, Elaborate Distraction and Stall for Time, fighting with Baseball Bats and Pitchforks." },
+    { "id": 46815, "role": "fighter", "secondaryRole": null, "archetypes": ["soak"], "summary": "Level 0 Hank with four two-handed weapons, Cherished Keepsake, Leather Coat and Peter Sylvestre to soak, and Wrong Place, Right Time to shift damage and draw." },
+    { "id": 53029, "role": "fighter", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Spanish-podcast Dark Horse Hank with Fire Axe and Madame Labranche, Hatchets and Pitchforks replayed through Pushed to the Limit, and Idol of Xanatos for protection." },
+    { "id": 56361, "role": "fighter", "secondaryRole": "support", "archetypes": ["soak"], "summary": "Main-fighter Hank who soaks the team's damage and heals it off with Second Wind and Jessica Hyde, fighting with Pitchforks and Sledgehammers kept on a Tool Belt." },
+    { "id": 46613, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse"], "summary": "Assistant-side Hank built for his Resolute stats: Dark Horse, Granny Orne and Pocket Multi Tool push him toward 7 in everything, with Fire Axe and Dig Deep to spend down his money." },
+    { "id": 46959, "role": "fighter", "secondaryRole": "support", "archetypes": ["soak"], "summary": "Soak-and-heal Hank with Cherished Keepsakes, Leather Coats and Talisman of Protection, Pitchforks to fight, and Bandages and Second Wind to recover." },
+    { "id": 47989, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Hellboy-themed Hank with Timeworn Brand and the Hyperphysical Shotcaster at 8 or 9 fight, Meat Cleavers and One-Two Punch, and Peter Sylvestre and Jessica Hyde to soak." }
+  ]
+}

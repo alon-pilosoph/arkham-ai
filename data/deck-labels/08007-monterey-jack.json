@@ -1,0 +1,15 @@
+{
+  "investigator": "Monterey Jack",
+  "decks": [
+    { "id": 33238, "role": "cluever", "secondaryRole": null, "archetypes": ["movement"], "summary": "Move-everything Monterey who takes up to six actions a turn through movement tricks, moves clues around with Vantage Point, and investigates with Fingerprint Kit and Lockpicks; easy to play." },
+    { "id": 33251, "role": "cluever", "secondaryRole": null, "archetypes": ["movement"], "summary": "Combo Monterey who pays for Eon Chart (4) actions through Ariadne's Twine with Milan and Lone Wolf money, moving and investigating several times a turn." },
+    { "id": 35838, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Two-box Monterey from the Revised Core and Edge of the Earth who shrinks his deck with Underworld Support to find the Trusty Bullwhip fast, so he keeps moving and earning even when enemies spawn." },
+    { "id": 42215, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Scarlet Keys Monterey who brews Alchemical Distillation and proves Empirical Hypothesis for clues and draw, with Milan, Well Connected and Money Talks paying for tests." },
+    { "id": 35640, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Spanish-language Core and Edge of the Earth Monterey who gathers clues fast with Milan, Magnifying Glass and Flashlight and avoids combat with Elusive and Pickpocketing." },
+    { "id": 35191, "role": "flex", "secondaryRole": null, "archetypes": ["actions matter", "movement"], "summary": "Highlander true solo Monterey with Underworld Support and In the Thick of It, combining Eon Chart, Ariadne's Twine and Milan for action compression; fast enough to beat Dream-Eaters alone." },
+    { "id": 48465, "role": "cluever", "secondaryRole": null, "archetypes": ["big hand"], "summary": "Hand-filling Monterey built toward Farsight, keeping his hand full with Gabriel Carillo and Burning the Midnight Oil and firing Breaking and Entering, Sneak By and Scout Ahead for clues and evasion." },
+    { "id": 57710, "role": "cluever", "secondaryRole": null, "archetypes": ["succeed by exactly"], "summary": "Succeed-by-exactly-three Monterey who hits the number with Steady-Handed and Artistic Inspiration for Alton O'Connell and Antikythera clues, investigating with agility through Thieves' Kit and Forensic Kit." },
+    { "id": 34911, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Spanish-language level 0 Revised Core and Edge of the Earth Monterey as clue finder and evader, with Milan, Flashlight and Pickpocketing, and Backstab for emergencies." },
+    { "id": 34739, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "A Revised Core and Edge of the Earth starter Monterey built to share cards with four sibling starter decks: Derringers, Burglary and Hard Knocks, Milan, and the Trusty Bullwhip." }
+  ]
+}

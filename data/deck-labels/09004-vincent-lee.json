@@ -1,0 +1,15 @@
+{
+  "investigator": "Vincent Lee",
+  "decks": [
+    { "id": 40577, "role": "flex", "secondaryRole": null, "archetypes": ["healing"], "summary": "Solo-and-flex medic Vincent who heals himself first with Bandages, Bonesaw and Trusted for On the Mend draws, investigates with Magnifying Glass and Deduction, and fights with Machete and Flare." },
+    { "id": 39640, "role": "flex", "secondaryRole": null, "archetypes": ["healing", "tools"], "summary": "Explosive Geared Up Vincent who plays ten or more items on turn one through Studious, Backpack and Schoffner's Catalogue, then heals and investigates with Surgical Kit, Fingerprint Kit and Tool Belts; great solo." },
+    { "id": 39509, "role": "fighter", "secondaryRole": null, "archetypes": ["healing"], "summary": "Fighter Vincent who uses Geared Up, Studious and At a Crossroads for a huge first turn, swinging Runic Axe and Baseball Bat and healing with Bonesaw, Surgical Kit and Jessica Hyde." },
+    { "id": 39629, "role": "flex", "secondaryRole": "support", "archetypes": ["healing", "parley"], "summary": "Power Word Vincent who uses three upgraded copies to make enemies cower and heal him, charging Soul Sanctification for team support, with Runic Axe and Archaic Glyphs." },
+    { "id": 40722, "role": "cluever", "secondaryRole": null, "archetypes": ["healing"], "summary": "Level 0 Geared Up Vincent who gets his items out on turn one, investigates with Grim Memoir and Magnifying Glass, and heals with Bonesaw and Bandages for On the Mend." },
+    { "id": 52963, "role": "flex", "secondaryRole": null, "archetypes": ["healing"], "summary": "Spanish-podcast Vincent with Timeworn Brand and Ice Pick (3), Surgical Kits and Bandages for healing, Girish Kadakia to protect the team, and Scientific Theory for stats." },
+    { "id": 39798, "role": "flex", "secondaryRole": null, "archetypes": ["healing"], "summary": "Flex Vincent who investigates at 6 with Milan and Magnifying Glass and deals testless damage with Dynamite Blast, Toe to Toe and Blood-Rite, happily healing the self-inflicted wounds." },
+    { "id": 46604, "role": "cluever", "secondaryRole": "support", "archetypes": ["healing", "clue drop"], "summary": "Alice Luxley Vincent who takes attacks of opportunity on purpose to trigger her, drops clues for Research Notes with Captivating Discovery, and boosts friends with Encyclopedia." },
+    { "id": 41324, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Scarlet Keys-proven Runic Axe Vincent who gears up on turn one with Backpack and Schoffner's Catalogue, then fights with the Axe and digs with Practice Makes Perfect." },
+    { "id": 39711, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Bloodletter Vincent who stakes everything on The Hungering Blade, digging for it with Backpack, Prepared for the Worst and Deep Knowledge, and heals others with Emergency Aid and Trusted." }
+  ]
+}

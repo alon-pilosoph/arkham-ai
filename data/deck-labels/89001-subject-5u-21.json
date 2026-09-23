@@ -1,0 +1,15 @@
+{
+  "investigator": "Subject 5U-21",
+  "decks": [
+    { "id": 48664, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "19 XP SUZI from a short tweet-length guide: Machete, Switchblade and Enchanted Blade to fight, Magnifying Glass and Read the Signs for clues, and Haste and Close the Circle for actions." },
+    { "id": 46862, "role": "flex", "secondaryRole": null, "archetypes": ["events matter"], "summary": "Combo SUZI who doubles the strongest events of every class with Double, Double, tucks spent ones under Crystallizer of Dreams to devour and Regurgitate, and cycles endlessly; 58 XP." },
+    { "id": 53025, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "Spanish-podcast clue-finding SUZI with Fingerprint Kits and Magnifying Glasses, Crystallizer of Dreams to feed her hunger with events, and Drawn to the Flame and Read the Signs." },
+    { "id": 53164, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Spanish-podcast flex SUZI with Charles Ross, David Renfield and Lone Wolf money, Switchblades and Sword Cane to fight, and Magnifying Glass and Empirical Hypothesis for clues." },
+    { "id": 50169, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Kitchen-sink level 0 SUZI mixing the best cards of every class, with Crystallizer of Dreams and Regurgitation to feed her hunger and Fire Axe, Meat Cleaver and Spectral Razor to fight." },
+    { "id": 51003, "role": "flex", "secondaryRole": null, "archetypes": ["skills matter"], "summary": "Skill-devouring SUZI who keeps her stats up while packing two dozen skills, drawing hard with Astronomical Atlas and Research Librarian and fighting with Switchblade (2)." },
+    { "id": 48666, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "The level 0 start of Subject to Hunger: Machete, Switchblade and Enchanted Blade, Magnifying Glass, Charles Ross and David Renfield money, and Solemn Vow to spread damage." },
+    { "id": 50368, "role": "cluever", "secondaryRole": null, "archetypes": ["bless", "curse"], "summary": "Standalone flex-cluever SUZI who catches bless and curse from Tempt Fate on Favors of the Sun and Moon to charge and fire the Broken Diadem, with Grim Memoir and Empirical Hypothesis for clues." },
+    { "id": 52101, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Ten-cards-per-class SUZI racing to 6/6/6/6 by devouring cheap assets like Old Keyring, Lockpicks and David Renfield before they run out." },
+    { "id": 48857, "role": "flex", "secondaryRole": null, "archetypes": ["doom", "parley"], "summary": "Solo cultist SUZI for The Circle Undone with doom charms like Ceremonial Sickle, Dowsing Rod and Onyx Pentacle, and parley tricks such as Vamp, Persuasion and String of Curses." }
+  ]
+}
