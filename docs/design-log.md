@@ -1,0 +1,190 @@
+# Design log
+
+How the project got to its current design, in order: what was built, what was measured, and
+what was thrown away because of it. [design-decisions.md](design-decisions.md) explains the
+design as it stands; this is the path, including the dead ends, because the deleted designs
+were the expensive part.
+
+The project serves one table: two players running Arkham Horror: The Card Game campaigns
+together, from a fixed collection. Three constraints held through every version: the
+collection is every release before the 2026 reissue; missing duplicates are proxied, so copy
+counts never matter; and XP is reported, never penalized.
+
+## v1: an LLM deckbuilder (June 2026)
+
+**Built:** a full pipeline from ArkhamDB data to finished decks: a card pool, a deck validator,
+an LLM builder, synergy and archetype detection, functional card profiles, substitutes, a rules
+judge and combo discovery.
+
+**Abandoned, because:**
+- Bulk harvesting decklists by date produced mostly junk to learn from.
+- Labeling card functions with a cheap model was wrong 73% of the time.
+- Parsing card text with regular expressions was too brittle for the game's wording.
+
+The repository was deleted before it had a single commit. The lesson that stuck: commit early.
+
+## v2: a deck-pair finder (September 13 to 18)
+
+**The question it answered:** which two published decks should the two players bring. It
+harvested the collection's decks, labeled 1,333 of them, scored pairs, and shipped as a static
+web app.
+
+**Decisions that survived into v3:**
+- **The collection boundary.** "Chapter 1" was first read as the first two boxes. It means
+  every release before the 2026 reissue, and misreading it cost a full harvest and labeling
+  pass. Ask what a boundary means before filtering on it.
+- **XP is information.** An early score penalized XP and silently buried good decks. The
+  requirement was to show XP, not punish it.
+- **The deck is the unit, not the investigator.** Aggregating to investigator pairs was
+  measured and rejected: within one investigator pair, the deck chosen swings the score by a
+  median 0.258, while the whole top 20 spans about 0.04; ranking by best or by median deck pair
+  agreed on only 7 of 20. "Zoey and Rex are good together" means little without naming decks.
+- **Ground truth has to be clean.** Deck-level evidence from guide links looked plentiful (196
+  links) but held only 8 real duos; the rest were an author's own series. Investigator-level
+  recommendations (77 cases) were the usable signal.
+
+**The hand-check that changed everything after it.** All 225 top write-ups were checked
+against card text by hand, and 102 needed a correction. Every error was card-level: a card
+credited with an effect it only has for its owner, the wrong printing's level, a dropped
+once-per-round limit. Card-level reasons break when a list changes one slot. v3 reasons from
+roles, archetypes, abilities and signatures, and uses card text to check.
+
+**ArkhamDB traps found on the way:**
+- Its `packs[]` search filter silently drops decks the collection can build, so decks are
+  harvested unfiltered and filtered locally.
+- `xp_spent` is the last upgrade step, not the XP a list needs; XP is summed from card levels.
+- Only `90xxx` codes are parallel investigators; the `alternate_front` fields are also set on
+  plain reprints.
+- Labels over-claim what helps a partner: 79% of decks labeled as cancelling treacheries could
+  only cancel their own. A partner-facing claim is checked against card text.
+
+## The pivot to a chat assistant (September 19 to 22)
+
+The questions the players actually asked were broader than "which pair": what a rule means,
+what a card does at each level, how to play a deck, what to play instead of a card. The v2 data
+could not answer those, and much of it was derived facts cached onto records. The pivot took
+nine rounds of designing something and then deleting it. They share one move: stop storing
+something derived from the sources, and compute it from the sources when asked.
+
+**Rejected, in the order it happened:**
+- **Reviewing pairs.** The v2 quality layer reviewed 231 pairs, which span only 178 distinct
+  decks. Reviewing those 178 decks makes 15,753 pairs scoreable, 68 times the coverage. Review
+  the nodes; compute the edges.
+- **Pair-level facts.** 73% of v2's pair flags were single-deck statements filed onto a pair
+  and repeated on every pair that deck touched. The rest were derivable from two deck records.
+- **A readiness tier.** Ranking "good and ready for scenario 1" first reintroduced an XP
+  penalty through the back door, after the score had correctly stopped weighting XP.
+- **Retrieval over the rules.** The Rules Reference is one page of 39,667 words under 287
+  headings, averaging 138 words each. That is a dictionary, not a corpus: similarity search over
+  a dictionary is worse than looking the entry up, and it adds chunking, embeddings and a recall
+  failure mode.
+- **A rules lookup tool.** Designed as the replacement, then deleted. A cached system prompt
+  beats a lookup round trip and removes "the search found nothing" as a failure. The whole Rules
+  Reference, about 65,000 tokens, went into the cached prefix, and there is no rules tool.
+- **A runtime answer checker.** Checking claims per request is unnecessary once the data it
+  reads is right; check at build time instead.
+- **Two services and a protocol bridge.** A Python API behind a separate web front end
+  collapsed into one Next.js app, with the pipeline demoted to offline scripts.
+
+**What survived:** four tools (`cards`, `deck`, `recommendDecks`, `replaceCard`), decks and
+guides read live, and one stored artifact: a small index with a line per liked, buildable deck,
+used only to shortlist before reading. Hand-written deck reviews were built for three decks and
+rejected: they restated the guides, and the restating produced a misreading.
+
+**Patterns carried over from earlier production agent work:** prompt caching treated as a
+byte-stability discipline, with a cache marker that moves to the newest message; errors never
+presented as absence; budgets enforced in code, with the last step reserved for the answer;
+tool definitions pinned by golden tests, because a tool description is prompt text; past tool
+results not replayed into history; and untrusted text fenced before it reaches the model.
+
+## Building v3 (September 22 and 23)
+
+- **The index is a census, not a likes walk.** ArkhamDB's popularity ordering has unstable
+  ties, so the crawl walks all 38,984 published decklists by date and cross-checks against the
+  likes order (every deck with 10 or more likes is present). It keeps the ten most liked decks
+  the collection can legally build for each of 66 owned investigators: 660 decks.
+- **Labels were written by reading.** Claude labeled all 660 during development (role,
+  secondary role, up to three archetypes, a one-line summary) from generated sheets of each
+  deck's list and guide, five decks a page, then checked them against the decks' card tallies.
+- **Published decks are the legality oracle.** Replaying every indexed deck through the
+  legality port found Versatile's extra off-class cards, that a customizable card's level is
+  half its marked boxes rounded up, that copies can split across two limited options, and that
+  ArkhamDB's validator (not the printed card) decides Versatile's limit. The port follows the
+  validator.
+- **The taboo list is a switch, and it is absolute.** Taboo lists rewrite card text (Rex
+  Murphy gains "Limit once per round", exactly the error class the v2 hand-check kept finding),
+  add XP, flip Exceptional and replace deckbuilding options. Off means no taboo change is
+  applied or mentioned anywhere; on means the current list applies to everything.
+- **Test the wire format.** The AI SDK's Anthropic provider implements "no tools" by deleting
+  the tool list, which breaks the prompt cache (tools are the first cached bytes) and makes
+  Anthropic reject a history with tool calls in it. A scripted model could not see this; a fake
+  `fetch` capturing the real request body did. A middleware keeps the tools and sends
+  Anthropic's own "none".
+- **Tests are hermetic.** A 24-hour card cache made tests pass on one day and fetch live data
+  the next. The index build snapshots its own card set, taboo lists and decks into fixtures,
+  and the tests read those.
+- **Scraping traps.** ArkhamDB's FAQ paginates by path while its pager only links ten pages, so
+  the crawl walks until a page adds nothing (949 cards with rulings). An emphasis-cleaning regex
+  stripped every bold span from the rules; the converter now skips empty tags where they appear.
+  A spec-compliant HTML parser repaired the rules page's malformed markup into different
+  paragraphs; a forgiving parser keeps the author's structure.
+
+## The interface (September 23)
+
+- **Library components, not custom styling.** The chat is assistant-ui on shadcn/ui (base-ui
+  primitives), and each tool result is the library's tool card: running, done, stopped or
+  failed, with the result inside. Custom CSS was replaced with library components wherever one
+  existed.
+- **Reviewed from screenshots.** A script drove the real interface on a free scripted model
+  through 37 states, light and dark, desktop and phone, and reviewers critiqued the shots over
+  several rounds. Fixes ranged from alignment to real bugs: a pasted file silently sent to the
+  model, the keyboard opening on a phone, a card name wrapping away from its quantity.
+- **Choices made from rendered options, not descriptions.** The welcome suggestions were built
+  four ways and screenshotted side by side before one was picked.
+- **Chats persist without accounts.** Assistant Cloud keeps each browser's chats, with
+  generated titles, anonymously. The header and the sidebar name a chat by its first question
+  until the title arrives.
+- **Answers link cards.** The model links a card to ArkhamDB the first time it names it, using
+  only a code a tool returned, never one from memory.
+
+## Evals and model choice (September 23)
+
+Twenty-four cases ran on four models, and every transcript was read and its claims checked by
+hand. [evals.md](evals.md) has the method, the results and what they changed. In short: Opus 5.5
+is the default, with no errors found; Sonnet 5 invented card codes; GPT-6 Sol is accurate and
+the OpenAI default; GPT-6 Luna is careful but slow under the account's rate limit. Effort is
+pinned per provider so results stay comparable.
+
+**Two calls made along the way:**
+- **Streaming, not websockets.** The answer already streams over HTTP. The real limit is the
+  platform's function time, not the connection, so the agent budgets against a 300-second
+  deadline and always leaves time to write the answer. A background job that survives a closed
+  tab (resumable streams) needs a store and was not worth it for two players.
+- **The card set is loaded whole.** ArkhamDB's API returns every card or one card by code,
+  with no search by name, and name lookups, replacements and ownership checks all need the full
+  set. It is fetched live once per server instance and kept for a day; if a refresh fails, the
+  last copy keeps being served.
+
+## Going public (September 23)
+
+- **Hosting behind a login.** Vercel Authentication (free: visitors sign in with a Vercel
+  account, and one outside user may be approved) was picked over a shared password (a paid
+  add-on) and over real accounts with Clerk (history on every device, but a feature to build).
+  The model key never goes into GitHub; CI needs none, because the tests are hermetic.
+- **A final review of the whole codebase.** Three reviewers (correctness, design, conventions)
+  read everything. The fixes that mattered most:
+  - replacements now respect deck limits the way ArkhamDB does, including cards the taboo list
+    forbids;
+  - taboo-on recommendations skip decks the current list makes illegal;
+  - signature cards are never offered as replacements;
+  - answers budget against the real deadline;
+  - an ArkhamDB outage serves yesterday's cards instead of failing;
+  - untrusted text is escaped rather than stripped, so a nested tag can't close the fence;
+  - tool failures share one shape;
+  - tool results carry structured fields, so the interface stops re-parsing text written for
+    the model.
+- **A comment sweep.** 263 comments were deleted and 134 kept, each carrying something the code
+  cannot say: an ArkhamDB quirk, a game rule, a cache or hydration constraint.
+- **License and credits.** The code is MIT. The rules, FAQ and card text belong to Fantasy
+  Flight Games, the data comes from ArkhamDB, and the deck guides belong to their authors; none
+  of that is covered by the license.
