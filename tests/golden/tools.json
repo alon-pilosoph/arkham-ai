@@ -1,0 +1,194 @@
+{
+  "cards": {
+    "description": "Look up Arkham Horror LCG cards on ArkhamDB, player and encounter cards alike. With `code`, read that card exactly. With `query`, match by name first, then by trait or text. Every level and version of a name comes back together, with current errata folded into the text, official FAQ rulings and, when the players have the taboo list on, its changes attached, so check the level before you quote a card. Use it before explaining what any card does.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "A card name (\"Ward of Protection\", \"Shrivelling (3)\") or words from its text or traits.",
+          "type": "string"
+        },
+        "code": {
+          "description": "An ArkhamDB card code, e.g. \"01060\". Wins over query.",
+          "type": "string"
+        },
+        "offset": {
+          "description": "Page into a long result, from the nextOffset of a previous call.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "deck": {
+    "description": "Read any ArkhamDB deck live: a published decklist, a public personal deck, or one made minutes ago. Returns the investigator (with parallel sides resolved), the decoded list with every card's text and customizations, and the author's own guide. Use it to explain how a deck plays, and read it before suggesting a swap or a partner for it.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "ref": {
+          "type": "string",
+          "description": "A deck id (\"33170\") or an arkhamdb.com deck link."
+        },
+        "guideOffset": {
+          "description": "Continue a long guide, from the guideNextOffset of a previous call.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "ref"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "recommendDecks": {
+    "description": "Shortlist ArkhamDB decks from the deck index: each owned investigator's most liked decks that the collection can build, each with a role, a one-line summary and any archetype it is built around. Filter by class, role, archetype, ArkhamDB tag, XP, investigator, or a key card the deck runs. With pairWith, find partners for a given deck in the roles that fill its gap, never the same investigator; for a deck outside the index, read it first and pass role once you have judged its gap. The shortlist is a starting point: read a deck with the deck tool before recommending it.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "class": {
+          "type": "string",
+          "enum": [
+            "guardian",
+            "seeker",
+            "rogue",
+            "mystic",
+            "survivor",
+            "neutral"
+          ]
+        },
+        "role": {
+          "description": "fighter, cluever, flex (does both) or support.",
+          "type": "string",
+          "enum": [
+            "fighter",
+            "cluever",
+            "flex",
+            "support"
+          ]
+        },
+        "archetype": {
+          "description": "What the deck is built around. bless (adds bless tokens and profits when they are revealed); curse (adds curse tokens and profits when they are revealed); seal (seals chaos tokens on its cards and releases them); token manipulation (reveals extra tokens and chooses among them, or reads the bag); doom (places doom on its own cards for their effects); succeed by X (pays off beating a test by a margin); succeed by exactly (pays off hitting a test's difficulty exactly); difficulty reduction (brings test difficulty down to 0 and profits from testing at 0); fail forward (gains from failing tests or from making them harder); spell events (casts Spell events as its main tools); big hand (keeps a large hand and scales with it); card draw (draws through its deck fast and profits from the flow); discard recursion (discards its own cards and plays them again); secrets (spends and refills secrets on its assets); skills matter (commits skill cards for their effects, not only their icons); events matter (plays events as its engine and replays them); big money (amasses resources and spends them on large effects); dark horse (wins by staying poor); allies (plays many allies and benefits from them); relics (builds around Relic assets); tools (builds around Tool assets); firearms (upgrades and reloads guns); fight events (fights with events instead of a weapon); evasion (answers enemies by evading them); parley (answers enemies by parley); soak (takes damage and horror for the team); healing (heals the team as a main job); clue drop (places its clues on locations and profits from it); remote clues (discovers clues at other locations); movement (moves itself or others without spending actions); actions matter (takes extra actions or gets more from each).",
+          "type": "string",
+          "enum": [
+            "bless",
+            "curse",
+            "seal",
+            "token manipulation",
+            "doom",
+            "succeed by X",
+            "succeed by exactly",
+            "difficulty reduction",
+            "fail forward",
+            "spell events",
+            "big hand",
+            "card draw",
+            "discard recursion",
+            "secrets",
+            "skills matter",
+            "events matter",
+            "big money",
+            "dark horse",
+            "allies",
+            "relics",
+            "tools",
+            "firearms",
+            "fight events",
+            "evasion",
+            "parley",
+            "soak",
+            "healing",
+            "clue drop",
+            "remote clues",
+            "movement",
+            "actions matter"
+          ]
+        },
+        "tag": {
+          "description": "The author's ArkhamDB tag. A solo tag means the deck stands on its own, which is no mark against it in two-player.",
+          "type": "string",
+          "enum": [
+            "multiplayer",
+            "solo",
+            "beginner",
+            "theme"
+          ]
+        },
+        "maxXp": {
+          "description": "Only decks whose whole list costs at most this much XP; 0 for campaign-start lists.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "keyCard": {
+          "description": "A card the deck must run, e.g. \"Rite of Seeking\" or \"Shrivelling (3)\".",
+          "type": "string"
+        },
+        "investigator": {
+          "type": "string"
+        },
+        "pairWith": {
+          "description": "A deck id or link to find a two-player partner for.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "How many to shortlist, default 5.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "replaceCard": {
+    "description": "Find legal substitutes for one card in an ArkhamDB deck. Candidates are cards in the collection that this investigator can include, checked against the deck's own options and limits with the old card removed. Goals: cheaper (lower level or cost), same_job (same kind of card doing similar work), different_job (a new effect this investigator's decks play), collection (an owned stand-in for a card not owned). Candidates are ranked by likeness and popularity only; pick from their text.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "deck": {
+          "type": "string",
+          "description": "A deck id or arkhamdb.com deck link."
+        },
+        "card": {
+          "type": "string",
+          "description": "The card to replace, by name (\"Machete\", \"Shrivelling (3)\") or code."
+        },
+        "goal": {
+          "type": "string",
+          "enum": [
+            "cheaper",
+            "same_job",
+            "different_job",
+            "collection"
+          ]
+        },
+        "maxXp": {
+          "description": "Highest level allowed. Defaults to the replaced card's level.",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "limit": {
+          "description": "How many candidates, default 10.",
+          "type": "integer",
+          "minimum": 3,
+          "maximum": 20
+        }
+      },
+      "required": [
+        "deck",
+        "card",
+        "goal"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
