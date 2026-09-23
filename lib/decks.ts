@@ -1,0 +1,250 @@
+import { type Fetched, getJson } from "./arkhamdb";
+import type { CardFace, Customization } from "./card-text";
+import { type CardStore, cardFace, cleanText, DECK_CARD_TYPES, getCards, type RawCard } from "./cards";
+import { type Failure, fromFetched, notFound, toolError } from "./format";
+import type { Settings } from "./settings";
+import { type TabooEntry, type TabooList, tabooEntry, tabooInForce } from "./taboo";
+import type { DeckKind } from "./urls";
+
+export type RawDeck = {
+  id: number;
+  name: string;
+  date_creation?: string;
+  date_update?: string;
+  description_md?: string;
+  investigator_code: string;
+  investigator_name?: string;
+  slots: Record<string, number>;
+  sideSlots?: Record<string, number> | unknown[];
+  ignoreDeckLimitSlots?: Record<string, number> | unknown[] | null;
+  xp?: number | null;
+  xp_spent?: number | null;
+  taboo_id?: number | null;
+  meta?: string | Record<string, string>;
+  tags?: string;
+  previous_deck?: number | null;
+  next_deck?: number | null;
+};
+
+export type DeckList = Pick<RawDeck, "id" | "investigator_code" | "slots" | "meta" | "taboo_id" | "ignoreDeckLimitSlots">;
+
+export function ignoredCopies(d: Pick<RawDeck, "ignoreDeckLimitSlots">): Record<string, number> {
+  const i = d.ignoreDeckLimitSlots;
+  return i && !Array.isArray(i) ? i : {};
+}
+
+type DeckRef = { id: number; kind?: DeckKind };
+
+export function parseRef(ref: string | number): DeckRef | null {
+  const s = String(ref).trim();
+  if (/^\d+$/.test(s)) return { id: Number(s) };
+  const m = s.match(/arkhamdb\.com\/(decklist|deck)\/(?:view\/|edit\/)?(\d+)/);
+  if (m) return { id: Number(m[2]), kind: m[1] as DeckKind };
+  return null;
+}
+
+/** Decklists and personal decks have separate id spaces; a bare id tries decklists first. */
+export async function fetchDeck(ref: DeckRef): Promise<Fetched<{ deck: RawDeck; kind: DeckKind }>> {
+  const kinds: DeckKind[] = ref.kind ? [ref.kind] : ["decklist", "deck"];
+  const errors: string[] = [];
+  for (const kind of kinds) {
+    const r = await getJson<RawDeck>(`/api/public/${kind}/${ref.id}`);
+    if (r.ok && r.data?.slots) return { ok: true, data: { deck: r.data, kind } };
+    if (!r.ok && r.status === "error") errors.push(r.message);
+  }
+  if (errors.length) return { ok: false, status: "error", message: errors.join("; ") };
+  return {
+    ok: false,
+    status: "not_found",
+    message: `No deck ${ref.id} on ArkhamDB${ref.kind === "deck" || !ref.kind ? " (a personal deck is only readable when its owner has made it public)" : ""}.`,
+  };
+}
+
+export function deckMeta(d: Pick<RawDeck, "meta">): Record<string, string> {
+  if (!d.meta) return {};
+  if (typeof d.meta === "string") {
+    try {
+      return JSON.parse(d.meta || "{}");
+    } catch {
+      return {};
+    }
+  }
+  return d.meta;
+}
+
+/** A parallel investigator swaps its front (ability) and/or back (deckbuilding) for a 90xxx card. */
+export function investigatorSides(store: CardStore, d: DeckList) {
+  const inv = store.get(d.investigator_code);
+  const meta = deckMeta(d);
+  const alt = (k: string) => {
+    const code = String(meta[k] ?? "");
+    return code.startsWith("90") ? store.get(code) : undefined;
+  };
+  const front = alt("alternate_front");
+  const back = alt("alternate_back");
+  return { inv, ability: front ?? inv, options: back ?? inv, parallelFront: !!front, parallelBack: !!back };
+}
+
+type CustomizationPart = { index: number; boxes: number; choice?: string };
+
+/** ArkhamDB's meta.cus_<code>: "index|boxes[|choice],..." per purchased option, where index is
+ *  the customization_text line and choice the card code an option names. */
+export function parseCustomization(raw: string | undefined): CustomizationPart[] {
+  if (!raw) return [];
+  return String(raw)
+    .split(",")
+    .map((part) => {
+      const [i, boxes, choice] = part.split("|");
+      return { index: Number(i), boxes: Number(boxes) || 0, choice };
+    })
+    .filter((p) => Number.isInteger(p.index) && p.index >= 0);
+}
+
+function customizations(store: CardStore, meta: Record<string, string>, code: string): Customization[] {
+  const parts = parseCustomization(meta[`cus_${code}`]);
+  const c = store.get(code);
+  const opts = (c?.customization_text ?? "").split("\n").filter((o) => o.trim());
+  if (!parts.length || !opts.length) return [];
+  const out: Customization[] = [];
+  for (const { index: idx, boxes, choice } of parts) {
+    if (idx >= opts.length) continue;
+    // Each option line opens with one box glyph per checkbox: "□□ <b>Durable.</b> ..."
+    const total = opts[idx].match(/^[□☐]+/)?.[0].length ?? 0;
+    const text = cleanText(opts[idx].replace(/^[□☐]+\s*/, ""));
+    const chosen = choice ? (store.get(choice)?.name ?? choice) : "";
+    out.push({ text, boxes, total, ...(chosen ? { choice: chosen } : {}) });
+  }
+  return out;
+}
+
+export function guideText(md?: string): string {
+  let t = (md ?? "").replace(/<[^>]+>/g, " ");
+  t = t.replace(/!\[[^\]]*\]\([^)]*\)/g, "");
+  t = t.replace(/\[([^\]]*)\]\([^)]*\)/g, "$1");
+  t = t
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&nbsp;/g, " ");
+  t = t.replace(/[ \t]+/g, " ");
+  return t.replace(/\n\s*\n+/g, "\n").trim();
+}
+
+export type DeckCard = CardFace & {
+  qty: number;
+  customizations: Customization[];
+  owned: boolean;
+  weakness: boolean;
+  /** XP these copies cost: exceptional doubles, myriad pays once, customizable boxes add. */
+  xpCost: number;
+  hasRulings: boolean;
+};
+
+export function isExceptional(c: RawCard, t?: TabooEntry): boolean {
+  return !!(t?.exceptional ?? c.exceptional);
+}
+
+export function isWeakness(c: RawCard): boolean {
+  return c.subtype_code === "weakness" || c.subtype_code === "basicweakness";
+}
+
+export function deckCards(
+  store: CardStore,
+  slots: Record<string, number>,
+  meta: Record<string, string>,
+  taboo?: TabooList,
+): DeckCard[] {
+  const typeOrder = (type: string) => {
+    const i = (DECK_CARD_TYPES as readonly string[]).indexOf(type);
+    return i < 0 ? DECK_CARD_TYPES.length : i;
+  };
+  return Object.entries(slots)
+    .map(([code, qty]): DeckCard => {
+      const c = store.get(code);
+      if (!c) {
+        return {
+          code,
+          qty,
+          name: `unknown card ${code}`,
+          label: `unknown card ${code}`,
+          level: 0,
+          type: "?",
+          classes: [],
+          icons: [],
+          text: "",
+          customizations: [],
+          owned: false,
+          weakness: false,
+          xpCost: 0,
+          hasRulings: false,
+        };
+      }
+      const t = tabooEntry(store, taboo, code);
+      const exceptional = isExceptional(c, t);
+      const boxes = parseCustomization(meta[`cus_${code}`]).reduce((n, p) => n + p.boxes, 0);
+      return {
+        ...cardFace(store, c, taboo),
+        qty,
+        customizations: customizations(store, meta, code),
+        owned: store.inCollection(code),
+        weakness: isWeakness(c),
+        xpCost: isWeakness(c) ? 0 : ((c.xp ?? 0) * (exceptional ? 2 : 1) + (t?.xp ?? 0)) * (c.myriad ? 1 : qty) + boxes,
+        hasRulings: store.rulings(code) !== undefined,
+      };
+    })
+    .sort(
+      (a, b) =>
+        Number(a.weakness) - Number(b.weakness) ||
+        typeOrder(a.type) - typeOrder(b.type) ||
+        a.name.localeCompare(b.name) ||
+        a.level - b.level,
+    );
+}
+
+/** ArkhamDB's xp fields cover only the last upgrade step, so the list's total is counted here. */
+export function xpInList(cards: DeckCard[]): number {
+  return cards.reduce((n, c) => n + c.xpCost, 0);
+}
+
+export function notADeck(ref: string): Failure {
+  return notFound(`"${ref}" is not a deck id or an arkhamdb.com deck link.`);
+}
+
+type OpenDeck = {
+  ok: true;
+  store: CardStore;
+  deck: RawDeck;
+  kind: DeckKind;
+  meta: Record<string, string>;
+  sides: ReturnType<typeof investigatorSides> & { inv: RawCard; options: RawCard };
+  taboo?: TabooList;
+  tabooError?: string;
+  cards: DeckCard[];
+};
+
+export async function openDeck(ref: string, settings: Settings): Promise<OpenDeck | Failure> {
+  const parsed = parseRef(ref);
+  if (!parsed) return notADeck(ref);
+  const [store, fetched] = await Promise.all([getCards(), fetchDeck(parsed)]);
+  if (!fetched.ok) return fromFetched(fetched);
+  const { deck, kind } = fetched.data;
+  const sides = investigatorSides(store, deck);
+  const { inv, options } = sides;
+  if (!inv || !options)
+    return toolError(`Deck ${deck.id} uses investigator ${deck.investigator_code}, which is not in the card set.`);
+  const meta = deckMeta(deck);
+  const { list: taboo, error: tabooError } = await tabooInForce(settings);
+  return {
+    ok: true,
+    store,
+    deck,
+    kind,
+    meta,
+    sides: { ...sides, inv, options },
+    ...(taboo ? { taboo } : {}),
+    ...(tabooError ? { tabooError } : {}),
+    cards: deckCards(store, deck.slots, meta, taboo),
+  };
+}
