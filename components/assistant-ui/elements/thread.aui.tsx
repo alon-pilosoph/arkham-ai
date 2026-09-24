@@ -231,7 +231,7 @@ const MessageError: FC = () => {
     <MessagePrimitive.Error>
       <ErrorPrimitive.Root render={<Alert variant="destructive" className="aui-message-error-root mt-2" />}>
         <CircleAlertIcon />
-        <AlertTitle>The answer stopped</AlertTitle>
+        <AlertTitle className="pr-18">The answer stopped</AlertTitle>
         <AlertDescription>
           <ErrorPrimitive.Message className="aui-message-error-message" />
         </AlertDescription>

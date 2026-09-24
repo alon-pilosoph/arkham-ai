@@ -35,7 +35,7 @@ export function ThreadListSidebar({ ...props }: React.ComponentProps<typeof Side
         <ThreadList />
       </SidebarContent>
       {props.collapsible !== "none" && <SidebarRail />}
-      <SidebarFooter className="aui-sidebar-footer border-t pb-3">
+      <SidebarFooter className="aui-sidebar-footer border-t">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
