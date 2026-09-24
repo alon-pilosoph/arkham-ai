@@ -1,9 +1,13 @@
 # arkham-ai
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/answer-dark.png">
-  <img alt="The assistant answering which deck to play beside a partner's Lily Chen deck: it read the partner's deck, searched the index for decks that fill the gap, read the two best, and recommends one with the reasons" src="docs/images/answer-light.png">
-</picture>
+<p align="center">
+  <img alt="The assistant answering which deck to play beside a partner's Lily Chen deck: it read the partner's deck, searched the index for decks that fill the gap, read the two best, and recommends one with the reasons" src="docs/images/hero-desktop-light.png#gh-light-mode-only" width="900">
+  <img alt="The assistant answering which deck to play beside a partner's Lily Chen deck: it read the partner's deck, searched the index for decks that fill the gap, read the two best, and recommends one with the reasons" src="docs/images/hero-desktop-dark.png#gh-dark-mode-only" width="900">
+</p>
+<p align="center">
+  <img alt="The same answer on a phone" src="docs/images/hero-phone-light.png#gh-light-mode-only" width="280">
+  <img alt="The same answer on a phone" src="docs/images/hero-phone-dark.png#gh-dark-mode-only" width="280">
+</p>
 
 A chat assistant for two people playing Arkham Horror: The Card Game campaigns together. It
 answers from the real sources at the moment you ask: the full Rules Reference, ArkhamDB's card
