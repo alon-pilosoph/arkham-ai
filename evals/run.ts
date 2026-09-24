@@ -1,4 +1,4 @@
-//   npx tsx evals/run.ts --model anthropic:claude-opus-5-5 --max-usd 3 [--cases id,id] [--tpm 180000] [--effort high]
+//   npx tsx evals/run.ts --model openai:gpt-6-sol --max-usd 3 [--cases id,id] [--tpm 180000] [--effort high]
 // Writes one transcript per case to evals/results/<model>/ for a person to read; grades nothing.
 // Stops before a case once spend reaches --max-usd; --tpm paces calls to a tokens-per-minute limit.
 
@@ -18,11 +18,41 @@ const PRICES: Record<string, { input: number; output: number; cacheRead: number;
   "anthropic:claude-sonnet-5": { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 6 },
   "openai:gpt-6-sol": { input: 2, output: 10, cacheRead: 0.2, cacheWrite: 2 },
   "openai:gpt-6-luna": { input: 0.1, output: 0.5, cacheRead: 0.01, cacheWrite: 0.1 },
+  "openai:gpt-5.6-luna": { input: 0.2, output: 1.2, cacheRead: 0.02, cacheWrite: 0.2 },
 };
 
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);
   return i >= 0 ? process.argv[i + 1] : undefined;
+}
+
+const CARD_CODE = /\b\d{5}[a-z]?\b/g;
+
+function codesIn(text: string): Set<string> {
+  return new Set([...text.matchAll(CARD_CODE)].map((m) => m[0]));
+}
+
+function linkedCodes(answer: string): string[] {
+  return [...answer.matchAll(/\]\(https:\/\/arkhamdb\.com\/card\/([^)]+)\)/g)].map((m) => m[1]);
+}
+
+type Checks = { invalidCardLinks: string[]; tabooMentioned: boolean; empty: boolean };
+
+function checkTurn(answer: string, toolResults: unknown, tabooOn: boolean): Checks {
+  const seen = codesIn(JSON.stringify(toolResults));
+  return {
+    invalidCardLinks: linkedCodes(answer).filter((code) => !seen.has(code)),
+    tabooMentioned: !tabooOn && /taboo/i.test(answer),
+    empty: answer.trim().length === 0,
+  };
+}
+
+function failedChecks(checks: Checks): string[] {
+  const out: string[] = [];
+  if (checks.invalidCardLinks.length) out.push(`invented card code(s) ${checks.invalidCardLinks.join(", ")}`);
+  if (checks.tabooMentioned) out.push("mentioned taboo while it is off");
+  if (checks.empty) out.push("empty answer");
+  return out;
 }
 
 function cost(model: string, u: LanguageModelUsage): number {
@@ -92,6 +122,7 @@ async function main(): Promise<number> {
   fs.mkdirSync(outDir, { recursive: true });
 
   let spent = 0;
+  let allChecksPassed = true;
   for (const c of cases) {
     if (spent >= maxUsd) {
       console.log(`budget reached ($${spent.toFixed(3)}), stopping before ${c.id}`);
@@ -127,6 +158,8 @@ async function main(): Promise<number> {
       if (timedOut) error ??= `ran out of time at the ${BUDGET.deadlineMs / 1000}s deadline`;
       if (usage) usd += cost(model, usage);
       history.push({ id: `a${i}`, role: "assistant", parts: [{ type: "text", text }] });
+      const toolResults = steps.flatMap((s) => s.toolResults);
+      const checks = error ? undefined : checkTurn(text, toolResults, settings.taboo);
       turns.push({
         question,
         usage,
@@ -137,6 +170,7 @@ async function main(): Promise<number> {
           usage: s.usage,
         })),
         answer: text,
+        ...(checks ? { checks } : {}),
         ...(error ? { error } : {}),
       });
       if (error) break;
@@ -154,12 +188,15 @@ async function main(): Promise<number> {
     fs.writeFileSync(path.join(outDir, `${c.id}.json`), `${JSON.stringify(record, null, 1)}\n`);
     const tools = turns.map((t) => t.steps.flatMap((s) => s.toolCalls.map((x) => x.tool)).join(", ") || "none").join(" | ");
     const failed = turns.find((t) => "error" in t);
+    const badChecks = turns.flatMap((t) => (t.checks ? failedChecks(t.checks) : []));
+    if (badChecks.length) allChecksPassed = false;
     console.log(
-      `${c.id}: ${record.seconds.toFixed(1)}s, $${usd.toFixed(4)}, tools ${tools}${failed ? `, ERROR ${failed.error}` : ""}`,
+      `${c.id}: ${record.seconds.toFixed(1)}s, $${usd.toFixed(4)}, tools ${tools}` +
+        `${failed ? `, ERROR ${failed.error}` : ""}${badChecks.length ? `, CHECK FAILED: ${badChecks.join(", ")}` : ""}`,
     );
   }
-  console.log(`total $${spent.toFixed(3)} -> ${outDir}`);
-  return 0;
+  console.log(`total $${spent.toFixed(3)} -> ${outDir}${allChecksPassed ? "" : " (some checks failed, see above)"}`);
+  return allChecksPassed ? 0 : 1;
 }
 
 process.exitCode = await main();

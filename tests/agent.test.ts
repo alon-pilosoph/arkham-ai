@@ -71,6 +71,12 @@ describe("the agent loop", () => {
     expect(second[0].content).toBe(first[0].content);
   });
 
+  test("a wrong card code in the answer is corrected against the real card data", async () => {
+    const model = scripted(() => say("Try [Shrivelling (3)](https://arkhamdb.com/card/60104) for the extra damage."));
+    const result = runAgent({ model, messages: [{ role: "user", content: "What should I upgrade?" }] });
+    expect(await result.text).toBe("Try [Shrivelling (3)](https://arkhamdb.com/card/02154) for the extra damage.");
+  });
+
   test("the last step is reserved for the answer", async () => {
     let n = 0;
     const model = scripted(() => toolCall(`c${n++}`, "cards", { query: "Machete" }));

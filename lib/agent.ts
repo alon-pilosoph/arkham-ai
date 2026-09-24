@@ -1,7 +1,17 @@
-import { convertToModelMessages, isStepCount, type LanguageModel, type ModelMessage, streamText, type UIMessage } from "ai";
+import {
+  convertToModelMessages,
+  isStepCount,
+  type LanguageModel,
+  type ModelMessage,
+  type StreamTextTransform,
+  streamText,
+  type UIMessage,
+} from "ai";
+import { getCards } from "./cards";
 import { withSignal } from "./deadline";
 import { toolError } from "./format";
 import { trimHistory } from "./history";
+import { repairLinks } from "./link-repair";
 import { SYSTEM_PROMPT } from "./prompt";
 import { DEFAULT_SETTINGS, type Settings } from "./settings";
 import { type ToolName, tools } from "./tools";
@@ -75,6 +85,41 @@ function budgetedTools(signal: AbortSignal) {
   return { tools: wrapped, used: () => used };
 }
 
+function linkRepairTransform(): StreamTextTransform<typeof tools> {
+  return () => {
+    const buffers = new Map<string, string>();
+    let store: ReturnType<typeof getCards> | undefined;
+    return new TransformStream({
+      async transform(chunk, controller) {
+        if (chunk.type === "text-start") {
+          buffers.set(chunk.id, "");
+          controller.enqueue(chunk);
+          return;
+        }
+        if (chunk.type === "text-delta") {
+          buffers.set(chunk.id, (buffers.get(chunk.id) ?? "") + chunk.text);
+          return;
+        }
+        if (chunk.type === "text-end") {
+          const text = buffers.get(chunk.id) ?? "";
+          buffers.delete(chunk.id);
+          let fixed = text;
+          try {
+            store ??= getCards();
+            fixed = repairLinks(text, await store);
+          } catch {
+            fixed = text;
+          }
+          controller.enqueue({ type: "text-delta", id: chunk.id, text: fixed });
+          controller.enqueue(chunk);
+          return;
+        }
+        controller.enqueue(chunk);
+      },
+    });
+  };
+}
+
 export function runAgent(opts: {
   model: LanguageModel;
   messages: ModelMessage[];
@@ -105,6 +150,7 @@ export function runAgent(opts: {
     tools: budgeted.tools,
     toolsContext,
     abortSignal: cutOff,
+    experimental_transform: linkRepairTransform(),
     stopWhen: [isStepCount(BUDGET.maxSteps), () => finalIssued],
     prepareStep: ({ stepNumber, initialMessages, responseMessages }) => {
       const spent =
