@@ -34,8 +34,8 @@ cp .env.example .env.local   # add ANTHROPIC_API_KEY or OPENAI_API_KEY
 npm run dev                  # http://localhost:3000
 ```
 
-`ARKHAM_MODEL` picks the model as `provider:model` (default `anthropic:claude-opus-5-5`, or
-`openai:gpt-6-sol` when only an OpenAI key is set). `ARKHAM_MODEL=mock:local` needs no key:
+`ARKHAM_MODEL` picks the model as `provider:model` (default `openai:gpt-6-sol`, or
+`anthropic:claude-opus-5-5` when only an Anthropic key is set). `ARKHAM_MODEL=mock:local` needs no key:
 a scripted stand-in that routes each question to one tool, so the loop, the tools and the UI
 can be exercised end to end for free.
 
@@ -68,7 +68,7 @@ grade nothing. The script reads keys from the environment, so load `.env.local` 
 
 ```sh
 set -a && . ./.env.local && set +a
-npm run eval -- --model anthropic:claude-opus-5-5 --max-usd 2 [--cases rules-doom,partner]
+npm run eval -- --model openai:gpt-6-sol --max-usd 2 [--cases rules-doom,partner]
 ```
 
 ## Documentation

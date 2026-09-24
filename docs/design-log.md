@@ -150,10 +150,11 @@ results not replayed into history; and untrusted text fenced before it reaches t
 ## Evals and model choice (September 23)
 
 Twenty-four cases ran on four models, and every transcript was read and its claims checked by
-hand. [evals.md](evals.md) has the method, the results and what they changed. In short: Opus 5.5
-is the default, with no errors found; Sonnet 5 invented card codes; GPT-6 Sol is accurate and
-the OpenAI default; GPT-6 Luna is careful but slow under the account's rate limit. Effort is
-pinned per provider so results stay comparable.
+hand. [evals.md](evals.md) has the method, the results and what they changed. In short, on the
+first pass: Opus 5.5 had no errors found; Sonnet 5 invented card codes; GPT-6 Sol was accurate;
+GPT-6 Luna was careful but slow under the account's rate limit. Effort is pinned per provider so
+results stay comparable. The model actually shipped as the default changed the next day — see
+below.
 
 **Two calls made along the way:**
 - **Streaming, not websockets.** The answer already streams over HTTP. The real limit is the
@@ -188,3 +189,34 @@ pinned per provider so results stay comparable.
 - **License and credits.** The code is MIT. The rules, FAQ and card text belong to Fantasy
   Flight Games, the data comes from ArkhamDB, and the deck guides belong to their authors; none
   of that is covered by the license.
+
+## Widening the evals and picking Sol (September 24)
+
+The first pass compared four models once each. It left two open questions: was Sonnet's
+invented-code failure a fluke, and would a different effort level fix or explain Luna's
+slowness. Both got a real answer instead of a guess, and a fifth model (`gpt-5.6-luna`, the
+previous generation, with a 500,000 tokens/minute limit against the current Luna's 200,000) was
+added for comparison. [evals.md](evals.md) has the numbers; the findings:
+
+- **Not a fluke.** Sonnet's three failing cases, repeated three more times at default effort,
+  invented a card code in two of the three repeats — a different code each time. Effort, not
+  chance, was the fix: Sonnet at maximum effort ran the whole set clean.
+- **Higher effort helped Sonnet and hurt Luna.** Luna at high effort was clean too, but slower
+  than its own default; at max effort it called `cards` redundantly until a sixth of all cases
+  ran out of time. Luna's default effort was already its best setting.
+- **The previous-generation Luna lost on every axis.** Pricier per token, no faster despite its
+  higher rate limit, and the only model in the whole matrix to invent a card with no tool call
+  at all. There is no reason to use it over the current one.
+- **17 of 18 invented codes were real cards, just the wrong one** — never a fabrication, always
+  a mix-up. That ruled out checking whether a code merely exists (it would have missed 17 of
+  18) and ruled out asking ArkhamDB live (the card set is already cached in the app).
+  `lib/link-repair.ts` checks a linked code's real name against the one in the answer and
+  corrects or strips it, backed only by data already in memory. It runs as a `streamText`
+  transform (`lib/agent.ts`) buffering just the current text block, so tool progress keeps
+  streaming live. Re-running Sonnet's original failing cases afterward found every link correct.
+- **Cost, not correctness, picked the default.** With the link-repair backstop covering every
+  model, Opus's edge over Sol stopped being about correctness and became about price: Sol costs
+  65% less per run and carries none of Anthropic's roughly 2x premium to write the system prompt
+  into cache on a cold request — a premium a bench of back-to-back eval cases barely pays, but
+  that two people asking occasional questions pay on nearly every real one. `lib/model.ts` now
+  prefers OpenAI over Anthropic when both keys are set.

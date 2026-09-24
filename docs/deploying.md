@@ -12,11 +12,11 @@ Assistant Cloud, anonymous per browser.
 
    | Name | Value | Why |
    |---|---|---|
-   | `ANTHROPIC_API_KEY` | the Anthropic key | the model (Opus by default) |
+   | `OPENAI_API_KEY` | the OpenAI key | the model (GPT-6 Sol by default: accurate, fast, and far cheaper per question than Claude) |
    | `NEXT_PUBLIC_ASSISTANT_BASE_URL` | the Assistant Cloud project URL | saved chats and titles; read at build time, so set it before the first build |
 
-   Leave out `OPENAI_API_KEY` unless OpenAI should answer: with no Anthropic key the app
-   falls back to it, and with both it uses Anthropic. `ARKHAM_MODEL` overrides the choice.
+   Leave out `ANTHROPIC_API_KEY` unless Claude should answer instead: with no OpenAI key the
+   app falls back to it, and with both it uses OpenAI. `ARKHAM_MODEL` overrides the choice.
 4. **Protect every URL.** Settings, then Deployment Protection: turn on Vercel Authentication and
    set the scope to **All Deployments**. The default, Standard Protection, leaves the
    production domain public.
@@ -28,8 +28,9 @@ Assistant Cloud, anonymous per browser.
 
 ## Worth setting
 
-- **A monthly spend limit** on the Anthropic key (console.anthropic.com, Settings, then Limits),
-  in case a device is lost with a login cookie on it.
+- **A monthly spend limit** on the OpenAI key (platform.openai.com, Settings, then Limits), or
+  the Anthropic key (console.anthropic.com, Settings, then Limits) if Claude is answering
+  instead, in case a device is lost with a login cookie on it.
 - **Assistant Cloud:** if chats don't persist on the deployed site, check the cloud project's
   settings for an allowed-origins list and add the production domain.
 

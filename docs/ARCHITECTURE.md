@@ -204,13 +204,24 @@ development, one investigator at a time, and checked against the card tallies. H
 
 ## The model
 
-`lib/model.ts` picks Anthropic (default `claude-opus-5-5`) or OpenAI (default `gpt-6-sol`) from
-`ARKHAM_MODEL` or whichever key is set; nothing else in the app knows which. OpenAI's Responses
-API makes function tools strict by default, which forces the model to fill every optional field
-(a search with every filter set finds nothing); an OpenAI-only middleware (`openaiModel`) turns
-strict off, leaving Anthropic's cached request bytes untouched. `ARKHAM_MODEL=mock:local` swaps in `lib/mock-model.ts`, a scripted
-stand-in that routes a question to one tool by pattern and reports the result, so the real loop,
-tools and UI run end to end with no key.
+`lib/model.ts` picks OpenAI (default `gpt-6-sol`) or Anthropic (default `claude-opus-5-5`) from
+`ARKHAM_MODEL` or whichever key is set, preferring OpenAI when both are; nothing else in the app
+knows which. Sol is the default because it is accurate and far cheaper per question than Claude:
+evals across every model and effort level found it clean, and Anthropic's prompt-cache write
+carries a price premium a lightly used app pays on most requests, which OpenAI's caching does
+not. OpenAI's Responses API makes function tools strict by default, which forces the model to
+fill every optional field (a search with every filter set finds nothing); an OpenAI-only
+middleware (`openaiModel`) turns strict off, leaving Anthropic's cached request bytes untouched.
+`ARKHAM_MODEL=mock:local` swaps in `lib/mock-model.ts`, a scripted stand-in that routes a
+question to one tool by pattern and reports the result, so the real loop, tools and UI run end
+to end with no key.
+
+Every model, even the ones evals never faulted, occasionally names a real card with another
+card's code. `lib/link-repair.ts` checks each `[Name](arkhamdb.com/card/CODE)` link in the
+answer against the cached card set (no ArkhamDB call): a mismatch is corrected when the name
+resolves to exactly one card, or stripped to plain text otherwise, the same fallback the prompt
+already asks for when no tool gave a code. `lib/agent.ts` wires it in as a `streamText`
+transform that buffers only the current text block, so tool-call progress still streams live.
 
 ## Tests
 
@@ -221,8 +232,10 @@ tools and UI run end to end with no key.
 | `index.test.ts` | the index's XP matches the deck tool's, its cards are the list's own, every archetype is used and every example card is owned, play-rate counts are sane |
 | `selection.test.ts` | the crawl's rules: most liked first, republished lists once, unowned and illegal lists passed over with the card named, promo reprints folded |
 | `pipeline-parsers.test.ts` | the rules, FAQ and decklist-search parsers on pages shaped like ArkhamDB's, including a search page whose rows miss a deck link |
-| `agent.test.ts` | the loop: budgets, the reserved answer step, cache markers, history trimming |
+| `agent.test.ts` | the loop: budgets, the reserved answer step, cache markers, history trimming, a wrong card code corrected against the real card data |
 | `providers.test.ts` | the request each provider really receives: Anthropic cache breakpoints (1 h on the system prompt, 5 min on the newest message) and its own `tool_choice`, and a valid OpenAI Responses call |
+| `model.test.ts` | which provider `modelSpec` picks from the keys set, `ARKHAM_MODEL`, and `ARKHAM_EFFORT` |
+| `link-repair.test.ts` | a correct link left alone, a level pinning a name to one version, an ambiguous or unknown name stripped to plain text |
 | `route.test.ts` | the chat route's contract: 400s for bad bodies, partial settings, provider errors in plain words |
 | `loader.test.ts` | the card set and taboo lists survive ArkhamDB being down: the last copy served, one log line, a minute's wait before retrying |
 | `mock-model.test.ts` | the scripted model only calls tools that exist |
@@ -243,5 +256,5 @@ to be read by a person:
 
 ```sh
 set -a && . ./.env.local && set +a
-npm run eval -- --model anthropic:claude-opus-5-5 --max-usd 2 [--cases rules-doom,partner]
+npm run eval -- --model openai:gpt-6-sol --max-usd 2 [--cases rules-doom,partner]
 ```

@@ -36,8 +36,8 @@ export function modelSpec(env: NodeJS.ProcessEnv = process.env): Spec {
       `ARKHAM_MODEL must look like "anthropic:${DEFAULTS.anthropic}" or "openai:${DEFAULTS.openai}", got "${spec}"`,
     );
   }
-  if (env.ANTHROPIC_API_KEY) return { provider: "anthropic", id: DEFAULTS.anthropic, effort };
   if (env.OPENAI_API_KEY) return { provider: "openai", id: DEFAULTS.openai, effort };
+  if (env.ANTHROPIC_API_KEY) return { provider: "anthropic", id: DEFAULTS.anthropic, effort };
   throw new Error("No model configured: set ANTHROPIC_API_KEY or OPENAI_API_KEY in .env.local (and optionally ARKHAM_MODEL).");
 }
 

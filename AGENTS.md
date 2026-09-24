@@ -48,7 +48,7 @@ npm run check        # typecheck, Biome lint and format check, tests
 npm run format       # apply Biome fixes and formatting
 npm run build
 npm run e2e          # the built app in a browser (Playwright), no key needed
-npm run eval -- --model anthropic:claude-opus-5-5 --max-usd 2   # real model, costs money
+npm run eval -- --model openai:gpt-6-sol --max-usd 2   # real model, costs money
 ```
 
 `npm run eval` reads its key from the environment: run `set -a && . ./.env.local && set +a`
