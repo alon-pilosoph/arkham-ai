@@ -1,260 +1,337 @@
 # Architecture
 
-**Scope.** How the assistant answers a question, what it reads to do it, and how the one
-thing it stores (the deck index) is made. The reasons behind each choice, and what lost, are
-in [design-decisions.md](design-decisions.md); the index build in detail is in
+This document describes how the assistant answers a question, what it reads to do so, and how
+the deck index, the only data it builds ahead of time, is produced. The reasons behind each
+choice, and the alternatives that were rejected, are in
+[design-decisions.md](design-decisions.md). The index build is covered step by step in
 [data-pipeline.md](data-pipeline.md).
 
-## The shape
+## Overview
 
-Two halves share one library.
+The code has two halves that share one library, `lib/`:
+
+- **The app** is a Next.js chat page and a single API route. While answering, it fetches the
+  card set, taboo lists and decks from ArkhamDB, and reads a few files bundled with the code.
+- **The offline pipeline** (`pipeline/`) is a set of scripts run by hand with `npm run data:*`.
+  They build the deck index and refresh the bundled Rules Reference and rulings. The app never
+  runs them.
 
 ```
-                 browser                                   offline, run on demand
-  assistant-ui thread + taboo switch                 npm run data:crawl / data:index
-            |  POST /api/chat                          data:rules / data:faq
-            v  {messages, settings}                              |
-  app/api/chat/route.ts  --validate-->  lib/agent.ts             v
-            |                      streamText, 4 tools     pipeline/  (census, selection,
-            |                      budgets, cache marks       labels, usage, scrapers)
-            v                                                    |
-  lib/tools/  cards | deck | recommendDecks | replaceCard         |
-            |                                                    |
-            +--------------------  lib/  ------------------------+
-               cards.ts (card store)   decks.ts (lists, XP)   legality.ts
-               taboo.ts, loader.ts     archetypes.ts          index/ (decks, schema, usage)
-            |                                                    |
-            v                                                    v
-   ArkhamDB, live: cards, taboo lists, decks        lib/index/decks.json, card-usage.json
-   bundled: data/rules.md, data/faq.json,           data/rules.md, data/faq.json
-            lib/collection.json                      tests/fixtures/ (snapshots)
+Browser: app/assistant.tsx (assistant-ui thread, taboo switch)
+  |
+  |  POST /api/chat  {messages, settings}
+  v
+app/api/chat/route.ts     validates the body, picks the model
+  |
+  v
+lib/agent.ts              one streamText loop: budgets, cache breakpoints
+  |
+  v
+lib/tools/                cards, deck, recommendDecks, replaceCard
+  |
+  +--> ArkhamDB, live:     card set, taboo lists, decks
+  +--> bundled files:      data/rules.md, data/faq.json,
+                           lib/collection.json, lib/index/*.json
+
+pipeline/ (offline, npm run data:*)
+  reads:   ArkhamDB, data/deck-labels/
+  writes:  lib/index/*.json, data/rules.md, data/faq.json,
+           tests/fixtures/
 ```
 
-The app is one Next.js route and a chat page. Everything it knows about cards, taboo lists and
-decks it fetches from ArkhamDB when asked; the pipeline never runs at request time. The pipeline
-imports the same `lib/` modules the tools use, so an XP total, a legality verdict or a reprint
-folding is computed by one function everywhere.
+Both halves import the same modules from `lib/`: the card store (`lib/cards.ts`), deck decoding
+and XP counting (`lib/decks.ts`), taboo handling (`lib/taboo.ts`) and the legality check
+(`lib/legality.ts`). An XP total, a legality verdict or the folding of a reprint into its
+original card is therefore computed by the same function in the app and in the pipeline.
 
 ## A request, end to end
 
-1. **The page** (`app/assistant.tsx`) is an assistant-ui thread. Each tool's renderer
-   (`cards-ui.tsx`, `deck-ui.tsx`, `recommend-decks-ui.tsx` and `replace-card-ui.tsx` in
-   `components/tools/`, sharing `parts.tsx`) is registered as an assistant-ui toolkit in
-   `components/tools/tool-ui.tsx`; any other tool call gets the thread's generic card. The
-   taboo switch (`components/settings/taboo-switch.tsx`) sets a setting kept by
-   `hooks/use-settings.ts`, remembered in `localStorage` and shared by the browser's tabs, and
-   the chat transport reads it fresh for every request. The transport trims history before
-   sending (`lib/history.ts`), so old tool results never go over the wire. The composer takes
-   text only: there is no attachment adapter, and pasting a file attaches nothing. Threads live
-   in memory unless `NEXT_PUBLIC_ASSISTANT_BASE_URL` names an Assistant Cloud project, which
-   keeps them per browser (anonymous) with generated titles.
-2. **The route** (`app/api/chat/route.ts`) validates `{messages, settings}` with zod (a bad body
-   or message part is a 400; settings are partial and merged over the defaults, so a tab opened
-   before a new setting still works), resolves the model (`lib/model.ts`), and streams the
-   agent's output back as a UI message stream, reasoning included. A failed answer shows the
-   players plain words; the provider's own message goes to the server log.
-3. **History is trimmed** (`trimHistory` in `lib/history.ts`, again on the server). Earlier
-   turns keep only their text, never their tool results, so nothing stale is re-read as if it
-   were fresh; tools refetch. The last 24 messages are kept, and the window always starts on a
-   question: an answer whose question was cut off is dropped with it.
-4. **The turn note** goes on the newest user message: today's date and whether the taboo list
-   is on. It never enters the system prompt, whose bytes are identical on every request.
-5. **The loop** is one `streamText` call with four tools. The players' settings reach each tool
-   through the AI SDK's per-tool context (`toolsContext`), not through the prompt. `prepareStep`
-   enforces the budget and moves the cache marker; see below.
-6. **Each tool** returns a structured result for the UI and renders it to text for the model
-   (`toModelOutput`), fencing stranger-written text as data. The UI draws every result as
-   assistant-ui's own tool card (running, done or failed), with shadcn parts inside.
+1. **The page** (`app/assistant.tsx`) is an [assistant-ui](https://www.assistant-ui.com)
+   thread. Each tool has its own renderer in `components/tools/` (`cards-ui.tsx`,
+   `deck-ui.tsx`, `recommend-decks-ui.tsx`, `replace-card-ui.tsx`, with shared pieces in
+   `parts.tsx`), registered as an assistant-ui toolkit in `components/tools/tool-ui.tsx`. A call
+   to any other tool falls back to the thread's generic tool card.
+
+   The taboo switch (`components/settings/taboo-switch.tsx`) writes the players' settings
+   through `hooks/use-settings.ts`, which keeps them in `localStorage` so every tab of the
+   browser shares them. The chat transport reads the settings again for every request, and
+   trims the history before sending it (`trimHistory`, `lib/history.ts`), so old tool results
+   never go over the wire.
+
+   The composer accepts text only: there is no attachment adapter, and pasting a file attaches
+   nothing. Threads are kept in memory unless `NEXT_PUBLIC_ASSISTANT_BASE_URL` names an
+   [Assistant Cloud](https://cloud.assistant-ui.com) project, which stores them per browser,
+   anonymously, and gives them generated titles.
+
+2. **The route** (`app/api/chat/route.ts`) validates the body, `{messages, settings}`, with zod.
+   A malformed body or message part gets a 400, and a body over 512 KB a 413. Settings are
+   optional and merged over the defaults, so a tab opened before a new setting existed still
+   works. The route then picks the model (`lib/model.ts`) and streams the agent's output back as
+   an AI SDK UI message stream, including the model's reasoning. If the answer fails, the
+   players see a plain-language message and the provider's own error goes to the server log.
+
+3. **The history is trimmed again** on the server, by the same `trimHistory`. Earlier turns
+   keep only their text, never their tool results, so stale data is never re-read as if it were
+   current; the tools fetch it again. The last 24 messages are kept, and the window always
+   starts on a user message: an answer whose question fell out of the window is dropped with it.
+
+4. **A per-turn note** is prepended to the newest user message: today's date and whether the
+   taboo list is on (`turnNote` and `anchorTurn`, `lib/agent.ts`). It never goes into the system
+   prompt, whose bytes are identical on every request.
+
+5. **The agent loop** is one `streamText` call with four tools. The players' settings reach each
+   tool through the AI SDK's per-tool context (`toolsContext`), not through the prompt. Before
+   each step, `prepareStep` checks the budgets and moves the cache breakpoint (see below).
+
+6. **Each tool** returns a structured result for the UI, and renders that result as text for the
+   model (`toModelOutput`), wrapping any text written by ArkhamDB users as untrusted data. The UI
+   shows every result in assistant-ui's own tool card (running, done, stopped or failed), with
+   shadcn/ui components inside.
 
 ## The system prompt and caching
 
-`lib/prompt.ts` is the guidance (what the assistant is for, how to use each tool, the rules
-that keep it honest) followed by the complete Rules Reference from `data/rules.md`: about
-39,500 words and 285 headings, inlined whole. There is no rules tool.
+The system prompt (`lib/prompt.ts`) is the guidance, which covers what the assistant is for, how
+to use each tool and the rules that keep it honest, followed by the complete Rules Reference from
+`data/rules.md`: about 39,500 words under 285 headings, inlined whole. There is no rules tool.
 
-Caching is a byte-stability discipline:
+Prompt caching depends on keeping the request's leading bytes identical:
 
-- The system prompt carries a one-hour cache marker and never changes between requests.
-- One more marker sits on the newest message and moves forward each step, so every step
-  re-reads everything before it from cache.
-- Whatever varies (date, settings) is appended to the newest user message only.
-- `tests/golden.test.ts` pins the guidance and every tool's description and schema byte for
-  byte, and the whole system prompt (the rules wrapper and `data/rules.md` included) by hash. A
-  tool description is prompt text the model reads on every call, so changing one fails the test
-  until it is regenerated on purpose.
+- The system prompt carries a one-hour cache breakpoint and never changes between requests.
+- A second breakpoint (the provider's default five minutes) sits on the newest message and moves
+  forward at each step, so every step reads everything before it from the cache.
+- Anything that varies, such as the date or the settings, goes on the newest user message only.
+- `tests/golden.test.ts` pins the guidance and every tool's description and input schema byte for
+  byte, and the whole system prompt, `data/rules.md` included, by hash. A tool description is
+  prompt text the model reads on every call, so changing one fails the test until the pins are
+  regenerated on purpose with `UPDATE_GOLDEN=1`.
 
 ## Budgets
 
-`BUDGET` in `lib/agent.ts`, enforced in code rather than asked for in the prompt:
+The limits live in `BUDGET` in `lib/agent.ts` and are enforced in code, not requested in the
+prompt:
 
 | Limit | Value |
 |---|---|
-| Model calls per answer | 10, the last reserved for the answer |
-| Tool calls per answer | 14, counted as each call starts; past it a call returns `ERROR` without doing work |
-| The whole answer's wall time (`deadlineMs`) | 270 s, under the route's `maxDuration` of 300 s; the stream is stopped there |
-| Kept for the answer step (`answerReserveMs`) | 60 s: tool work, ArkhamDB fetches included, is cut once less than this remains |
-| One more tool step (`toolStepMs`) | 60 s: a step is offered tools only while it and the reserve both fit before the deadline |
+| Model calls per answer (`maxSteps`) | 10, the last one reserved for the answer |
+| Tool calls per answer (`maxToolCalls`) | 14, counted as each call starts; later calls return `ERROR` without doing any work |
+| Wall time for the whole answer (`deadlineMs`) | 270 s, under the route's `maxDuration` of 300 s; the stream is stopped at the deadline, and any unfinished text block is dropped (see [card link repair](#card-link-repair)) |
+| Time kept for writing the answer (`answerReserveMs`) | 60 s: tool work, ArkhamDB fetches included, is cut off once less than this remains |
+| Time allowed for one more tool step (`toolStepMs`) | 60 s: a step is offered tools only if this and the reserve both fit before the deadline |
 | History kept | 24 messages (`HISTORY_MESSAGES`, `lib/history.ts`) |
-| Characters one tool result may inject | 80,000 (`lib/format.ts`), cut loudly if ever hit |
+| Characters one tool result may add to the context | 80,000 (`MAX_TOOL_CHARS`, `lib/format.ts`); a longer result is cut with a note saying so |
 
-When any limit is reached the next step runs with `toolChoice: "none"` and a note telling the
-model to answer from what it has and say what it could not check. The loop also stops after that
-step even if a model ignores the tool switch.
+When any limit is reached, the next step runs with `toolChoice: "none"` and a note telling the
+model to answer from what it has and to say what it could not check. The loop also stops after
+that step, even if a model ignores the tool setting.
 
-The tools' time limit reaches every fetch without being passed through each tool:
-`lib/deadline.ts` holds the answer's tool signal in an `AsyncLocalStorage` scope, each tool call
-runs inside it, and `getJson` (`lib/arkhamdb.ts`) reads it, so a fetch still running when time
-is up stops and reports `ERROR`.
+The time limit for tools reaches every ArkhamDB fetch without being passed through each tool.
+`lib/deadline.ts` holds the answer's abort signal in an `AsyncLocalStorage` scope, every tool
+call runs inside that scope, and `getJson` (`lib/arkhamdb.ts`) reads the signal from it. A fetch
+still running when time is up is aborted and reports `ERROR`.
 
 ## The tools
 
 | Tool | Reads | Returns |
 |---|---|---|
-| `cards` | the card store, rulings, the taboo list when on | every version of each matching card, grouped by name, with text, errata, rulings and the taboo change; long matches page by offset |
-| `deck` | the deck from ArkhamDB, live | the decoded list (customizable upgrades included), XP, unowned cards, the investigator's sides, and the author's guide, paged by offset |
-| `recommendDecks` | the deck index | a shortlist, most liked first, one per investigator unless one was asked for; with `pairWith`, the roles that complement the given deck |
-| `replaceCard` | the deck, the card store, legality, play rates | legal owned candidates for one card in one deck, for a goal: cheaper, the same job, a different job, or an owned stand-in for an unowned card |
+| `cards` | The card store, official rulings, and the taboo list when it is on | Every version of each matching card, grouped by name, with text, errata, rulings and any taboo change. Long results are paged with an offset. |
+| `deck` | The deck, from ArkhamDB | The decoded list (customizable upgrades included), XP, cards not in the collection, the investigator's sides and deckbuilding choices, and the author's guide, paged with an offset |
+| `recommendDecks` | The deck index | A shortlist, most liked first, one deck per investigator unless an investigator was asked for. With `pairWith`, decks in the roles that complement the given deck. |
+| `replaceCard` | The deck, the card store, the legality check, play rates | Legal, owned candidates to replace one card in one deck, for a goal: cheaper, the same job, a different job, or an owned stand-in for an unowned card |
 
-Common contracts:
+All four tools follow the same contracts:
 
-- **Errors are not absence.** ArkhamDB calls return `Fetched<T>` (`lib/arkhamdb.ts`): data,
-  `not_found`, or `error`. The model sees `ERROR: ...` or `NOT FOUND: ...`, never an empty
-  answer, and the prompt tells it never to report a failed lookup as "there are none".
-- **Untrusted text is fenced.** Deck names and guides go through `untrusted()`, which wraps them
-  in `<untrusted_data>` and escapes every `<` inside as `‹`, so no tag in the text, however
-  nested, can close the fence.
-- **Long results page.** `cards` and `deck` return an offset to continue from rather than
+- **An error is never shown as absence.** ArkhamDB calls return a `Fetched<T>`
+  (`lib/arkhamdb.ts`): the data, `not_found` or `error`. The model sees `ERROR: ...` or
+  `NOT FOUND: ...`, never an empty result, and the prompt tells it never to report a failed
+  lookup as "there are none".
+- **Untrusted text is wrapped.** Deck names, guides and free-text customization choices (a
+  trait or skill the author typed) pass through `untrusted()`
+  (`lib/format.ts`), which wraps them in `<untrusted_data>` tags and replaces every `<` inside
+  with `‹`, so no tag in the text, however nested, can close the wrapper.
+- **Long results are paged.** `cards` and `deck` return an offset to continue from rather than
   truncating.
-- **Rulings travel with the card.** A deck list flags every card with official rulings
-  (`[FAQ]`) so the model reads them before explaining it, and `replaceCard` includes the
-  replaced card's rulings, since a ruling can change what a card's job is.
-- **Decks open one way.** `deck` and `replaceCard` both read a deck through `openDeck`
-  (`lib/decks.ts`), which returns the same `NOT FOUND` / `ERROR` failure (`Failure`, `lib/format.ts`).
+- **Rulings travel with the card.** A deck list marks every card that has official rulings with
+  `[FAQ]`, so the model reads them before explaining the card, and `replaceCard` includes the
+  replaced card's rulings, since a ruling can change what a card does.
+- **Decks are opened one way.** `deck` and `replaceCard` both read a deck through `openDeck`
+  (`lib/decks.ts`), so they fail the same way, with a `Failure` (`lib/format.ts`) that renders as
+  `NOT FOUND` or `ERROR`.
 
-### Pairing
+### Finding a partner deck
 
-`recommendDecks` with `pairWith` looks the deck up in the index. If it is there, its labeled role
-picks the roles to seek (`COMPLEMENT` in `lib/index/decks.ts`: a cluever is offered fighters first,
-then flex decks). If it is not, the tool refuses until the model has read the deck and passes the
-role that fills its gap. The same investigator is never offered, and the model is told to read
-the strongest candidates with `deck` before choosing.
+`recommendDecks` with `pairWith` first looks the given deck up in the index. If it is there, its
+labeled role determines which roles to look for (`COMPLEMENT`, `lib/index/decks.ts`): a cluever
+is offered fighters first, then flex decks. If it is not in the index, the tool returns
+`NEEDS ROLE` until the model has read the deck and passes the role that fills its gap. The
+partner's own investigator is never offered, and the tool description tells the model to read the
+strongest candidates with `deck` before choosing.
 
-### Replacement popularity
+### How replacements are ranked
 
-`replaceCard` ranks candidates partly by how often they are played: `4 × investigator share +
-2 × class share`, from `lib/index/card-usage.json`. That counts every published list with ten or
-more likes, owned or not, so a rare investigator still gets a class-level signal.
+`replaceCard` scores each candidate by how similar it is to the replaced card (for the
+"different job" goal, how dissimilar) plus how often it is played:
+`4 × investigator share + 2 × class share`, from `lib/index/card-usage.json`. Those play rates count every published decklist with 10 or more
+likes, owned or not, so an investigator with few published decks still gets a signal from its
+class.
 
 ## The card store
 
-`lib/cards.ts` loads ArkhamDB's full card set (about 9 MB) into a `CardStore`. The load, like
-the taboo lists' in `lib/taboo.ts`, goes through `cachedLoader` (`lib/loader.ts`): one copy in
-memory and on disk (development only) for a day, loaded once however many requests ask at the
-same time. A stale copy is served at once and refreshed behind it, so no answer waits on a
-refresh. A failed refresh keeps serving the last copy (from memory, or a stale disk copy after
-a restart), is logged once, and is not retried for a minute. Only a first load, with nothing to
-serve, is waited for, and never past the request's time for tools. `ARKHAM_CARDS_FILE` and
-`ARKHAM_TABOOS_FILE` point the loaders at pinned files instead, which is how the tests run.
+`lib/cards.ts` loads ArkhamDB's full card set, about 9 MB of JSON, into a `CardStore`. That load
+and the taboo lists' load (`lib/taboo.ts`) both go through `cachedLoader` (`lib/loader.ts`):
 
-The store:
+- One copy is kept in memory for a day, and also on disk (`data/cache/`) where the filesystem is
+  writable, which in practice means local development.
+- Concurrent requests share a single load.
+- A copy older than a day is served immediately and refreshed in the background, so no answer
+  waits on a refresh.
+- A failed refresh keeps serving the last copy (from memory, or after a restart a stale disk
+  copy), logs one warning, and waits a minute before trying again.
+- Only a first load, with nothing to serve yet, is waited for, and never for longer than the
+  request's time for tools.
 
-- **Reprints fold into their original.** ArkhamDB's `duplicate_of_code`, plus hidden promo
-  printings that match exactly one visible card by name, subname, class, type and level (the
-  novella investigators, for instance). Parallel versions share a name but are different cards,
-  so they never fold, and an ambiguous match folds nothing.
-- **Versions come back together.** Every level of a card is one group, so the model cannot pick
-  the wrong printing's text.
-- **One name search.** `store.find` parses an optional level (`"Name (2)"`), tries the exact
-  name, and otherwise matches word starts, so "Holy" finds Holy Rosary and not Melancholy. The
-  `cards` tool and `recommendDecks`' key-card filter both use it.
-- **Taboo entries follow the card.** `tabooEntry` (`lib/taboo.ts`) looks through every
-  printing, so a reprint carries its original's taboo change.
+`ARKHAM_CARDS_FILE` and `ARKHAM_TABOOS_FILE` point the loaders at fixed snapshot files instead of
+ArkhamDB. The tests and the Playwright run use them.
+
+The store's behavior:
+
+- **Reprints fold into their original.** A card folds into the one named by ArkhamDB's
+  `duplicate_of_code`. A hidden promo printing (the novella investigators, for instance) folds
+  into the one visible card that has the same name, subname, class, type and level. Parallel
+  versions share a name but are different cards, so they never fold, and an ambiguous match folds
+  nothing.
+- **All versions come back together.** Every level of a card is returned as one group, so the
+  model cannot quote the wrong printing's text.
+- **There is one name search.** `store.find` parses an optional level (`"Name (2)"`), tries the
+  exact name, and otherwise matches the starts of words, so "Holy" finds Holy Rosary but not
+  Melancholy. The `cards` tool and the `keyCard` filter of `recommendDecks` both use it.
+- **Taboo entries follow the card.** `tabooEntry` (`lib/taboo.ts`) checks every printing, so a
+  reprint carries its original's taboo change.
 - **Ownership is by pack.** `lib/collection.json` lists the owned packs. A card is owned when any
-  of its printings is in one, and only owned printings are named to the players.
+  of its printings is in one of them, and only owned printings are named to the players.
 
 ## Legality
 
-`lib/legality.ts` evaluates ArkhamDB's deck options the way ArkhamDB does: a card is governed by
-the first option that matches it, a `not` option forbids it, and an option with a limit admits it
-only while there is room. It handles chosen classes, signatures, customizable levels, Versatile,
-parallel investigator sides and taboo-list deckbuilding changes. Deck limits count copies by
-title across levels, as ArkhamDB's validator does (myriad allows three, a purchased customization
-can raise a limit, Underworld Support lowers it to one, copies marked outside the limit are not
-counted), and the taboo list in force can lower a limit or forbid a card. `deckViolation`
-returns the first card of a list that breaks the rules.
+`lib/legality.ts` evaluates ArkhamDB's deckbuilding options the way ArkhamDB does: a card is
+governed by the first option that matches it, a `not` option forbids it, and an option with a
+limit admits it only while there is room. It handles chosen classes, signature cards,
+customizable levels, Versatile, parallel investigator sides and the taboo list's changes to
+deckbuilding.
 
-It is held to ArkhamDB's own verdict: every published list passed ArkhamDB's validator when it
-was published, and `tests/legality.test.ts` checks that every indexed list passes here too, under
-the taboo list it was built with.
+Deck limits count copies by title across levels, as ArkhamDB's validator does: myriad allows
+three, a purchased customization can raise a limit, Underworld Support lowers it to one, and
+copies the author marked as outside the deck limit are not counted. The taboo list in force can
+lower a limit or forbid a card. `deckViolation` returns the first card in a list that breaks the
+rules.
+
+The check is tested against ArkhamDB's own verdicts. Every published decklist passed ArkhamDB's
+validator when it was published, and `tests/legality.test.ts` checks that every indexed list also
+passes here, under the taboo list it was built with.
 
 ## The deck index
 
-`lib/index/decks.json`, validated by `IndexRowSchema` when it loads. One row per deck: id, name,
-investigator, class, publication date, XP printed and under the current taboo list, whether the
-list is legal under that taboo list, role and
-optional secondary role, up to three archetypes, a one-line summary, the author's ArkhamDB tags,
-likes, and the canonical card codes (so "a deck that runs Rite of Seeking" is answerable).
+`lib/index/decks.json` has one row per deck, validated by `IndexRowSchema`
+(`lib/index/schema.ts`) when it loads. Each row holds the deck's id, name, investigator, class,
+publication date, XP (as printed, and under the current taboo list), whether the list is legal
+under that taboo list, its role and optional secondary role, up to three archetypes, a one-line
+summary, the author's ArkhamDB tags, its likes, and its cards as original-printing codes, which is
+what lets the tool answer "a deck that runs Rite of Seeking".
 
-It holds the ten most liked published lists of each of the 66 investigators the players own,
-buildable from the collection and legal, with republished copies of one list counted once:
-660 decks. Every role, archetype and summary (`data/deck-labels/`) was written from a label
-sheet showing the deck's list, card-text tallies and the opening of its guide: by Claude during
-development, one investigator at a time, and checked against the card tallies. How it is built:
-[data-pipeline.md](data-pipeline.md). What the archetypes mean: [archetypes.md](archetypes.md).
+It holds the ten most liked published decklists for each of the 66 investigators the players own,
+counting only lists the collection can build and the rules allow, with republished copies of one
+list counted once: 660 decks.
+
+Every deck's role, archetypes and summary (its label, kept in `data/deck-labels/`) was written
+from a generated label sheet showing the deck's list, counts of mechanics found in its card text,
+and the opening of its guide. Claude wrote the labels during development, one investigator at a
+time, and they were checked against those counts. [data-pipeline.md](data-pipeline.md) describes
+the build, and [archetypes.md](archetypes.md) defines the archetypes.
 
 ## The model
 
-`lib/model.ts` picks OpenAI (default `gpt-6-sol`) or Anthropic (default `claude-opus-5-5`) from
-`ARKHAM_MODEL` or whichever key is set, preferring OpenAI when both are; nothing else in the app
-knows which. Sol is the default because it is accurate and far cheaper per question than Claude:
-evals across every model and effort level found it clean, and Anthropic's prompt-cache write
-carries a price premium a lightly used app pays on most requests, which OpenAI's caching does
-not. OpenAI's Responses API makes function tools strict by default, which forces the model to
-fill every optional field (a search with every filter set finds nothing); an OpenAI-only
-middleware (`openaiModel`) turns strict off, leaving Anthropic's cached request bytes untouched.
-`ARKHAM_MODEL=mock:local` swaps in `lib/mock-model.ts`, a scripted stand-in that routes a
-question to one tool by pattern and reports the result, so the real loop, tools and UI run end
-to end with no key.
+`lib/model.ts` chooses the provider. `ARKHAM_MODEL` (`provider:model`) wins if it is set;
+otherwise OpenAI (`gpt-6-sol`) is used when `OPENAI_API_KEY` is set, and Anthropic
+(`claude-opus-5-5`) when only `ANTHROPIC_API_KEY` is. Nothing else in the app knows which
+provider is answering. Reasoning effort is pinned per provider (`medium` for OpenAI, `high` for
+Anthropic) and can be overridden with `ARKHAM_EFFORT`.
 
-Every model, even the ones evals never faulted, occasionally names a real card with another
-card's code. `lib/link-repair.ts` checks each `[Name](arkhamdb.com/card/CODE)` link in the
-answer against the cached card set (no ArkhamDB call): a mismatch is corrected when the name
-resolves to exactly one card, or stripped to plain text otherwise, the same fallback the prompt
-already asks for when no tool gave a code. `lib/agent.ts` wires it in as a `streamText`
-transform that buffers only the current text block, so tool-call progress still streams live.
+GPT-6 Sol is the default because it is accurate and much cheaper per question than Claude. The
+evals found it free of errors, and Anthropic charges extra to write the system prompt into its
+cache, which a lightly used app pays on most requests; OpenAI's caching has no such charge. See
+[evals.md](evals.md#the-move-to-gpt-6-sol).
+
+Two provider quirks are handled by middleware in `lib/model.ts`:
+
+- **OpenAI.** The Responses API makes function tools strict by default, which forces the model to
+  fill in every optional field; a search with every filter set finds nothing. `openaiModel` turns
+  strict mode off.
+- **Anthropic.** The AI SDK's Anthropic provider implements `toolChoice: "none"` by dropping the
+  tool list, which invalidates the cached prefix and makes Anthropic reject a history that
+  contains tool calls. `anthropicModel` keeps the tools and sends Anthropic's own
+  `tool_choice: {type: "none"}` instead.
+
+`ARKHAM_MODEL=mock:local` swaps in the mock model (`lib/mock-model.ts`): a scripted stand-in that
+picks one tool for the question by pattern matching, calls it, and replies with a fixed message
+saying how long the result was. It runs the real loop, tools and UI end to end with no API key,
+which is how the Playwright tests run.
+
+### Card link repair
+
+Every model tested, even those the evals never caught making an error, occasionally links a real
+card with another card's code. `lib/link-repair.ts` checks each
+`[Name](https://arkhamdb.com/card/CODE)` link in an answer against the cached card set, with no
+ArkhamDB call. If the code belongs to a different card, the link is corrected when the name
+matches exactly one card, and otherwise reduced to plain text, which is also what the prompt asks
+for when no tool supplied a code. `lib/agent.ts` applies it as a `streamText` transform that
+holds back each block of answer text until the block ends, then sends it repaired, in one piece.
+Tool calls and reasoning still stream live, but the answer text does not appear token by token.
+If the deadline cuts a text block off before it ends, that block's partial text is never sent;
+the route then ends the stream with an error that reads "This answer ran out of time. Try
+again, or ask a narrower question." (`OUT_OF_TIME_ANSWER`).
 
 ## Tests
 
-| File | Holds |
-|---|---|
-| `known-answers.test.ts` | answers from mistakes a hand-check pass once caught: wrong printing level, a self-only card credited to a partner, a card named that is not in the deck, a dropped once-per-round limit; plus taboo on and off, pairing, filters and untrusted fencing |
-| `legality.test.ts` | every indexed list is legal under its own taboo list; hand-checked deckbuilding cases |
-| `index.test.ts` | the index's XP matches the deck tool's, its cards are the list's own, every archetype is used and every example card is owned, play-rate counts are sane |
-| `selection.test.ts` | the crawl's rules: most liked first, republished lists once, unowned and illegal lists passed over with the card named, promo reprints folded |
-| `pipeline-parsers.test.ts` | the rules, FAQ and decklist-search parsers on pages shaped like ArkhamDB's, including a search page whose rows miss a deck link |
-| `agent.test.ts` | the loop: budgets, the reserved answer step, cache markers, history trimming, a wrong card code corrected against the real card data |
-| `providers.test.ts` | the request each provider really receives: Anthropic cache breakpoints (1 h on the system prompt, 5 min on the newest message) and its own `tool_choice`, and a valid OpenAI Responses call |
-| `model.test.ts` | which provider `modelSpec` picks from the keys set, `ARKHAM_MODEL`, and `ARKHAM_EFFORT` |
-| `link-repair.test.ts` | a correct link left alone, a level pinning a name to one version, an ambiguous or unknown name stripped to plain text |
-| `route.test.ts` | the chat route's contract: 400s for bad bodies, partial settings, provider errors in plain words |
-| `loader.test.ts` | the card set and taboo lists survive ArkhamDB being down: the last copy served, one log line, a minute's wait before retrying |
-| `mock-model.test.ts` | the scripted model only calls tools that exist |
-| `symbols.test.ts` | game symbols in an answer become keycaps; links and other brackets are left alone |
-| `e2e/smoke.spec.ts` | Playwright, desktop and phone: the welcome screen, a card lookup, a deck shortlist, the taboo switch surviving a reload |
-| `golden.test.ts` | the guidance and tool definitions byte for byte, and the whole system prompt (rules included) by hash; a missing pin fails |
+The unit tests use Vitest and are all in `tests/`. `known-answers.test.ts` holds regression tests
+built from mistakes found when stored write-ups were checked by hand, each with a known correct
+answer.
 
-All of it is hermetic: the card set, taboo lists and decklists come from `tests/fixtures/`,
-written by the same index build that produced the shipped index. `vitest.config.mts` sets
-`ARKHAM_CARDS_FILE` and `ARKHAM_TABOOS_FILE` to those snapshots.
+| File | What it checks |
+|---|---|
+| `known-answers.test.ts` | Past mistakes: the wrong printing's level, a card that only helps its owner credited to a partner, a card named that is not in the deck, a dropped once-per-round limit. Also taboo on and off, partner search, filters and untrusted-text wrapping. |
+| `legality.test.ts` | Every indexed list is legal under its own taboo list; deckbuilding cases checked by hand against ArkhamDB |
+| `index.test.ts` | The index's XP matches the `deck` tool's, its cards are the list's own, every archetype is used and every example card is owned, `docs/archetypes.md` matches `lib/archetypes.ts`, play-rate counts are consistent |
+| `selection.test.ts` | The pipeline's selection rules: most liked first, republished lists once, unowned and illegal lists skipped with the card named, promo reprints folded |
+| `pipeline-parsers.test.ts` | The rules, FAQ and decklist-search parsers, on pages shaped like ArkhamDB's, including a search page with a row that has no deck link |
+| `agent.test.ts` | The loop: budgets, the reserved answer step, cache breakpoints, history trimming, a wrong card code corrected against the real card data |
+| `providers.test.ts` | The request each provider actually receives: Anthropic's cache breakpoints (1 h on the system prompt, 5 min on the newest message) and its own `tool_choice`, and a valid OpenAI Responses call |
+| `model.test.ts` | Which provider `modelSpec` picks from the keys that are set, `ARKHAM_MODEL` and `ARKHAM_EFFORT` |
+| `link-repair.test.ts` | A correct link is left alone, a level pins a name to one version, an ambiguous or unknown name becomes plain text |
+| `route.test.ts` | The chat route: 400s for bad bodies, a 413 for an oversized one, partial settings, provider errors shown in plain words, a cut-off answer that says so |
+| `taboo-unavailable.test.ts` | With the taboo switch on and the taboo lists unavailable, every tool reports an error instead of an answer without the taboo list applied |
+| `loader.test.ts` | The card set and taboo lists survive ArkhamDB being down: the last copy is served, one warning is logged, and retries wait a minute |
+| `mock-model.test.ts` | The mock model only calls tools that exist |
+| `symbols.test.ts` | Game symbols in an answer become keycaps; links and other brackets are left alone |
+| `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
+| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: the welcome screen, a card lookup, a deck shortlist, the taboo switch surviving a reload |
+
+The unit tests never touch the network. `vitest.config.mts` sets `ARKHAM_CARDS_FILE` and
+`ARKHAM_TABOOS_FILE` to the card set and taboo lists in `tests/fixtures/`, and a `fetch` mock
+(`tests/helpers.ts`) answers deck requests from `tests/fixtures/decklist-<id>.json` and throws on
+any other URL. `npm run data:index` rewrites the card set, the taboo lists and
+`indexed-decks.json` (every indexed list) together with the index, so the tests compare the index
+with the data it was built from. The `decklist-<id>.json` files are added by hand for tests that
+need a particular deck.
 
 ## Evals
 
-`evals/run.ts` runs the product's use cases (`evals/cases.ts`: rules, card lookups with the
-taboo list on and off, reading a deck, replacements, finding decks, partners) against a real
-model, with a dollar cap, and writes each transcript to `evals/results/<model>/` (git-ignored)
-to be read by a person:
+`evals/run.ts` runs the product's use cases (`evals/cases.ts`: rules questions, card lookups with
+the taboo list on and off, reading a deck, replacements, finding decks, finding partners) against
+a real model, stops once a dollar cap is reached, and writes each transcript to
+`evals/results/<provider>_<model>[@effort]/` (ignored by git) for a person to read:
 
 ```sh
-set -a && . ./.env.local && set +a
-npm run eval -- --model openai:gpt-6-sol --max-usd 2 [--cases rules-doom,partner]
+set -a && . ./.env.local && set +a   # load the API keys
+npm run eval -- --model openai:gpt-6-sol --max-usd 2
+npm run eval -- --model openai:gpt-6-sol --cases rules-doom,partner
 ```
+
+[evals.md](evals.md) has the method, the results per model and what they changed.

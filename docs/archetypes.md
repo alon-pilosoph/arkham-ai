@@ -1,30 +1,36 @@
 # Archetypes
 
-**Scope.** What the `archetypes` field of the deck index means, how a deck earns one, and the
-definition of each. The definitions live in `lib/archetypes.ts`; the `recommendDecks` tool
-shows them to the model, and the table below mirrors them (a test keeps the two in step).
+This document explains the `archetypes` field of the deck index: what an archetype is, when a
+deck is tagged with one, and what each archetype means. The definitions live in
+`lib/archetypes.ts`, and the `recommendDecks` tool includes them in its description so the model
+knows what each filter value means. The table below repeats them, and `tests/index.test.ts`
+fails if the two drift apart.
 
 ## What an archetype is
 
-The word is used the way the Arkham community uses it: **a way of building that works for many
-investigators and needs both enablers and payoffs.** Big money is an archetype because any Rogue
-can build around it; Daisy's tomes are not, because they only go with Daisy. An archetype says
-*how* a deck wins. Its role (fighter, cluever, flex, support) says *what* it does in a scenario,
-and the two are recorded separately.
+The word is used the way the Arkham Horror LCG community uses it: **a way of building a deck that
+works for many investigators and needs both enablers (cards that set the mechanic up) and payoffs
+(cards that reward it).** Big money is an archetype because any Rogue can build around it; Daisy
+Walker's tomes are not, because they only work with Daisy. An archetype says *how* a deck wins. Its
+role (fighter, cluever, flex or support) says *what* it does in a scenario, and the two are
+recorded separately.
 
 A deck is tagged with an archetype only when it is built around it:
 
-- **A build, not a package.** A couple of Chthonian Stones is a package; Protective Incantations,
-  Seal of the Seventh Sign and the cards that release seals make a seal deck.
+- **A build, not a package.** A couple of copies of The Chthonian Stone are a package, a small
+  set of cards added to an otherwise unrelated deck. Protective Incantation, Seal of the Seventh
+  Sign and the cards that release sealed tokens together make a seal deck.
 - **Generic cards, not only the investigator.** When the investigator's own ability supports a
-  mechanic, the deck is still tagged if it invests in the generic cards for it: Carolyn Fern or
-  Vincent Lee with healing cards, Sister Mary or Kōhaku with bless cards, Rita Young or Finn
+  mechanic, the deck is still tagged if it also invests in the generic cards for it: Carolyn Fern
+  or Vincent Lee with healing cards, Sister Mary or Kōhaku with bless cards, Rita Young or Finn
   Edwards with evasion cards. An investigator's own engine with no generic support (Lily Chen's
-  Disciplines, Joe Diamond's Hunch deck, Duke) is not an archetype; the summary names it.
-- **Zero is normal.** A third of the indexed decks have no archetype: they are good-stuff lists or
-  run on their investigator's engine. A deck can have up to three.
-- **Deck names are no help.** Of 4,073 published deck names in one harvest, 53 mention money, 45
-  guns and 35 bless, so labels are read off the list and the guide.
+  Disciplines, Joe Diamond's Hunch deck, Duke) is not an archetype; the deck's summary names it
+  instead.
+- **Having no archetype is normal.** A third of the indexed decks have none: they are collections
+  of generally strong cards, or they run on their investigator's own engine. A deck can have up
+  to three.
+- **Deck names don't help.** Of 4,073 published deck names in one harvest, 53 mention money, 45
+  guns and 35 bless, so labels are based on the list and the guide, not the title.
 
 ## The archetypes
 
@@ -62,13 +68,14 @@ A deck is tagged with an archetype only when it is built around it:
 | movement | moves itself or others without spending actions | Pathfinder, Shortcut, Elusive, Swift Reflexes |
 | actions matter | takes extra actions or gets more from each | Haste, Borrowed Time, Quick Learner, Swift Reflexes |
 
-Every example card is one the players own, and `tests/index.test.ts` checks both that and that
-every archetype is used by at least one indexed deck.
+Every example card is one the players own. `tests/index.test.ts` checks that, and that every
+archetype is used by at least one indexed deck.
 
 ## Where the vocabulary comes from
 
-The list was drawn from community sources: ArkhRec's data-driven
-classification of player cards, r/arkhamhorrorlcg's archetype threads, two YouTube archetype
-guide series, BoardGameGeek and the Ancient Evils blog. Terms that three or more of them name made
-the list; ArkhamDB's own deck tags (solo, multiplayer, beginner, theme) are kept as the separate
-`tags` field. The notes, with every source, are in [research/archetypes.md](research/archetypes.md).
+The list was drawn from community sources: ArkhRec's data-driven classification of player cards,
+the archetype discussion threads on r/arkhamhorrorlcg, two YouTube series of archetype guides,
+BoardGameGeek and the Ancient Evils blog. A term made the list when three or more of those sources
+use it. ArkhamDB's own deck tags (solo, multiplayer, beginner, theme) are kept separately, in the
+index's `tags` field. The research notes, with every source, are in
+[research/archetypes.md](research/archetypes.md).

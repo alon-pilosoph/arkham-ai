@@ -1,7 +1,9 @@
 # What "archetype" means in Arkham Horror LCG: research notes (2026-09-23)
 
-Working notes, gathered to decide the archetype field of the deck index. Sources are listed
-at the end; every claim below cites one.
+Working notes, gathered to decide what the `archetypes` field of the deck index should hold. The
+result is [docs/archetypes.md](../archetypes.md). Sources are listed at the end, and each claim
+taken from a source cites it by its tag, such as [R2]. The "ArkhamDB itself" section is from the
+project's own harvest of ArkhamDB data.
 
 ## Definitions the community uses
 
@@ -25,7 +27,7 @@ at the end; every claim below cites one.
 
 ## ArkhRec's data-driven classification [A2]
 
-Every player card classified by effect, trigger and additional cost into 24 groups. Two are
+ArkhRec classified every player card by effect, trigger and additional cost into 24 groups. Two are
 roles (**Combat**, **Clue**); six are "basic functions of the game that are not flavorful
 enough to be considered an archetype" (**Agility Boost, Willpower Boost, Wild Skill Boost,
 non-combat Enemy mgmt, Seal, Discount**). The remaining **16 archetypes**:
@@ -33,8 +35,8 @@ non-combat Enemy mgmt, Seal, Discount**). The remaining **16 archetypes**:
 Heal, Bless, Curse, Doom, Skill substitution, Token manipulation, Encounter mgmt, Big money,
 Succeed by, Fail, Dark horse, Card draw, Big hand, Discard, Exile, Move.
 
-A deck's score in each archetype = how many of its cards fall in that group, scaled so the
-90th-percentile deck is 100%. Example: Diana "Practicing Safe Hex" reads as "flex 60/40
+A deck's score in each archetype is how many of its cards fall in that group, scaled so that the
+deck at the 90th percentile scores 100%. Example: Diana "Practicing Safe Hex" reads as "flex 60/40
 combat/clue, with lots of skill substitution, token modification and encounter management".
 
 ## Community archetype lists
@@ -139,10 +141,9 @@ whether "the player cards are cohesive enough to support archetypes".
 
 ## Sources
 
-
 - [A2] ArkhRec blog, "A piece of the Arkham pie pt. 2" (2022-09-21), archived:
   http://web.archive.org/web/20220921235050/https://blog.arkhrec.com/2022/09/21/a-piece-of-the-arkham-pie-pt-2/
-- [A1] Reddit, "Arkham's Roles and Archetypes - Part 1/2":
+- [A1] Reddit, "Arkham's Roles and Archetypes - Part 1/2" (consulted, not quoted above):
   https://www.reddit.com/r/arkhamhorrorlcg/comments/xeygcp/ and /comments/xkhyt3/
 - [R1] https://www.reddit.com/r/arkhamhorrorlcg/comments/10ocp1l/
 - [R2] https://www.reddit.com/r/arkhamhorrorlcg/comments/a4pewr/
@@ -160,6 +161,5 @@ whether "the player cards are cohesive enough to support archetypes".
   https://derbk.com/ancientevils/investigator-expansion-review-the-drowned-city/
 - [D2] Ancient Evils, "54 Investigator Decks for the Current Environment":
   https://derbk.com/ancientevils/54-investigator-decks-for-the-current-environment/
-- [R7] Reddit, "What's your favourite community jargon":
+- [R7] Reddit, "What's your favourite community jargon" (consulted, not quoted above):
   https://www.reddit.com/r/arkhamhorrorlcg/comments/xsapcp/
-
