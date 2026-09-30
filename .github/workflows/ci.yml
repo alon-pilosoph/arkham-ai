@@ -16,6 +16,7 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -24,6 +25,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run typecheck
+      # Biome's check covers formatting as well as lint
       - run: npm run lint
       # hermetic: cards, taboo lists and decklists come from tests/fixtures, never the network
       - run: npm test
@@ -31,6 +33,7 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -39,7 +42,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      # the real app on the scripted model and the fixture card set: no keys, no network
+      # the production build on the mock model and the fixture card set: no keys, no network
       - run: npm run e2e
       - if: failure()
         uses: actions/upload-artifact@v4

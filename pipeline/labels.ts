@@ -18,8 +18,6 @@ export type DeckLabel = z.infer<typeof DeckLabelSchema>;
 
 export const LabelFileSchema = z.object({ investigator: z.string().min(1), decks: z.array(DeckLabelSchema) }).strict();
 
-export type LabelFile = z.infer<typeof LabelFileSchema>;
-
 export function labelFileName(code: string, name: string): string {
   const slug = name
     .normalize("NFD")
