@@ -1,8 +1,8 @@
 import { tool } from "ai";
 import { z } from "zod";
 import {
+  type Customization,
   cardHead,
-  customizationText,
   type InvestigatorStats,
   investigatorStats,
   statsText,
@@ -93,6 +93,16 @@ export async function readDeck(ref: string, guideOffset = 0, settings: Settings 
     guideOffset: offset,
     ...(next < guide.length ? { guideNextOffset: next } : {}),
   };
+}
+
+function customizationText(c: Customization): string {
+  const marks = [
+    c.total ? `${c.boxes} of ${c.total} ${c.total === 1 ? "box" : "boxes"}` : "",
+    c.choice
+      ? `chose ${c.choiceIsText ? untrusted("customization choice, written by the deck's author", c.choice) : c.choice}`
+      : "",
+  ].filter(Boolean);
+  return `${c.text}${marks.length ? ` [${marks.join(", ")}]` : ""}`;
 }
 
 function cardRow(c: DeckCard): string {

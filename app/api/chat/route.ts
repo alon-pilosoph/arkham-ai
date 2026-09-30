@@ -19,7 +19,9 @@ export const maxDuration = 300;
 // Warm the card cache at module load, but not while `next build` only analyses the module.
 if (process.env.NEXT_PHASE !== "phase-production-build") getCards().catch(() => {});
 
-const LIMITS = { messages: 100, textChars: 8_000 };
+// The page sends a trimmed history (lib/history.ts): text only, at most HISTORY_MESSAGES
+// messages, well under bodyBytes. The cap bounds what one request can make the model read.
+const LIMITS = { bodyBytes: 512_000, messages: 100, textChars: 8_000 };
 
 // No system role, so a client can't inject instructions. Assistant parts are validated later by
 // convertToModelMessages.
@@ -47,8 +49,20 @@ function errorText(error: unknown): string {
   return "Something went wrong while answering. Try again.";
 }
 
+function parseJson(bytes: ArrayBuffer): unknown {
+  try {
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(req: Request) {
-  const parsed = RequestSchema.safeParse(await req.json().catch(() => null));
+  const tooLarge = () => new Response("This chat is too long to send. Start a new chat.", { status: 413 });
+  if (Number(req.headers.get("content-length")) > LIMITS.bodyBytes) return tooLarge();
+  const body = await req.arrayBuffer().catch(() => null);
+  if (body && body.byteLength > LIMITS.bodyBytes) return tooLarge();
+  const parsed = RequestSchema.safeParse(body && parseJson(body));
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
     const where = issue?.path.length ? ` (at ${issue.path.join(".")})` : "";

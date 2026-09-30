@@ -48,7 +48,9 @@ export function cachedLoader<Raw, T>(o: LoaderOptions<Raw, T>): () => Promise<T>
     if (res.ok) {
       try {
         fs.mkdirSync(path.dirname(o.file), { recursive: true });
-        fs.writeFileSync(o.file, JSON.stringify(res.data));
+        // Renamed into place, so a process killed mid-write never leaves half a file to read as fresh.
+        fs.writeFileSync(`${o.file}.tmp`, JSON.stringify(res.data));
+        fs.renameSync(`${o.file}.tmp`, o.file);
       } catch {
         // Read-only filesystem on serverless: keep it in memory only.
       }

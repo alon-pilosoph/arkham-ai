@@ -33,6 +33,8 @@ export type Customization = {
   boxes: number;
   total: number;
   choice?: string;
+  /** The choice is the deck author's own text (traits, a skill), not card names. */
+  choiceIsText?: true;
 };
 
 export type CardFace = {
@@ -135,14 +137,6 @@ export function cardHead(c: CardFace): string {
   ]
     .filter(Boolean)
     .join(", ");
-}
-
-export function customizationText(c: Customization): string {
-  const marks = [
-    c.total ? `${c.boxes} of ${c.total} ${c.total === 1 ? "box" : "boxes"}` : "",
-    c.choice ? `chose ${c.choice}` : "",
-  ].filter(Boolean);
-  return `${c.text}${marks.length ? ` [${marks.join(", ")}]` : ""}`;
 }
 
 export function rulingsMarkdown(r: Rulings): string {

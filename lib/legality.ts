@@ -311,11 +311,16 @@ export function deckViolation(store: CardStore, deck: DeckList, taboo?: TabooLis
 }
 
 /** The choices an investigator's deckbuilding asks for and what this deck picked, in words:
- *  "Secondary Class: guardian". A choice the author never made reads "not chosen". */
+ *  "Secondary Class: guardian". A choice the author never made reads "not chosen". Only a
+ *  class the option offers is named: meta is the author's own text. */
 export function deckChoices(options: DeckOption[] | undefined, meta: Record<string, string>): string[] {
   const out: string[] = [];
   for (const o of options ?? []) {
-    if (o.faction_select) out.push(`${o.name ?? "Chosen class"}: ${meta[o.id ?? "faction_selected"] ?? "not chosen"}`);
+    if (o.faction_select) {
+      const chosen = meta[o.id ?? "faction_selected"];
+      const shown = chosen === undefined ? "not chosen" : o.faction_select.includes(chosen) ? chosen : "not a class it offers";
+      out.push(`${o.name ?? "Chosen class"}: ${shown}`);
+    }
     if (o.option_select) {
       const chosen = o.option_select.find((s) => s.id === meta.option_selected);
       out.push(`${o.name ?? "Chosen option"}: ${chosen ? (chosen.name ?? chosen.id) : "not chosen"}`);

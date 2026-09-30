@@ -62,14 +62,16 @@ export async function fetchDeck(ref: DeckRef): Promise<Fetched<{ deck: RawDeck; 
 
 export function deckMeta(d: Pick<RawDeck, "meta">): Record<string, string> {
   if (!d.meta) return {};
-  if (typeof d.meta === "string") {
+  let meta: unknown = d.meta;
+  if (typeof meta === "string") {
     try {
-      return JSON.parse(d.meta || "{}");
+      meta = JSON.parse(meta || "{}");
     } catch {
       return {};
     }
   }
-  return d.meta;
+  // Written by the deck's author: "null" or an array parses, and would break every lookup.
+  return meta && typeof meta === "object" && !Array.isArray(meta) ? (meta as Record<string, string>) : {};
 }
 
 /** A parallel investigator swaps its front (ability) and/or back (deckbuilding) for a 90xxx card. */
@@ -88,7 +90,8 @@ export function investigatorSides(store: CardStore, d: DeckList) {
 type CustomizationPart = { index: number; boxes: number; choice?: string };
 
 /** ArkhamDB's meta.cus_<code>: "index|boxes[|choice],..." per purchased option, where index is
- *  the customization_text line and choice the card code an option names. */
+ *  the customization_text line and choice what the option names: card codes, traits or a skill,
+ *  several joined by "^". */
 export function parseCustomization(raw: string | undefined): CustomizationPart[] {
   if (!raw) return [];
   return String(raw)
@@ -111,8 +114,12 @@ function customizations(store: CardStore, meta: Record<string, string>, code: st
     // Each option line opens with one box glyph per checkbox: "□□ <b>Durable.</b> ..."
     const total = opts[idx].match(/^[□☐]+/)?.[0].length ?? 0;
     const text = cleanText(opts[idx].replace(/^[□☐]+\s*/, ""));
-    const chosen = choice ? (store.get(choice)?.name ?? choice) : "";
-    out.push({ text, boxes, total, ...(chosen ? { choice: chosen } : {}) });
+    const picks = (choice ?? "").split("^").filter(Boolean);
+    const cards = picks.map((p) => store.get(p)?.name);
+    const chosen = cards.every(Boolean)
+      ? { choice: cards.join(", ") }
+      : { choice: picks.join(", "), choiceIsText: true as const };
+    out.push({ text, boxes, total, ...(picks.length ? chosen : {}) });
   }
   return out;
 }
