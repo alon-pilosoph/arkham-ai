@@ -9,7 +9,7 @@
     { "id": 45234, "role": "flex", "secondaryRole": null, "archetypes": ["big money", "events matter"], "summary": "Preston who refuses to take tests: Double, Double doubles Intel Report, Small Favor, Sneak Attack and Hot Streak, and Money Talks and Friends in Low Places buy the rest." },
     { "id": 11698, "role": "flex", "secondaryRole": null, "archetypes": ["big money"], "summary": "Hard-mode generalist Preston who pours his money into Well Connected and Money Talks for guaranteed successes, with Lone Wolf, Dario El-Amin and Drawing Thin feeding the pile." },
     { "id": 30289, "role": "cluever", "secondaryRole": null, "archetypes": ["bless", "succeed by X"], "summary": "Blessed Preston who seals bless on Favor of the Sun and Ancient Covenant to auto-succeed huge all-in turns with Eye of the Djinn, Lucky Cigarette Case and Quick Thinking; can be the only cluever." },
-    { "id": 14402, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse", "fail forward"], "summary": "Taboo-friendly Poorston: Dark Horse, Fire Axe and Dig Deep, Trial by Fire and Intel Report to spend everything, and Live and Learn and Lucky! to save tests." },
+    { "id": 14402, "role": "flex", "secondaryRole": null, "archetypes": ["dark horse", "fail forward"], "summary": "Poorston: Dark Horse, Fire Axe and Dig Deep, Trial by Fire and Intel Report to spend everything, and Live and Learn and Lucky! to save tests." },
     { "id": 35026, "role": "cluever", "secondaryRole": null, "archetypes": ["fail forward", "events matter"], "summary": "Draw-engine Preston who fails tests on purpose with Drawing Thin, Rabbit's Foot and Take Heart, takes clues with Old Keyring and \"Look what I found!\", and doubles Black Market with Double, Double." }
   ]
 }

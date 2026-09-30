@@ -1,7 +1,7 @@
 {
   "investigator": "Luke Robinson",
   "decks": [
-    { "id": 19422, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Taboo-compliant standard Luke who plays events at connecting locations and through the Dream-Gate: Drawn to the Flame and Read the Signs for clues, Shrivelling and Sixth Sense in play, Mr. \"Rook\" to dig." },
+    { "id": 19422, "role": "flex", "secondaryRole": null, "archetypes": ["spell events"], "summary": "Standard Luke who plays events at connecting locations and through the Dream-Gate: Drawn to the Flame and Read the Signs for clues, Shrivelling and Sixth Sense in play, Mr. \"Rook\" to dig." },
     { "id": 17073, "role": "flex", "secondaryRole": null, "archetypes": [], "summary": "Hard-mode Luke who digs with Mr. \"Rook\" and Astounding Revelation, investigates remotely with Drawn to the Flame and Rite of Seeking, and fights with Shrivelling and Storm of Spirits." },
     { "id": 16082, "role": "cluever", "secondaryRole": null, "archetypes": ["token manipulation"], "summary": "Dream-Gate Luke who takes nearly every clue from the safety of the Dream-Gate at shroud 0 or 1, controlling the bag with Olive McBride, Dark Prophecy and Premonition; full of rules questions." },
     { "id": 43767, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Innsmouth fighter Luke from Ancient Evils who snipes into any location with Enchanted Bows kept charged by Twila and Prophetic, backed by Spectral Razor and String of Curses." },

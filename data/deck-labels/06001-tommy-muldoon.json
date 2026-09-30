@@ -1,7 +1,7 @@
 {
   "investigator": "Tommy Muldoon",
   "decks": [
-    { "id": 22004, "role": "fighter", "secondaryRole": null, "archetypes": ["soak"], "summary": "Taboo-compliant standard Tommy: soak assets like Cherished Keepsake, Leather Coat and Tetsuo Mori pay him when they fall and shuffle back, while Becky, Enchanted Blade and Guard Dog fight." },
+    { "id": 22004, "role": "fighter", "secondaryRole": null, "archetypes": ["soak"], "summary": "Standard Tommy: soak assets like Cherished Keepsake, Leather Coat and Tetsuo Mori pay him when they fall and shuffle back, while Becky, Enchanted Blade and Guard Dog fight." },
     { "id": 31304, "role": "fighter", "secondaryRole": null, "archetypes": ["bless", "seal"], "summary": "Blessed Tommy at 30 XP: Spirit of Humanity on Peter Sylvestre and Jessica Hyde makes bless every turn, sealed on Holy Spear for big attacks and recycled with Hallow." },
     { "id": 31338, "role": "fighter", "secondaryRole": null, "archetypes": ["bless"], "summary": "The level 0 start of Holy Muldy: soak assets and Tetsuo Mori, .35 Winchesters and Becky to fight, and Rite of Sanctification and Keep Faith laying the groundwork for bless." },
     { "id": 43841, "role": "fighter", "secondaryRole": null, "archetypes": ["bless", "firearms"], "summary": "Shotgun Tommy who builds bless with Spirit of Humanity, Favor of the Sun and Keep Faith, upgrades the Shotgun with Custom Modifications and Venturer, and reloads through Relentless." },

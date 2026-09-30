@@ -1,7 +1,7 @@
 {
   "investigator": "Tony Morgan",
   "decks": [
-    { "id": 17487, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Taboo-compliant standard Tony who hunts bounty targets with his .38 Long Colts, Derringers and Knuckleduster, reloads with Contraband, and gains actions from Leo De Luca and Swift Reflexes." },
+    { "id": 17487, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Standard Tony who hunts bounty targets with his .38 Long Colts, Derringers and Knuckleduster, reloads with Contraband, and gains actions from Leo De Luca and Swift Reflexes." },
     { "id": 32625, "role": "fighter", "secondaryRole": null, "archetypes": ["succeed by X", "actions matter"], "summary": "Miracle-Rogue Tony who takes six or seven Switchblade (2) attacks a turn through Haste, Leo De Luca, Garrote Wire and his bounty action, boosted by Lonnie Ritter, Delilah and Hard Knocks; built for Expert." },
     { "id": 48228, "role": "fighter", "secondaryRole": null, "archetypes": ["actions matter", "succeed by X"], "summary": "Bewitching Tony who holds Ace in the Hole for twelve-action turns with Haste, Honed Instinct and Leo De Luca, oversucceeding with Switchblade (2) for damage and taking clues with Working a Hunch." },
     { "id": 28027, "role": "fighter", "secondaryRole": null, "archetypes": ["fight events"], "summary": "Fight-event Tony who spends his free bounty attack on Clean Them Out, Monster Slayer, One-Two Punch and Coup de Grâce, pulling enemies in with \"Get over here!\" and boosting with Lonnie Ritter." },
