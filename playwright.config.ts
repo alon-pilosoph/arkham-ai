@@ -2,7 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 3100;
 
-// The real app on the scripted model, reading the fixture card set: no keys, no network.
+// The production build on the mock model (ARKHAM_MODEL=mock:local), reading the fixture
+// card set: no API key and no network needed.
 export default defineConfig({
   testDir: "e2e",
   timeout: 60_000,

@@ -37,6 +37,8 @@ function rolandDecks(): RawDeck[] {
     .map((d) => ({ ...d, name: `deck ${d.id}` }));
 }
 
+/** Runs the selection over `decks` with the likes given, plus `extra` rows of 500 likes each that load
+ *  as the deck mapped to them, or fail to load when it is null. */
 async function select(decks: RawDeck[], likes: (d: RawDeck, i: number) => number, extra: Record<number, RawDeck | null> = {}) {
   const byId = new Map<number, RawDeck | null>([
     ...decks.map((d) => [d.id, d] as const),
@@ -50,15 +52,15 @@ async function select(decks: RawDeck[], likes: (d: RawDeck, i: number) => number
   return selectForInvestigator(await getCards(), await getTaboos(), ROLAND, rows, load);
 }
 
-describe("selection", () => {
-  test("keeps the most liked lists, up to ten", async () => {
+describe("selectForInvestigator", () => {
+  test("keeps every liked, legal list, most liked first", async () => {
     const decks = rolandDecks();
     expect(decks.length).toBe(DECKS_PER_INVESTIGATOR);
-    const r = await select(decks, (_, i) => 100 - i);
-    expect(r.decks.map((d) => d.row.id)).toEqual(decks.map((d) => d.id));
+    const r = await select(decks, (_, i) => i + 1);
+    expect(r.decks.map((d) => d.row.id)).toEqual(decks.map((d) => d.id).reverse());
   });
 
-  test("a republished list is kept once, under its most liked copy", async () => {
+  test("keeps a republished list once, under its most liked copy", async () => {
     const [first, ...rest] = rolandDecks();
     const copy = { ...first, id: 900001 };
     const r = await select([first, ...rest.slice(0, 3)], (_, i) => 100 - i, { 900001: copy });
@@ -67,7 +69,7 @@ describe("selection", () => {
     expect(r.skipped).toContainEqual({ id: first.id, likes: 100, skip: { reason: "same list", as: 900001 } });
   });
 
-  test("lists the collection cannot build, or the rules forbid, are passed over with the card named", async () => {
+  test("passes over a list the collection cannot build, the rules forbid, or ArkhamDB cannot serve, saying why", async () => {
     const [base] = rolandDecks();
     const unowned = { ...base, id: 900002, slots: { ...base.slots, "12017": 1 } }; // Endurance, 2026 Core Set only
     const illegal = { ...base, id: 900003, slots: { ...base.slots, "01061": 2 } }; // Scrying, Mystic
@@ -79,27 +81,31 @@ describe("selection", () => {
     expect(r.decks).toEqual([]);
   });
 
-  test("a list nobody liked is never read", async () => {
+  test("never reads a list nobody liked", async () => {
     const decks = rolandDecks().slice(0, 2);
     const r = await select(decks, (_, i) => 1 - i);
     expect(r.decks.map((d) => d.row.likes)).toEqual([1]);
   });
 });
 
-describe("helpers", () => {
-  test("overlap is Jaccard over distinct cards", () => {
+describe("overlap", () => {
+  test("is Jaccard similarity over distinct cards", () => {
     expect(overlap(new Set(["a", "b", "c"]), new Set(["b", "c", "d"]))).toBe(0.5);
     expect(overlap(new Set(["a"]), new Set(["a"]))).toBe(1);
   });
+});
 
-  test("ties in likes go to favorites, then to the older deck", () => {
+describe("byLikes", () => {
+  test("breaks a tie in likes by favorites, then by the older deck", () => {
     const a = { ...row(2, 5), favorites: 1 };
     const b = { ...row(1, 5), favorites: 1 };
     const c = { ...row(3, 5), favorites: 2 };
     expect([a, b, c].sort(byLikes).map((r) => r.id)).toEqual([3, 1, 2]);
   });
+});
 
-  test("owned investigators fold promo reprints and skip card backs and parallels", async () => {
+describe("ownedInvestigators", () => {
+  test("folds promo reprints and skips card backs and parallels", async () => {
     const store = await getCards();
     const owned = ownedInvestigators(store);
     expect(owned.size).toBe(66);

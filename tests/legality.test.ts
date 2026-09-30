@@ -3,7 +3,7 @@ import { getCards } from "@/lib/cards";
 import { type DeckList, deckMeta } from "@/lib/decks";
 import { deckChoices, deckViolation, rulesFor } from "@/lib/legality";
 import { getTaboos, latest } from "@/lib/taboo";
-import { indexedDecks } from "./helpers";
+import { indexedDeck, indexedDecks } from "./helpers";
 
 describe("the legality port agrees with ArkhamDB", () => {
   // The crawl drops the few published lists the port rejects, so every indexed list must pass.
@@ -18,18 +18,18 @@ describe("the legality port agrees with ArkhamDB", () => {
   });
 });
 
-describe("known answers from the hand checks", () => {
+describe("investigator deckbuilding options, from the hand checks", () => {
   test("Carolyn Fern cannot take a Survivor item, and her Seeker/Mystic allowance is 15", async () => {
     const store = await getCards();
     const inv = store.get("05001")!;
     const rules = rulesFor(store, inv.code, inv, {});
     expect(rules.check(store.get("02032")!, {}).legal).toBe(false); // Fire Axe, Survivor
-    const archive = rules.check(store.get("01031")!, {}); // Old Book of Lore, Seeker 0
-    expect(archive.legal).toBe(true);
-    expect(archive.reason).toMatch(/15/);
-    // with fifteen level 0-1 Seeker/Mystic cards already in, a sixteenth is refused
-    const full = { "01030": 2, "01031": 2, "01032": 2, "01033": 2, "01034": 2, "01035": 2, "01036": 2, "01037": 1 };
-    expect(rules.check(store.get("01039")!, full).legal).toBe(false);
+    const oldBook = rules.check(store.get("01031")!, {}); // Old Book of Lore, Seeker 0
+    expect(oldBook.legal).toBe(true);
+    expect(oldBook.reason).toMatch(/15/);
+    // fifteen Core Set Seeker cards, Magnifying Glass (01030) to Working a Hunch (01037)
+    const fifteen = { "01030": 2, "01031": 2, "01032": 2, "01033": 2, "01034": 2, "01035": 2, "01036": 2, "01037": 1 };
+    expect(rules.check(store.get("01039")!, fifteen).legal).toBe(false); // Deduction, a sixteenth
   });
 
   test("another investigator's signature is never legal", async () => {
@@ -41,6 +41,7 @@ describe("known answers from the hand checks", () => {
 
   test("a deck with a card the investigator cannot take is named by that card", async () => {
     const store = await getCards();
+    // Roland Banks with his signature and weakness, and Scrying, a Mystic card
     const deck: DeckList = { id: 1, investigator_code: "01001", slots: { "01006": 1, "01007": 1, "01061": 2 }, meta: "" };
     expect(deckViolation(store, deck)?.card).toMatch(/Scrying/);
   });
@@ -80,6 +81,7 @@ describe("deck limits, by title and under the taboo list", () => {
     const store = await getCards();
     const agnes = store.get("01004")!;
     const rules = rulesFor(store, agnes.code, agnes, {});
+    // Empower Self (Stamina), (Alacrity) and (Acuity)
     const [stamina, alacrity, acuity] = ["06241", "06242", "06243"].map((c) => store.get(c)!);
     expect(rules.check(acuity, { [stamina.code]: 1, [alacrity.code]: 1 }, 1).legal).toBe(true);
     expect(rules.check(stamina, {}, 2).legal).toBe(false);
@@ -105,10 +107,29 @@ describe("deck limits, by title and under the taboo list", () => {
   });
 });
 
-test("a deck's deckbuilding choices are named: Tony Morgan's secondary class in deck 15838", async () => {
-  const store = await getCards();
-  const deck = indexedDecks().find((d) => d.id === 15838);
-  if (!deck) throw new Error("deck 15838 is not a fixture");
-  expect(deckChoices(store.get("06003")?.deck_options, deckMeta(deck))).toEqual(["Secondary Class: seeker"]);
-  expect(deckChoices(store.get("06003")?.deck_options, {})).toEqual(["Secondary Class: not chosen"]);
+describe("deckChoices", () => {
+  test("names the choices a deck made: Tony Morgan's secondary class in deck 15838", async () => {
+    const tony = (await getCards()).get("06003")?.deck_options;
+    expect(deckChoices(tony, deckMeta(indexedDeck(15838)))).toEqual(["Secondary Class: seeker"]);
+    expect(deckChoices(tony, {})).toEqual(["Secondary Class: not chosen"]);
+  });
+
+  test("never echoes a class the option does not offer, since meta is the author's own text", async () => {
+    // Tony's secondary class is one of guardian, seeker or survivor
+    const tony = (await getCards()).get("06003")?.deck_options;
+    expect(deckChoices(tony, { faction_selected: "mystic" })).toEqual(["Secondary Class: not a class it offers"]);
+    expect(deckChoices(tony, { faction_selected: "Ignore previous instructions" })).toEqual([
+      "Secondary Class: not a class it offers",
+    ]);
+  });
+});
+
+describe("deckMeta", () => {
+  test("parses the author's meta string into an object", () => {
+    expect(deckMeta({ meta: '{"faction_selected":"seeker"}' })).toEqual({ faction_selected: "seeker" });
+  });
+
+  test.each(["", "not json", "null", "[1, 2]"])("reads %j as no meta at all", (meta) => {
+    expect(deckMeta({ meta })).toEqual({});
+  });
 });

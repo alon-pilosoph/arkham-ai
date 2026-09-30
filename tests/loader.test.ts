@@ -55,21 +55,28 @@ describe("the cached loader", () => {
   test("a failed refresh serves the last copy, logs once, and waits a minute to retry", async () => {
     const get = loader();
     expect(await get()).toBe(1);
+
+    // stale, with ArkhamDB down: the copy is served at once, and the refresh behind it fails
     up = false;
     later(TTL_MS + 1_000);
-    // stale: served at once, refreshed behind it
     expect(await get()).toBe(1);
     await settle();
     expect(calls).toBe(2);
+
+    // within the minute: no new fetch
     expect(await get()).toBe(1);
     await settle();
     expect(calls).toBe(2);
+
+    // a minute on: one retry, which fails too, and still only one log line
     later(RETRY_MS);
     expect(await get()).toBe(1);
     await settle();
     expect(calls).toBe(3);
     expect(warn).toHaveBeenCalledTimes(1);
     expect(String(warn.mock.calls[0][0])).toMatch(/could not load the test set.*503.*serving the last copy/);
+
+    // back up: the next retry's copy is served from then on
     up = true;
     later(RETRY_MS);
     await get();
@@ -96,7 +103,7 @@ describe("the cached loader", () => {
     expect(await get()).toBe(2);
   });
 
-  test("a first load is waited for no longer than the request's time for tools", async () => {
+  test("a first load is waited for no longer than the request's time for tools allows", async () => {
     vi.stubGlobal("fetch", () => new Promise(() => {}));
     const out = new AbortController();
     const waiting = withSignal(out.signal, () => loader()());

@@ -15,8 +15,9 @@ describe("repairLinks", () => {
     expect(repairLinks(text, store)).toBe("Play [Shrivelling (3)](https://arkhamdb.com/card/02154) for the extra damage.");
   });
 
-  test("strips the link when the name has more than one version and no level to pick one", async () => {
+  test("strips a wrong code when the name has several versions and no level picks one", async () => {
     const store = await getCards();
+    // 09021 is Hunter's Armor; Archaic Glyphs has a level 0 and two level 3 versions
     const text = "Recharge with [Archaic Glyphs](https://arkhamdb.com/card/09021).";
     expect(repairLinks(text, store)).toBe("Recharge with Archaic Glyphs.");
   });
