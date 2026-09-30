@@ -259,7 +259,11 @@ const AssistantMessage: FC = () => {
           {({ part, children }) => {
             switch (part.type) {
               case "group-chainOfThought":
-                return <div data-slot="aui_chain-of-thought">{children}</div>;
+                return (
+                  <div data-slot="aui_chain-of-thought" className="not-last:mb-4">
+                    {children}
+                  </div>
+                );
               case "group-tool":
                 return <div className="flex flex-col">{children}</div>;
               case "group-reasoning": {
