@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Thread } from "@/components/assistant-ui/elements/thread.aui";
 import { ThreadListSidebar } from "@/components/assistant-ui/elements/threadlist-sidebar.aui";
 import { TooltipIconButton } from "@/components/assistant-ui/elements/tooltip-icon-button";
+import { CardDialogProvider } from "@/components/cards/card-dialog";
 import { TabooSwitch } from "@/components/settings/taboo-switch";
 import { useArkhamTools } from "@/components/tools/tool-ui";
 import { Separator } from "@/components/ui/separator";
@@ -109,15 +110,17 @@ export const Assistant = () => {
   return (
     <AssistantRuntimeProvider runtime={runtime} aui={aui}>
       <SidebarProvider>
-        <div className="flex h-dvh w-full md:pr-0.5">
-          <ThreadListSidebar />
-          <SidebarInset>
-            <Header taboo={settings.taboo} onTaboo={(taboo) => update({ taboo })} />
-            <div className="flex-1 overflow-hidden">
-              <Thread welcome={<Welcome />} autoFocus={autoFocus} />
-            </div>
-          </SidebarInset>
-        </div>
+        <CardDialogProvider>
+          <div className="flex h-dvh w-full md:pr-0.5">
+            <ThreadListSidebar />
+            <SidebarInset>
+              <Header taboo={settings.taboo} onTaboo={(taboo) => update({ taboo })} />
+              <div className="flex-1 overflow-hidden">
+                <Thread welcome={<Welcome />} autoFocus={autoFocus} />
+              </div>
+            </SidebarInset>
+          </div>
+        </CardDialogProvider>
       </SidebarProvider>
     </AssistantRuntimeProvider>
   );

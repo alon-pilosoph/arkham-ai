@@ -2,6 +2,7 @@
 
 import type { ToolCallMessagePartComponent } from "@assistant-ui/react";
 import type { FC } from "react";
+import { useCardClick } from "@/components/cards/card-link";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "@/components/ui/item";
 import type { Candidate, Goal, ReplaceInput, ReplaceResult } from "@/lib/tools/replace-card";
 import { cardUrl } from "@/lib/urls";
@@ -30,12 +31,14 @@ const GOAL_LABEL: Record<Goal, string> = {
 
 const CandidateRow: FC<{ c: Candidate; investigator: string; sameReason: boolean }> = ({ c, investigator, sameReason }) => {
   const played = c.playedBy.investigator;
+  const href = cardUrl(c.code);
+  const onClick = useCardClick(href);
   return (
     <ListItem>
       <Item
         size="sm"
         className="items-start max-sm:px-0"
-        render={<a href={cardUrl(c.code)} target="_blank" rel="noopener noreferrer" />}
+        render={<a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick} />}
       >
         <Dots classes={c.classes} />
         <ItemContent>
