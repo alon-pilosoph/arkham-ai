@@ -87,8 +87,14 @@ so the three can never disagree about which decks were selected.
 
 Every census deck with 10 or more likes is fetched, whether the collection can build it or not.
 Its distinct cards (excluding weaknesses and investigator cards, with reprints folded into their
-originals) are counted per investigator and per class. `replaceCard` reads these counts as play
-rates.
+originals) are counted per investigator and per class, along with how many of those decks hold at
+least 0, 1, 2, 3, 4 and 5 XP in their list (`xpAtLeast`, the XP counted as the index counts it).
+`replaceCard` reads these counts as play rates.
+
+A published list is one moment in a campaign: many are starting decks with no XP, others are a
+campaign's last list. So a card's play rate is the share of the decks that could hold it, those
+with at least its level in XP, rather than of every deck; a level 5 card is not diluted by the
+starting decks that could never run it.
 
 ### 4. Labels (`data/deck-labels/`, `pipeline/labels.ts`)
 

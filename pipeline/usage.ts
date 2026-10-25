@@ -2,23 +2,24 @@
 // card the collection lacks. replaceCard filters its candidates to owned cards later.
 
 import type { CardStore } from "@/lib/cards";
-import { isWeakness } from "@/lib/decks";
-import type { CardUsage, UsageCounts } from "@/lib/index/schema";
+import { deckCards, deckMeta, isWeakness, xpInList } from "@/lib/decks";
+import { type CardUsage, type UsageCounts, XP_LEVELS } from "@/lib/index/schema";
 import type { SearchRow } from "./search";
 import type { LoadDeck } from "./selection";
 
 export const USAGE_MIN_LIKES = 10;
 
-function tally(group: Record<string, UsageCounts>, key: string, cards: Iterable<string>): void {
-  group[key] ??= { decks: 0, cards: {} };
+function tally(group: Record<string, UsageCounts>, key: string, cards: Iterable<string>, xp: number): void {
+  group[key] ??= { decks: 0, cards: {}, xpAtLeast: Array(XP_LEVELS).fill(0) };
   const counts = group[key];
   counts.decks++;
+  for (let i = 0; i < XP_LEVELS; i++) if (xp >= i && counts.xpAtLeast) counts.xpAtLeast[i]++;
   for (const code of cards) counts.cards[code] = (counts.cards[code] ?? 0) + 1;
 }
 
 function sorted(counts: UsageCounts): UsageCounts {
   const cards = Object.fromEntries(Object.entries(counts.cards).sort(([a], [b]) => a.localeCompare(b)));
-  return { decks: counts.decks, cards };
+  return { decks: counts.decks, cards, xpAtLeast: counts.xpAtLeast };
 }
 
 export async function cardUsage(
@@ -45,8 +46,10 @@ export async function cardUsage(
         })
         .map((code) => store.canonical(code)),
     );
-    tally(investigators, investigator.code, cards);
-    tally(classes, investigator.faction_code, cards);
+    // printed XP, as the index counts it: the list's own cards, not the campaign's total
+    const xp = xpInList(deckCards(store, loaded.deck.slots, deckMeta(loaded.deck)));
+    tally(investigators, investigator.code, cards, xp);
+    tally(classes, investigator.faction_code, cards, xp);
   }
   const ordered = (group: Record<string, UsageCounts>) =>
     Object.fromEntries(

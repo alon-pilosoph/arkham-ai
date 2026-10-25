@@ -5,7 +5,7 @@ import { ARCHETYPES } from "@/lib/archetypes";
 import { getCards, norm } from "@/lib/cards";
 import { deckCards, deckMeta, xpInList } from "@/lib/decks";
 import { DECK_INDEX } from "@/lib/index/decks";
-import { CARD_USAGE } from "@/lib/index/usage";
+import { CARD_USAGE, playRate } from "@/lib/index/usage";
 import { getTaboos, latest } from "@/lib/taboo";
 import { DECKS_PER_INVESTIGATOR, ownedInvestigators } from "@/pipeline/selection";
 import { indexedDecks } from "./helpers";
@@ -84,5 +84,30 @@ describe("card play rates", () => {
         for (const n of Object.values(counts.cards)) expect(n).toBeLessThanOrEqual(counts.decks);
       }
     }
+  });
+
+  test("counts the decks that could hold each XP level, fewer at each level up", () => {
+    for (const scope of [CARD_USAGE.investigators, CARD_USAGE.classes]) {
+      for (const counts of Object.values(scope)) {
+        if (!counts.xpAtLeast) continue; // data built before XP was recorded
+        expect(counts.xpAtLeast[0]).toBe(counts.decks);
+        for (let i = 1; i < counts.xpAtLeast.length; i++)
+          expect(counts.xpAtLeast[i]).toBeLessThanOrEqual(counts.xpAtLeast[i - 1]);
+      }
+    }
+  });
+
+  test("rates a leveled card against the decks with enough XP to hold it, not the starting decks", () => {
+    // 10 liked decks, 4 of them holding 3 or more XP; 2 of those run a level 3 card
+    const data = {
+      minLikes: 10,
+      investigators: { "01001": { decks: 10, cards: { "02154": 2, "01060": 5 }, xpAtLeast: [10, 8, 6, 4, 3, 2] } },
+      classes: {},
+    };
+    expect(playRate("01001", "guardian", "02154", 3, data).investigator).toEqual({ decks: 4, share: 0.5, minXp: 3 });
+    expect(playRate("01001", "guardian", "01060", 0, data).investigator).toEqual({ decks: 10, share: 0.5, minXp: 0 });
+    // data without XP counts falls back to every deck
+    const old = { ...data, investigators: { "01001": { decks: 10, cards: { "02154": 2 } } } };
+    expect(playRate("01001", "guardian", "02154", 3, old).investigator).toEqual({ decks: 10, share: 0.2, minXp: 3 });
   });
 });

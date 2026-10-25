@@ -232,3 +232,11 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   barely pays that premium, but two people asking occasional questions pay it on nearly every
   real question. `lib/model.ts` now
   prefers OpenAI over Anthropic when both keys are set.
+
+## Play rates against the decks that could hold the card (October 25)
+
+- **Why.** A play rate was "this share of the investigator's liked decks run it", and a published
+  list is one moment of a campaign: a 0 XP starting deck can't run a level 5 card, so leveled
+  cards looked rarer than they are. Each deck's list XP is now recorded with the counts, and a
+  card's share is taken among the decks holding at least its level in XP. Until the index is
+  rebuilt, the old counts fall back to every deck.

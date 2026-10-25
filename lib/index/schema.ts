@@ -38,7 +38,15 @@ export function roleText(d: Pick<IndexRow, "role" | "secondaryRole">): string {
   return d.secondaryRole ? `${d.role}, also ${d.secondaryRole}` : d.role;
 }
 
-export type UsageCounts = { decks: number; cards: Record<string, number> };
+/** XP_LEVELS[i] decks hold at least i XP in their list, i = 0..5: the decks that could run a level i card. */
+export const XP_LEVELS = 6;
+
+export type UsageCounts = {
+  decks: number;
+  cards: Record<string, number>;
+  /** How many of the decks hold at least i XP in their list, for i = 0 to 5. */
+  xpAtLeast?: number[];
+};
 
 export type CardUsage = {
   minLikes: number;
