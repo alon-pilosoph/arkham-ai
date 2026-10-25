@@ -54,7 +54,7 @@ A few rules hold everywhere, enforced in code rather than left to the model:
 flowchart LR
   ui["Chat UI<br/>(assistant-ui)"] -- "POST /api/chat" --> loop["Agent loop<br/>lib/agent.ts"]
   loop <--> llm["LLM<br/>(OpenAI or Anthropic)"]
-  loop --> tools["Tools<br/>cards · deck<br/>recommendDecks · replaceCard"]
+  loop --> tools["Tools<br/>cards · deck · findDeck<br/>recommendDecks · replaceCard<br/>upgrades · campaignPrep"]
   tools --> adb[("ArkhamDB<br/>cards, taboos, decks")]
   tools --> index[("Deck index<br/>lib/index/")]
   pipeline["Offline pipeline<br/>pipeline/"] -. builds .-> index
