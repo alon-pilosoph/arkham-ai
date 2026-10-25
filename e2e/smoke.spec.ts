@@ -64,6 +64,14 @@ test("a deck slot says so when what was pasted isn't a deck link", async ({ page
   await expect(page.getByText("That isn't an ArkhamDB deck link.")).toBeVisible();
 });
 
+test("campaign prep sizes up a campaign without naming its cards", async ({ page }) => {
+  await ask(page, "How should we prepare for The Path to Carcosa?");
+  const prep = page.locator("[data-slot=tool-fallback-trigger]").filter({ hasText: "What The Path to Carcosa asks of you" });
+  await expect(prep).toContainText("Spoiler-light");
+  await prep.click();
+  await expect(page.getByText("By pack, in play order")).toBeVisible();
+});
+
 test("the taboo switch is remembered across a reload", async ({ page }) => {
   const taboo = page.getByRole("switch", { name: /taboo/i });
   await expect(taboo).not.toBeChecked();

@@ -52,6 +52,8 @@ export type RawCard = {
   enemy_evade?: number;
   enemy_damage?: number;
   enemy_horror?: number;
+  shroud?: number;
+  health_per_investigator?: boolean;
   hidden?: boolean;
   url?: string;
   flavor?: string;

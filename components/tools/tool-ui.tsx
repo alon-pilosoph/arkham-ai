@@ -1,6 +1,7 @@
 "use client";
 
 import { defineToolkit, Tools, useAui } from "@assistant-ui/react";
+import { CampaignPrepUI } from "./campaign-prep-ui";
 import { CardsUI } from "./cards-ui";
 import { DeckUI } from "./deck-ui";
 import { FindDeckUI } from "./find-deck-ui";
@@ -15,6 +16,7 @@ const arkhamToolkit = defineToolkit({
   recommendDecks: { type: "backend", render: RecommendUI },
   replaceCard: { type: "backend", render: ReplaceUI },
   upgrades: { type: "backend", render: UpgradesUI },
+  campaignPrep: { type: "backend", render: CampaignPrepUI },
 });
 
 export function useArkhamTools() {

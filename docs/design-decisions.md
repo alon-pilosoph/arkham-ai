@@ -220,6 +220,24 @@ word matching already ranks well. *ArkhamDB's own deck-name search:* it would ma
 strangers' decks, most of which the players can't build. *Signing in to ArkhamDB to read the
 players' decks:* a feature to build and an account to hold, where pasting a link once does.
 
+### Campaign prep is computed from the cards, and names none of them
+
+**Decision.** `campaignPrep` describes a campaign by counting its encounter cards: which skills
+its treacheries test, horror against damage, enemy toughness and keywords, shroud, frost. It
+names no card, enemy or story beat, and the model is told to offer it only when asked and to keep
+its own knowledge out of it unless the players ask for spoilers. A one-line note per campaign,
+written by hand, covers what the cards can't show: structure, travel, time.
+
+**Why.** Counts are true by construction and can't spoil anything, and they back up what players
+say about a campaign ("Carcosa deals a lot of horror early") with numbers, by scenario pack for
+the older cycles. Computing them at request time from the card store keeps one implementation of
+each fact: there is no generated file to drift from the card data.
+
+**Rejected.** *Scenario-by-scenario write-ups:* the most useful and the most spoiling, and only as
+accurate as whoever wrote them. *Scenario data from the ArkhamCards project:* it maps encounter
+sets to scenarios exactly, but it is a second data source to crawl and keep in step for a
+breakdown the pack order already approximates.
+
 ## 4. The agent loop
 
 ### Budgets are enforced in code, and the last step is kept for the answer
