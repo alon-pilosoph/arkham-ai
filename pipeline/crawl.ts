@@ -30,7 +30,8 @@ function investigatorCodes(store: CardStore): string[] {
 async function takeCensus(store: CardStore) {
   const codes = investigatorCodes(store);
   const rows = await census(codes, (code, done, total) => {
-    if (done % 25 === 0 || done === codes.length) console.log(`census: ${done}/${codes.length} investigators, ${total} decks`);
+    if (done % 10 === 0 || done === codes.length)
+      console.log(`census: ${done}/${codes.length} investigators (last ${code}), ${total} decks`);
   });
   console.log(`census: ${rows.length} published decklists`);
   const ids = new Set(rows.map((r) => r.id));
