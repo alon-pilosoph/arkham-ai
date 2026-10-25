@@ -40,17 +40,26 @@ until `status` reports every selected deck labeled.
 ### 1. The census (`pipeline/search.ts`, `pipeline/crawl.ts`)
 
 The census is the complete list of published decklists. The crawl builds it by walking
-ArkhamDB's decklist search in date order, 30 decks a page, until a page comes back empty: about
-1,300 pages and 38,984 published decklists at the last crawl. Each row records the deck's id,
-name, likes, favorites, comments, author, date, investigator and ArkhamDB tags.
+ArkhamDB's decklist search in date order, 30 decks a page, once for each investigator code in the
+card set (reprints, parallels and Chapter 2 included, since a deck is filed under the code its
+author picked), until a page comes back short. A code with no decks costs one empty page. Each
+row records the deck's id, name, likes, favorites, comments, author, date, investigator and
+ArkhamDB tags, and a deck found under two codes is counted once.
+
+ArkhamDB serves no search page past 99, filtered or not, so a single walk of every deck (about
+1,300 pages) is no longer possible. The busiest investigator, Roland Banks, fills under 80 pages.
+An investigator that ever needs more than 99 stops the crawl with an error naming it, rather than
+leaving the census short.
 
 A search page is parsed one table row at a time. Every field except the deck name is required,
 and a page whose rows do not account for every deck link on it is an error, never a shorter list,
 so a row with unexpected markup cannot silently drop out of the census.
 
-The crawl then cross-checks the census against the likes order, walking it down to 10 likes. If a
-deck found there is missing from the census, the run fails and names the deck. Below 10 likes the
-likes order has too many ties to page through reliably, which is why the census exists.
+The crawl then cross-checks the census twice. It walks the likes order down to 10 likes (about 66
+pages), and it reads the 10 newest pages across every investigator. If a deck found by either is
+missing from the census, the run fails and names the deck and its investigator code; the newest
+pages catch a code the census did not walk. Below 10 likes the likes order has too many ties to
+page through reliably, which is why the census exists.
 
 ### 2. The selection (`pipeline/selection.ts`)
 
