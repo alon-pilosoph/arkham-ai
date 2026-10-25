@@ -93,6 +93,7 @@ export async function POST(req: Request) {
     onDeadline: () => {
       timedOut = true;
     },
+    onError: (error) => console.error("chat: answer failed", error),
   });
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
@@ -100,10 +101,8 @@ export async function POST(req: Request) {
         writer.merge(
           result.toUIMessageStream({
             sendReasoning: true,
-            onError: (error) => {
-              console.error("chat: answer failed", error);
-              return errorText(error);
-            },
+            // also called again with the text it returned, so it must not log
+            onError: errorText,
             onFinish: () => resolve(),
           }),
         );
