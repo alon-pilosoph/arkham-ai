@@ -22,6 +22,7 @@ deck, that the players can build from their own collection.
 | *How do I play Boom Chakra Lacka?* | `findDeck` finds the deck by its name, then the `deck` tool reads the decoded list and the author's guide live from ArkhamDB |
 | *What could replace Archive of Conduits with something cheaper?* | `replaceCard` tool: legal, owned substitutes, with how often each is played |
 | *Suggest a mystic cluever deck.* | `recommendDecks` tool: searches an index of 660 of the most-liked published decks by class, role, archetype, XP, investigator or key card |
+| *I have 5 XP for my deck. What should I buy?* | `upgrades` tool: every owned, legal upgrade, customization box and new card the XP buys, priced by the Rules Reference and the taboo setting, ranked by how often liked decks play them |
 | *What should I play with my partner's deck?* | `recommendDecks` with `pairWith`: decks whose role covers what the partner's deck lacks, never the same investigator |
 
 Every card an answer names is a link. Tapping one opens the card in the app, laid out like the
@@ -59,7 +60,7 @@ flowchart LR
 ```
 
 The app is a Next.js chat page and a single API route. Each question runs an agent loop
-(the [AI SDK](https://ai-sdk.dev)'s `streamText`) with five tools. The system prompt holds the
+(the [AI SDK](https://ai-sdk.dev)'s `streamText`) with six tools. The system prompt holds the
 whole Rules Reference (about 39,500 words) and never changes between requests, so the provider
 can cache it. Anything that changes from turn to turn, such as the date and the players'
 settings, is added to the newest message instead. Steps, tool calls and wall time are capped in

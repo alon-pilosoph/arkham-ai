@@ -13,6 +13,8 @@ export function route(q: string): { toolName: string; input: Record<string, unkn
   const replace = q.match(/replace\s+(.+?)(?:\s+with|\?|$)/i)?.[1];
   if (deck && replace)
     return { toolName: "replaceCard", input: { deck, card: replace.trim(), goal: /cheap/i.test(q) ? "cheaper" : "same_job" } };
+  const xp = q.match(/(\d+)\s*xp/i)?.[1];
+  if (deck && xp) return { toolName: "upgrades", input: { deck, xp: Number(xp) } };
   if (deck) return { toolName: "deck", input: { ref: deck } };
   const named = q.match(/how do i play (?:the )?(.+?)(?: deck)?\?/i)?.[1];
   if (named) return { toolName: "findDeck", input: { name: named } };

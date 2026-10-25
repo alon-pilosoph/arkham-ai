@@ -109,7 +109,7 @@ export const CASES: EvalCase[] = [
       partnerDeck: { id: 33170, kind: "decklist", name: "Lily - Boom Chakra Lacka (Deck Guide)", investigator: "Lily Chen" },
     },
     expect:
-      "Reads the deck. Lily Chen: Guardian 1-5, Neutral 0-5, Mystic level 0 only, no Firearms. Every suggestion is legal and owned, the total is at most 5 XP, and no Mystic upgrade (Shrivelling (3), Ward of Protection (2)) is offered.",
+      "Calls upgrades with the saved partner deck and 5 XP. Lily Chen: Guardian 1-5, Neutral 0-5, Mystic level 0 only, no Firearms. Every suggestion is legal and owned, the total is at most 5 XP, and no Mystic upgrade (Shrivelling (3), Ward of Protection (2)) is offered. Says what each new card replaces.",
   },
   {
     id: "rules-card-aoo",

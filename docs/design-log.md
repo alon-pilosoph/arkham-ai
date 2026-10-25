@@ -273,3 +273,20 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   ([design-decisions.md](design-decisions.md#decks-are-named-never-numbered)).
 - **Found on the way.** The mock model stripped the per-turn note up to its first ")", which a
   saved deck's link now contains.
+
+## Spending experience (October 25)
+
+- **Why.** "My partner earned 5 XP, what should they buy?" was answered by reading the deck and
+  looking cards up one by one, with the model doing the deckbuilding check and the XP arithmetic
+  itself. The `upgrades` tool does both in code: it lists what the budget can buy that is owned and
+  legal for the deck, with exact prices, and the model picks the set and says what each new card
+  replaces.
+- **Prices from the Rules Reference.** A new card costs its level, at least 1; an upgrade to a
+  higher level of the same title costs the difference, at least 1; exceptional doubles; myriad
+  pays once; a customization box is 1 XP and a sheet holds 10. The taboo surcharge applies only
+  with the switch on.
+- **Found on the way.** The first version offered In the Thick of It and Underworld Support, which
+  can only be bought when a deck is built, and its new-card list was all 1 XP level 0 staples,
+  burying the leveled cards XP is usually spent on; leveled and level 0 cards are now listed
+  apart. The deck tool's customization view lists only options with marks, so unmarked options
+  are read from the card's upgrade sheet.
