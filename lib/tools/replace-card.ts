@@ -4,7 +4,7 @@ import { type CardFace, cardHead, type Rulings, rulingsMarkdown, tabooChangeText
 import { type CardStore, cardFace, icons, isDeckCardType, norm, parseCardQuery, type RawCard } from "../cards";
 import { type DeckCard, ignoredCopies, isWeakness, openDeck } from "../decks";
 import { type Failure, failureText, notFound, safely, toolError, toolText } from "../format";
-import { playRate, type Share } from "../index/usage";
+import { playRate, type Share, shareText } from "../index/usage";
 import { rulesFor } from "../legality";
 import { DEFAULT_SETTINGS, type Settings, SettingsSchema } from "../settings";
 
@@ -100,11 +100,6 @@ function score(goal: Goal, likeness: number, pop: number): number {
   if (goal !== "different_job") return likeness + pop;
   const unlike = likeness < DIFFERENT_JOB.unlikeBelow ? DIFFERENT_JOB.unlikeBonus : -likeness / DIFFERENT_JOB.likenessDivisor;
   return pop + unlike;
-}
-
-function percent(s: Share): string {
-  const of = `${s.decks}${s.minXp ? ` with ${s.minXp}+ XP` : ""}`;
-  return s.decks ? `${Math.round(100 * s.share)}% of ${of}` : `none of 0${s.minXp ? ` with ${s.minXp}+ XP` : ""}`;
 }
 
 type Target = { kind: "found"; card: DeckCard } | { kind: "ambiguous"; hits: DeckCard[] } | { kind: "missing"; list: string[] };
@@ -222,7 +217,7 @@ export function replaceText(r: ReplaceResult): string {
   );
   for (const c of r.candidates) {
     out.push(
-      `- ${c.label} [${c.code}] (${cardHead(c)}) ${c.text}${c.taboo ? `\n    TABOO: ${tabooChangeText(c.taboo)}` : ""}\n    legal: ${c.legalBecause}; played in ${percent(c.playedBy.investigator)} liked decks for this investigator, ${percent(c.playedBy.class)} for this class`,
+      `- ${c.label} [${c.code}] (${cardHead(c)}) ${c.text}${c.taboo ? `\n    TABOO: ${tabooChangeText(c.taboo)}` : ""}\n    legal: ${c.legalBecause}; played in ${shareText(c.playedBy.investigator)} liked decks for this investigator, ${shareText(c.playedBy.class)} for this class`,
     );
   }
   if (!r.candidates.length)

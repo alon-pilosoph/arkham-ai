@@ -4,7 +4,7 @@ import { type CardFace, cardHead, tabooChangeText } from "../card-text";
 import { type CardStore, cardFace, cleanText, isDeckCardType, norm, type RawCard } from "../cards";
 import { type DeckCard, ignoredCopies, isExceptional, isWeakness, openDeck, parseCustomization } from "../decks";
 import { type Failure, failureText, safely, toolError, toolText } from "../format";
-import { playRate, type Share } from "../index/usage";
+import { playRate, type Share, shareText } from "../index/usage";
 import { rulesFor } from "../legality";
 import { DEFAULT_SETTINGS, type Settings, SettingsSchema } from "../settings";
 import { type TabooList, tabooEntry } from "../taboo";
@@ -78,7 +78,7 @@ export async function upgrades(
   const xp = input.xp;
   const rules = rulesFor(store, inv.code, options, meta, taboo, ignoredCopies(deck));
   const invCode = store.canonical(inv.code);
-  const played = (code: string) => playRate(invCode, inv.faction_code, code);
+  const played = (c: RawCard) => playRate(invCode, inv.faction_code, c.code, c.xp ?? 0);
   const owned = (c: DeckCard) => (c.weakness ? undefined : store.get(c.code));
 
   const upgradesFound: Upgrade[] = [];
@@ -97,7 +97,7 @@ export async function upgrades(
         from: { code: c.code, label: c.label, qty: c.qty },
         xpEach: each,
         xpAll: all,
-        played: played(v.code),
+        played: played(v),
       });
     }
   }
@@ -131,7 +131,7 @@ export async function upgrades(
     if (each > xp) continue;
     const v = rules.check(c, deck.slots, 1);
     if (!v.legal) continue;
-    bought.push({ c, each, why: v.reason, p: played(c.code) });
+    bought.push({ c, each, why: v.reason, p: played(c) });
   }
   bought.sort((a, b) => score(b.p) - score(a.p) || b.each - a.each);
   const limit = Math.min(MAX_NEW, Math.max(1, input.limit ?? DEFAULT_NEW));
@@ -161,8 +161,7 @@ export async function upgrades(
 }
 
 function rate(p: Played): string {
-  const pct = (s: Share) => (s.decks ? `${Math.round(100 * s.share)}% of ${s.decks}` : "none of 0");
-  return `played in ${pct(p.investigator)} liked decks for this investigator, ${pct(p.class)} for this class`;
+  return `played in ${shareText(p.investigator)} liked decks for this investigator, ${shareText(p.class)} for this class`;
 }
 
 export function upgradesText(r: UpgradesResult): string {

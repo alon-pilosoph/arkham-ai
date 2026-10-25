@@ -22,3 +22,9 @@ export function playRate(investigatorCode: string, classCode: string, cardCode: 
     class: share(data.classes[classCode], cardCode, level),
   };
 }
+
+/** "40% of 5 with 3+ XP": the share and the decks it is of, for tool text. */
+export function shareText(s: Share): string {
+  const of = `${s.decks}${s.minXp ? ` with ${s.minXp}+ XP` : ""}`;
+  return s.decks ? `${Math.round(100 * s.share)}% of ${of}` : `none of ${of}`;
+}
