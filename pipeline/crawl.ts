@@ -1,12 +1,21 @@
-//   npm run data:crawl                    # census, cross-checks, fetch (about an hour)
+//   npm run data:crawl                    # census, cross-checks, fetch (two to three hours)
 //   npm run data:crawl -- --reuse-census  # fetch only, from the last census
+//   npm run data:crawl -- --fresh         # ignore a stopped census instead of resuming it
 // Writes data/cache/; exits non-zero if the census misses a deck a cross-check found, or a fetch fails.
 
 import fs from "node:fs";
 import path from "node:path";
 import { type CardStore, getCards } from "@/lib/cards";
 import { getTaboos } from "@/lib/taboo";
-import { CACHE_DIR, crawlDeck, readCensus, writeCensus } from "./cache";
+import {
+  CACHE_DIR,
+  clearPartialCensus,
+  crawlDeck,
+  readCensus,
+  readPartialCensus,
+  writeCensus,
+  writePartialCensus,
+} from "./cache";
 import { selectionReport } from "./report";
 import { census, likesWalk, newest } from "./search";
 import { selectIndex } from "./selection";
@@ -29,9 +38,16 @@ function investigatorCodes(store: CardStore): string[] {
 
 async function takeCensus(store: CardStore) {
   const codes = investigatorCodes(store);
-  const rows = await census(codes, (code, done, total) => {
-    if (done % 10 === 0 || done === codes.length)
-      console.log(`census: ${done}/${codes.length} investigators (last ${code}), ${total} decks`);
+  const partial = (!process.argv.includes("--fresh") && readPartialCensus()) || { startedAt: new Date().toISOString(), done: {} };
+  const resumed = Object.keys(partial.done).length;
+  if (resumed) console.log(`census: resuming the one started ${partial.startedAt}, ${resumed} investigators already walked`);
+  const rows = await census(codes, {
+    done: partial.done,
+    onInvestigator: (code, found, i, total) => {
+      partial.done[code] = found;
+      writePartialCensus(partial);
+      if ((i + 1) % 10 === 0 || i + 1 === total) console.log(`census: ${i + 1}/${total} investigators (last ${code})`);
+    },
   });
   console.log(`census: ${rows.length} published decklists`);
   const ids = new Set(rows.map((r) => r.id));
@@ -44,6 +60,7 @@ async function takeCensus(store: CardStore) {
   for (const r of missing)
     console.log(`  MISSING ${r.id} ${r.investigatorName} (${r.investigatorCode}): ${r.name} (${r.likes} likes)`);
   writeCensus({ takenAt: new Date().toISOString(), rows });
+  clearPartialCensus();
   return { rows, likedChecked: liked.rows.length + recent.length, missing };
 }
 

@@ -114,18 +114,27 @@ export async function fetchSearchPage(page: number, order: SearchOrder, investig
 // the busiest investigator (Roland) fills under 80 pages.
 export async function census(
   investigators: string[],
-  onInvestigator?: (code: string, done: number, total: number) => void,
+  opts: {
+    /** Investigators already walked, with their rows: a resumed census skips them. */
+    done?: Record<string, SearchRow[]>;
+    onInvestigator?: (code: string, rows: SearchRow[], index: number, total: number) => void;
+  } = {},
 ): Promise<SearchRow[]> {
   const seen = new Map<number, SearchRow>();
   for (const [i, code] of investigators.entries()) {
-    for (let page = 1; ; page++) {
-      if (page > MAX_PAGES)
-        throw new PageError(`investigator ${code} has more than ${MAX_PAGES} pages of decks, past what ArkhamDB serves`);
-      const rows = await fetchSearchPage(page, "date", code);
-      for (const r of rows) if (!seen.has(r.id)) seen.set(r.id, r);
-      if (rows.length < PAGE_SIZE) break;
+    let rows = opts.done?.[code];
+    if (!rows) {
+      rows = [];
+      for (let page = 1; ; page++) {
+        if (page > MAX_PAGES)
+          throw new PageError(`investigator ${code} has more than ${MAX_PAGES} pages of decks, past what ArkhamDB serves`);
+        const found = await fetchSearchPage(page, "date", code);
+        rows.push(...found);
+        if (found.length < PAGE_SIZE) break;
+      }
+      opts.onInvestigator?.(code, rows, i, investigators.length);
     }
-    onInvestigator?.(code, i + 1, seen.size);
+    for (const r of rows) if (!seen.has(r.id)) seen.set(r.id, r);
   }
   return [...seen.values()];
 }

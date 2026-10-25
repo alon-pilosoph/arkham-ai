@@ -20,14 +20,14 @@ offline, by hand; the app never runs any of it. The reasons it is built this way
 `data/cache/` is ignored by git. Every other output in the table is committed.
 
 The scripts wait their turn between requests, one a second, and identify themselves with their
-own user agent (`pipeline/http.ts`). A 429, a 5xx or a network failure is retried twice, after 3
-and then 10 seconds; a 404 is reported as `not_found` and never retried. ArkhamDB is run by
-volunteers, and a full crawl takes about an hour of its time.
+own user agent (`pipeline/http.ts`). A 429, a 5xx or a network failure is retried four times, after 3,
+10, 30 and 60 seconds, since a crawl runs for hours; a 404 is reported as `not_found` and never retried. ArkhamDB is run by
+volunteers, and a full crawl takes two to three hours of its time.
 
 ## Refreshing the deck index
 
 ```sh
-npm run data:crawl            # census, cross-check, fetch decklists (~1 h)
+npm run data:crawl            # census, cross-checks, fetch decklists (2-3 h; resumes if stopped)
 npm run data:sheet -- status  # how many selected decks still need labels
 npm run data:sheet -- next    # label sheets for the next investigator
 npm run data:index            # build; fails, listing them, if any lack labels
@@ -50,6 +50,10 @@ ArkhamDB serves no search page past 99, filtered or not, so a single walk of eve
 1,300 pages) is no longer possible. The busiest investigator, Roland Banks, fills under 80 pages.
 An investigator that ever needs more than 99 stops the crawl with an error naming it, rather than
 leaving the census short.
+
+The census is saved after each investigator (`data/cache/census-partial.json`). A crawl that
+stops, on a network outage for instance, resumes from there the next time it runs, unless the
+saved walk is more than two days old or `--fresh` is given.
 
 A search page is parsed one table row at a time. Every field except the deck name is required,
 and a page whose rows do not account for every deck link on it is an error, never a shorter list,

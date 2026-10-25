@@ -134,6 +134,16 @@ describe("census", () => {
     ).resolves.toEqual(Array.from({ length: 32 }, (_, i) => i + 1));
   });
 
+  test("resumes: an investigator already walked is not fetched again, and its rows still count", async () => {
+    pages.clear();
+    pages.set(searchUrl(1, "date", "01002"), page(deckRow(40, "Daisy", "", "01002")));
+    const walked: string[] = [];
+    const roland = parseSearchPage(page(deckRow(7, "saved Roland", "", "01001")));
+    const rows = await census(["01001", "01002"], { done: { "01001": roland }, onInvestigator: (code) => walked.push(code) });
+    expect(walked).toEqual(["01002"]);
+    expect(rows.map((r) => r.id).sort((a, b) => a - b)).toEqual([7, 40]);
+  });
+
   test("fails, rather than come back short, for an investigator past the last page ArkhamDB serves", async () => {
     pages.clear();
     for (let p = 1; p <= MAX_PAGES; p++) pages.set(searchUrl(p, "date", "01001"), full(p * 100, "01001"));

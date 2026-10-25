@@ -5,7 +5,8 @@ import { ARKHAMDB, type Fetched, missingJson } from "@/lib/arkhamdb";
 
 const USER_AGENT = "arkham-ai/0.1 (+https://github.com/alon-pilosoph/arkham-ai; offline pipeline, one request a second)";
 const TIMEOUT_MS = 60_000;
-const RETRY_DELAYS_MS = [3_000, 10_000];
+// a crawl runs for hours: ride out a network blip rather than lose the run to it
+const RETRY_DELAYS_MS = [3_000, 10_000, 30_000, 60_000];
 
 let nextSlot = 0;
 

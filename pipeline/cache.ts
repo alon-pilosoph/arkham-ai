@@ -17,6 +17,29 @@ export function writeCensus(census: Census): void {
   fs.writeFileSync(CENSUS_FILE, JSON.stringify(census));
 }
 
+/** The investigators a census has walked so far, saved after each one, so a crawl that stops
+ *  (a network outage, a closed laptop) resumes instead of starting over. */
+export type PartialCensus = { startedAt: string; done: Record<string, SearchRow[]> };
+
+const PARTIAL_FILE = path.join(CACHE_DIR, "census-partial.json");
+const PARTIAL_MAX_AGE_MS = 2 * 24 * 3600_000;
+
+export function readPartialCensus(): PartialCensus | null {
+  if (!fs.existsSync(PARTIAL_FILE)) return null;
+  const partial = JSON.parse(fs.readFileSync(PARTIAL_FILE, "utf8")) as PartialCensus;
+  // an old partial walk would mix in a stale picture of the decks
+  return Date.now() - Date.parse(partial.startedAt) < PARTIAL_MAX_AGE_MS ? partial : null;
+}
+
+export function writePartialCensus(partial: PartialCensus): void {
+  fs.mkdirSync(CACHE_DIR, { recursive: true });
+  fs.writeFileSync(PARTIAL_FILE, JSON.stringify(partial));
+}
+
+export function clearPartialCensus(): void {
+  fs.rmSync(PARTIAL_FILE, { force: true });
+}
+
 export function readCensus(): Census {
   if (!fs.existsSync(CENSUS_FILE))
     throw new Error(`${path.relative(ROOT, CENSUS_FILE)} is missing: run npm run data:crawl first`);
