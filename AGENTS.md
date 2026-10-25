@@ -60,7 +60,8 @@ scripted stand-in that needs no key.
 `npm run eval` runs the eval cases against a real model and reads its API key from the
 environment, so run `set -a && . ./.env.local && set +a` first. It writes transcripts to
 `evals/results/` for a person to read. It does not grade answers, but it flags linked card codes
-that no tool returned, taboo mentions while the list is off, and empty answers, and exits with an
+that no tool returned, taboo mentions while the list is off, a deck called by its number, and
+empty answers, and exits with an
 error if any turn fails one of those checks. See [docs/evals.md](docs/evals.md).
 
 The data commands (`data:crawl`, `data:index`, `data:sheet`, `data:rules`, `data:faq`,

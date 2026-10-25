@@ -56,14 +56,15 @@ export const CASES: EvalCase[] = [
   {
     id: "replace-cheaper",
     useCase: "replace",
-    question: "In deck 45147, what could replace Archive of Conduits with something cheaper?",
+    question: "In Carolyn Fern Destroys Carcosa, what could replace Archive of Conduits with something cheaper?",
     expect:
       "Uses replaceCard with goal cheaper; proposes owned, legal cards that do a similar job for Carolyn, explaining the trade-off.",
   },
   {
     id: "replace-missing",
     useCase: "replace",
-    question: "In deck 45147, what should I play instead of Old Book of Lore?",
+    question: "In my deck, what should I play instead of Old Book of Lore?",
+    settings: { myDeck: { id: 45147, kind: "decklist", name: "Carolyn Fern destroys Carcosa", investigator: "Carolyn Fern" } },
     expect: "Says Old Book of Lore is not in the deck (reads the list) instead of inventing replacements.",
   },
   {
@@ -88,14 +89,14 @@ export const CASES: EvalCase[] = [
   {
     id: "partner",
     useCase: "partner",
-    question: "My partner plays deck 33170. What should I play with them?",
+    question: "My partner plays Lily Chen's Boom Chakra Lacka. What should I play with them?",
     expect:
-      "Reads deck 33170 (Lily Chen, a fighter), looks for a cluever or flex partner of another investigator, reads the candidates, picks one and explains in roles and abilities.",
+      "Finds Boom Chakra Lacka with findDeck and reads it (Lily Chen, a fighter), looks for a cluever or flex partner of another investigator, reads the candidates, picks one and explains in roles and abilities.",
   },
   {
     id: "followup-cut",
     useCase: "deck",
-    question: "How do I play deck 33170?",
+    question: "How do I play Boom Chakra Lacka?",
     followUps: ["What would you cut first to make room for a Shrivelling?"],
     expect:
       "Turn 2 reads the deck again (earlier tool results are not in the history) and the card. Lily Chen takes Mystic cards at level 0 only, so only Shrivelling (0) fits; the cut is a card that is really in the list, with a reason.",
@@ -103,7 +104,10 @@ export const CASES: EvalCase[] = [
   {
     id: "upgrade-xp",
     useCase: "upgrade",
-    question: "My partner's deck 33170 just earned 5 XP. What should they buy?",
+    question: "My partner's deck just earned 5 XP. What should they buy?",
+    settings: {
+      partnerDeck: { id: 33170, kind: "decklist", name: "Lily - Boom Chakra Lacka (Deck Guide)", investigator: "Lily Chen" },
+    },
     expect:
       "Reads the deck. Lily Chen: Guardian 1-5, Neutral 0-5, Mystic level 0 only, no Firearms. Every suggestion is legal and owned, the total is at most 5 XP, and no Mystic upgrade (Shrivelling (3), Ward of Protection (2)) is offered.",
   },
@@ -124,21 +128,21 @@ export const CASES: EvalCase[] = [
   {
     id: "replace-unowned",
     useCase: "replace",
-    question: "In deck 64993 I don't own The Grapevine. What could I play instead?",
+    question: "In https://arkhamdb.com/decklist/view/64993 I don't own The Grapevine. What could I play instead?",
     expect:
       "Uses replaceCard for an owned stand-in; says The Grapevine is from André Patel's investigator deck, not the collection; every suggestion is owned and legal for Tony Morgan.",
   },
   {
     id: "taboo-xp-on",
     useCase: "deck",
-    question: "How much XP does deck 36402 need?",
+    question: "How much XP does Clue Vacuuming Rex need?",
     settings: { taboo: true },
     expect: "4 XP under the current taboo list (0 as printed), naming the card or cards the taboo list charges XP for.",
   },
   {
     id: "taboo-xp-off",
     useCase: "deck",
-    question: "How much XP does deck 36402 need?",
+    question: "How much XP does Clue Vacuuming Rex need?",
     settings: { taboo: false },
     expect: "0 XP, with no mention of any taboo change.",
   },
@@ -157,6 +161,19 @@ export const CASES: EvalCase[] = [
       "Reads both levels (0 and 1) and says the card comes from Tommy Muldoon's investigator deck, which is not in the collection.",
   },
   {
+    id: "deck-name-ambiguous",
+    useCase: "deck",
+    question: "How do I play my Carolyn deck?",
+    expect:
+      "No deck is saved, and the index has several Carolyn Fern decks: asks which one, naming a few by title, or asks for the link. Does not pick one and explain it.",
+  },
+  {
+    id: "deck-name-unknown",
+    useCase: "deck",
+    question: "How do I play the Zorblax Express deck?",
+    expect: "findDeck finds nothing; asks the player to paste the deck's ArkhamDB link instead of guessing.",
+  },
+  {
     id: "out-of-scope",
     useCase: "scope",
     question: "What's a good Spider-Man deck for Marvel Champions?",
@@ -172,9 +189,9 @@ export const CASES: EvalCase[] = [
   {
     id: "partner-followup",
     useCase: "partner",
-    question: "My partner plays deck 33170. What should I play with them?",
-    followUps: ["And if they play deck 45147 instead?"],
+    question: "My partner plays https://arkhamdb.com/decklist/view/33170. What should I play with them?",
+    followUps: ["And if they play Carolyn Fern Destroys Carcosa instead?"],
     expect:
-      "Turn 2 reads deck 45147 (Carolyn Fern, support) and searches again for flex first, then fighter or cluever partners; the recommendation changes with the new deck.",
+      "Turn 2 finds and reads Carolyn Fern Destroys Carcosa (support) and searches again for flex first, then fighter or cluever partners; the recommendation changes with the new deck.",
   },
 ];
