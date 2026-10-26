@@ -1,4 +1,4 @@
-//   npm run data:crawl                    # census, cross-checks, fetch (two to three hours)
+//   npm run data:crawl                    # census, cross-checks, fetch (three to four hours)
 //   npm run data:crawl -- --reuse-census  # fetch only, from the last census
 //   npm run data:crawl -- --fresh         # ignore a stopped census instead of resuming it
 // Writes data/cache/; exits non-zero if the census misses a deck a cross-check found, or a fetch fails.

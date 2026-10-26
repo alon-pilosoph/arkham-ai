@@ -19,15 +19,15 @@ offline, by hand; the app never runs any of it. The reasons it is built this way
 
 `data/cache/` is ignored by git. Every other output in the table is committed.
 
-The scripts wait their turn between requests, one a second, and identify themselves with their
+The scripts wait their turn between requests, one every two seconds, back off further when ArkhamDB answers slowly (ten times as long as a slow answer took, up to two minutes), and identify themselves with their
 own user agent (`pipeline/http.ts`). A 429, a 5xx or a network failure is retried four times, after 3,
 10, 30 and 60 seconds, since a crawl runs for hours; a 404 is reported as `not_found` and never retried. ArkhamDB is run by
-volunteers, and a full crawl takes two to three hours of its time.
+volunteers, and a full crawl takes three to four hours of its time, best run overnight.
 
 ## Refreshing the deck index
 
 ```sh
-npm run data:crawl            # census, cross-checks, fetch decklists (2-3 h; resumes if stopped)
+npm run data:crawl            # census, cross-checks, fetch decklists (3-4 h; resumes if stopped)
 npm run data:sheet -- status  # how many selected decks still need labels
 npm run data:sheet -- next    # label sheets for the next investigator
 npm run data:index            # build; fails, listing them, if any lack labels

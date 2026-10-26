@@ -65,7 +65,7 @@ error if any turn fails one of those checks. See [docs/evals.md](docs/evals.md).
 
 The data commands (`data:crawl`, `data:index`, `data:sheet`, `data:rules`, `data:faq`,
 `data:collection`) are described in [docs/data-pipeline.md](docs/data-pipeline.md). They run
-offline, make at most one request a second to ArkhamDB, and are never run by the app.
+offline, make at most one request every two seconds to ArkhamDB (slower when it is slow), and are never run by the app.
 
 ## Tests
 

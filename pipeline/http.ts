@@ -1,14 +1,24 @@
-// ArkhamDB is volunteer-run: requests are spaced (one a second by default) and only transient
-// failures are retried.
+// ArkhamDB is volunteer-run: requests are spaced (one every two seconds by default), slow answers
+// slow the crawl down further, and only transient failures are retried.
 
 import { ARKHAMDB, type Fetched, missingJson } from "@/lib/arkhamdb";
 
-const USER_AGENT = "arkham-ai/0.1 (+https://github.com/alon-pilosoph/arkham-ai; offline pipeline, one request a second)";
+const USER_AGENT = "arkham-ai/0.1 (+https://github.com/alon-pilosoph/arkham-ai; offline pipeline, one request every two seconds)";
 const TIMEOUT_MS = 60_000;
 // a crawl runs for hours: ride out a network blip rather than lose the run to it
 const RETRY_DELAYS_MS = [3_000, 10_000, 30_000, 60_000];
 
+// A slow answer means ArkhamDB is busy: the next request waits SLOW_FACTOR times as long as that
+// answer took, up to MAX_BACKOFF_MS, on top of the usual interval.
+const SLOW_MS = 3_000;
+const SLOW_FACTOR = 10;
+const MAX_BACKOFF_MS = 120_000;
+
 let nextSlot = 0;
+
+function backOff(tookMs: number): void {
+  if (tookMs > SLOW_MS) nextSlot = Math.max(nextSlot, Date.now() + Math.min(MAX_BACKOFF_MS, tookMs * SLOW_FACTOR));
+}
 
 async function waitTurn(intervalMs: number): Promise<void> {
   const now = Date.now();
@@ -23,14 +33,16 @@ function isTransient(status: number): boolean {
 
 export type GetOptions = { intervalMs?: number };
 
-export async function getText(pathOrUrl: string, { intervalMs = 1_000 }: GetOptions = {}): Promise<Fetched<string>> {
+export async function getText(pathOrUrl: string, { intervalMs = 2_000 }: GetOptions = {}): Promise<Fetched<string>> {
   const url = pathOrUrl.startsWith("http") ? pathOrUrl : ARKHAMDB + pathOrUrl;
   let failure = "";
   for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
     if (attempt > 0) await new Promise((resolve) => setTimeout(resolve, RETRY_DELAYS_MS[attempt - 1]));
     await waitTurn(intervalMs);
     try {
+      const started = Date.now();
       const res = await fetch(url, { headers: { "User-Agent": USER_AGENT }, signal: AbortSignal.timeout(TIMEOUT_MS) });
+      backOff(Date.now() - started);
       if (res.status === 404) return { ok: false, status: "not_found", message: `${url} returned 404` };
       if (res.ok) return { ok: true, data: await res.text() };
       failure = `${url} returned ${res.status}`;
