@@ -301,3 +301,24 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   46 encounter cards that work with frost tokens; no other campaign has any.
 - **The notes.** Each campaign carries one hand-written line on what the cards can't show, kept
   to what is certain and spoiler-free. They are the one part of the tool not derived from data.
+
+## Campaign notes, researched (October 26)
+
+The first notes were written from memory, and two of them overreached. Each is now drawn from the
+publisher's and reviewers' descriptions, kept to mechanics and structure, with the plot points
+those sources mention (bosses, endings) left out:
+
+- Night of the Zealot: [Tabletop Gaming](https://www.tabletopgaming.co.uk/News/arkham-horror-the-card-game-is-rewriting-its-first-campaign-in-its)
+- The Dunwich Legacy: [There Will Be Games, Extracurricular Activity](https://therewillbe.games/articles-up-your-game/7071-beyond-the-veil-the-arkham-horror-card-game-dunwich-legacy-extracurricular-activity)
+- The Path to Carcosa: [FFG, The Path to Carcosa](https://www.fantasyflightgames.com/en/news/2017/4/17/the-path-to-carcosa/), [Giant Brain, Dim Carcosa](https://giantbrain.co.uk/2019/03/13/beyond-the-veil-dim-carcosa/)
+- The Forgotten Age: [FFG, Welcome to the Jungle](https://www.fantasyflightgames.com/en/news/2018/4/13/welcome-to-the-jungle/), [supply cheat sheet](https://cfrick.codeberg.page/ahlcg-tfa-supply-cheat-sheet/)
+- The Circle Undone: [Bell of Lost Souls](https://www.belloflostsouls.net/?p=266606)
+- The Dream-Eaters: [Chaos Cards product page](https://chaoscards.co.uk/prod/arkham-horror-lcg/arkham-horror-the-card-game-the-dream-eaters-campaign-expansion)
+- The Innsmouth Conspiracy: [FFG, The Innsmouth Conspiracy](https://www.fantasyflightgames.com/en/news/2020/4/30/the-innsmouth-conspiracy/)
+- Edge of the Earth: [FFG, To the Edge of the Earth](https://www.fantasyflightgames.com/en/news/2021/6/3/to-edge-of-the-earth/), [TechRaptor](https://techraptor.net/tabletop/news/fantasy-flight-games-announce-new-arkham-horror-expansions)
+- The Scarlet Keys: [Asmodee product page](https://shop.asmodee.ca/en/ffgahc70)
+- The Feast of Hemlock Vale: [Asmodee product page](https://shop.asmodee.ca/en/ffgahc77)
+- The Drowned City: [Asmodee product page](https://shop.asmodee.ca/en/ffgahc84en)
+
+Two claims rest on this app's own counts rather than a source: Carcosa's horror, and Edge of the
+Earth's frost tokens.
