@@ -322,3 +322,15 @@ those sources mention (bosses, endings) left out:
 
 Two claims rest on this app's own counts rather than a source: Carcosa's horror, and Edge of the
 Earth's frost tokens.
+
+## Campaign notes, about decks (October 26)
+
+The researched notes described each campaign's story structure (Doubt and Conviction, an east or
+west approach, personal Tasks), which changes nothing in a deck. They now say only what a
+campaign's mechanics ask of a deck, each from the mechanic's entry in the Rules Reference
+(`data/rules.md`: Frost Tokens, Haunted, Swarming X, Concealed X, Explore, Vengeance X, Hidden)
+or published advice: [Unveiling Secrets](https://www.fantasyflightgames.com/en/news/2023/8/30/unveiling-secrets/)
+and an [ArkhamDB Scarlet Keys build](https://arkhamdb.com/decklist/view/40418) for testless ways to
+expose concealed enemies, [In Too Deep](https://www.fantasyflightgames.com/en/news/2020/8/27/in-too-deep/)
+for enemies strengthened by flooding and the cycle's lean toward evasion. The Dunwich Legacy and
+The Drowned City have no note: nothing beyond their counts was found that bears on a deck.

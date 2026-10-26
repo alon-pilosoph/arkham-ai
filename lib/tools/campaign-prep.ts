@@ -66,7 +66,7 @@ export function campaignPrepText(r: CampaignPrepResult): string {
   if (!r.ok) return failureText(r);
   const out = [
     `${r.campaign.name} (${r.campaign.kind === "standalone" ? "standalone scenario" : r.campaign.kind === "return" ? "Return to box: only the cards it adds" : "campaign"}).`,
-    ...(r.campaign.note ? [`What it asks of you: ${r.campaign.note}`] : []),
+    ...(r.campaign.note ? [`What it asks of your deck: ${r.campaign.note}`] : []),
     `\nIts encounter cards, as counts only (no card is named, so nothing here is a spoiler):`,
     profileText(r.profile),
   ];

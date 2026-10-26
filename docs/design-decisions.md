@@ -225,8 +225,10 @@ players' decks:* a feature to build and an account to hold, where pasting a link
 **Decision.** `campaignPrep` describes a campaign by counting its encounter cards: which skills
 its treacheries test, horror against damage, enemy toughness and keywords, shroud, frost. It
 names no card, enemy or story beat, and the model is told to offer it only when asked and to keep
-its own knowledge out of it unless the players ask for spoilers. A one-line note per campaign,
-written by hand, covers what the cards can't show: structure, travel, time.
+its own knowledge out of it unless the players ask for spoilers. A short note per campaign says
+what its mechanics ask of a deck (frost, Haunted, swarming, concealed enemies), from the Rules
+Reference and published deckbuilding advice; story structure that changes nothing in a deck is
+left out.
 
 **Why.** Counts are true by construction and can't spoil anything, and they back up what players
 say about a campaign ("Carcosa deals a lot of horror early") with numbers, by scenario pack for

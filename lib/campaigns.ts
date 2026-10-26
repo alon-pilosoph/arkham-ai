@@ -5,89 +5,91 @@ export type CampaignKind = "campaign" | "return" | "standalone";
 /** A Chapter 1 campaign and the packs its encounter cards come from, in play order. For the
  *  older cycles the first pack is the deluxe box (the opening scenarios) and each later pack is
  *  one scenario, named for it; the newer campaign boxes hold the whole campaign. `note` is what
- *  the card data cannot show (structure, travel, time pressure), written to be spoiler-light. */
+ *  the campaign asks of a deck that the counts can't show, from the Rules Reference and published
+ *  advice; empty where nothing is known beyond the counts. */
 export type Campaign = { code: string; name: string; kind: CampaignKind; packs: string[]; note: string };
 
 // Pack codes are ArkhamDB's (api/public/packs). Written by hand: a campaign's packs never change.
-// The notes come from the publisher's and reviewers' descriptions of each campaign (sources in
-// docs/design-log.md, October 26), kept to mechanics and structure: no plot, no bosses, no endings.
+// The notes say what each campaign's mechanics ask of a deck: the mechanic's effect as the Rules
+// Reference gives it, and published deckbuilding advice (sources in docs/design-log.md). Story
+// structure that changes nothing in a deck is left out, as are plot, bosses and endings.
 export const CAMPAIGNS: Campaign[] = [
   {
     code: "notz",
     name: "Night of the Zealot",
     kind: "campaign",
     packs: ["core"],
-    note: "The Core Set's three scenarios, playable alone or linked as a short campaign: the gentle start, built for learning the game.",
+    note: "Short and forgiving: any sound deck will do.",
   },
   {
     code: "dwl",
     name: "The Dunwich Legacy",
     kind: "campaign",
     packs: ["dwl", "tmm", "tece", "bota", "uau", "wda", "litas"],
-    note: "Eight scenarios. The first two can be played in either order, and the order changes how each plays out; choices in the campaign log carry weight later on.",
+    note: "",
   },
   {
     code: "ptc",
     name: "The Path to Carcosa",
     kind: "campaign",
     packs: ["ptc", "eotp", "tuo", "apot", "tpm", "bsr", "dca"],
-    note: "Eight scenarios. Choices mark Doubt or Conviction in the campaign log, and later scenarios change with them. Some treacheries are Hidden: whoever draws one keeps it secretly in hand. Heavy on horror, so willpower, sanity and horror healing pay off.",
+    note: "Heavy on horror, so willpower, sanity and horror healing pay off. Hidden treacheries sit in your hand and count toward your hand size, which a deck that likes a full hand will feel.",
   },
   {
     code: "tfa",
     name: "The Forgotten Age",
     kind: "campaign",
     packs: ["tfa", "tof", "tbb", "hote", "tcoa", "tdoy", "sha"],
-    note: "A jungle expedition. Several scenarios build the map from an exploration deck with the Explore action; the supplies chosen at the start and at each resupply shape the campaign; Poisoned is a weakness you can pick up; and some encounter cards are worth Vengeance, which makes later scenarios harder, so it pays to avoid it.",
+    note: "Exploring takes actions and can turn up a treachery instead of a location, so action economy and movement help. Some enemies add Vengeance when defeated, which makes later scenarios harder: a deck that can evade, not only fight, gets a choice.",
   },
   {
     code: "tcu",
     name: "The Circle Undone",
     kind: "campaign",
     packs: ["tcu", "tsn", "wos", "fgg", "uad", "icc", "bbt"],
-    note: "A prologue and eight scenarios. Haunted locations trigger whenever you fail to investigate them, and some scenarios give locations a Spectral side with an encounter deck of its own.",
+    note: "Haunted locations trigger on every failed investigation, so reliable investigating (high intellect, test boosts, clues discovered without a test) is worth more than usual.",
   },
   {
     code: "tde",
     name: "The Dream-Eaters",
     kind: "campaign",
     packs: ["tde", "sfk", "tsh", "dsm", "pnr", "wgd", "woc"],
-    note: "Two campaigns, The Dream-Quest in the Dreamlands and The Web of Dreams in the waking world, played separately or woven into one. It brings the Swarming keyword: enemies that arrive with a pack.",
+    note: "Swarming enemies arrive as a pack, with cards from the top of your deck as extra copies: each attacks and must be beaten separately, but evading the pack exhausts all of it. Damage that spreads, extra attacks and evasion pay off.",
   },
   {
     code: "tic",
     name: "The Innsmouth Conspiracy",
     kind: "campaign",
     packs: ["tic", "itd", "def", "hhg", "lif", "lod", "itm"],
-    note: "Eight scenarios moving between present and past. Flood tokens make locations harder, or impossible, to act in; key tokens open the way to places and rewards; and at times XP can't be spent yet, because of where the story stands.",
+    note: "Flooded locations make some enemies much stronger, and the campaign's player cards lean toward evasion: agility and ways to evade help.",
   },
   {
     code: "eote",
     name: "Edge of the Earth",
     kind: "campaign",
     packs: ["eoec"],
-    note: "An Antarctic expedition of four to ten scenarios along a branching path, with the surviving members of an expedition team along. Frost tokens go into the chaos bag, and there is a lot of moving between locations.",
+    note: "Frost tokens join the chaos bag: the first one in a test is -1 and draws another token, a second one in the same test is an automatic failure. Pass tests by a wide margin, and value chaos bag control and effects that need no test. There is a lot of moving between locations, so movement earns its place.",
   },
   {
     code: "tsk",
     name: "The Scarlet Keys",
     kind: "campaign",
     packs: ["tskc"],
-    note: "Non-linear: from a world map you choose where to go, playing all but the prologue and finale in any order. Time is the real threat, so one run won't see every scenario; some encounter cards hide enemy agents among decoys.",
+    note: "Concealed enemies hide among decoys until exposed, by fighting, evading or investigating at their location, or with an effect that damages, evades or discovers a clue without a test. Those testless effects are worth more here.",
   },
   {
     code: "fhv",
     name: "The Feast of Hemlock Vale",
     kind: "campaign",
     packs: ["fhvc"],
-    note: "Three in-game days, each with a day and a night: by day you get to know the residents and explore the island, by night its wildlife turns deadly. You choose which scenarios to play each day and night, and some enemies and perils work differently by time of day.",
+    note: "By night the island's creatures turn deadly, so even a clue-focused pair wants a way to fight or evade.",
   },
   {
     code: "tdc",
     name: "The Drowned City",
     kind: "campaign",
     packs: ["tdcc"],
-    note: "You choose to approach the city from the east or the west, which changes the order and setup of the scenarios, and each investigator has a personal Task: a side goal alongside the story.",
+    note: "",
   },
   { code: "rtnotz", name: "Return to the Night of the Zealot", kind: "return", packs: ["rtnotz"], note: "" },
   { code: "rtdwl", name: "Return to the Dunwich Legacy", kind: "return", packs: ["rtdwl"], note: "" },
