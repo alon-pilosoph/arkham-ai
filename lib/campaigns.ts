@@ -10,86 +10,86 @@ export type CampaignKind = "campaign" | "return" | "standalone";
 export type Campaign = { code: string; name: string; kind: CampaignKind; packs: string[]; note: string };
 
 // Pack codes are ArkhamDB's (api/public/packs). Written by hand: a campaign's packs never change.
-// The notes say what each campaign's mechanics ask of a deck: the mechanic's effect as the Rules
-// Reference gives it, and published deckbuilding advice (sources in docs/design-log.md). Story
-// structure that changes nothing in a deck is left out, as are plot, bosses and endings.
+// The notes say what each campaign asks of a deck, using only claims verified in
+// docs/research/campaigns.md: two independent sources, a rule, or a count of its encounter cards.
+// Story structure that changes nothing in a deck is left out, as are plot, bosses and endings.
 export const CAMPAIGNS: Campaign[] = [
   {
     code: "notz",
     name: "Night of the Zealot",
     kind: "campaign",
     packs: ["core"],
-    note: "Short and forgiving: any sound deck will do.",
+    note: "Its second and third scenarios are much harder than the tutorial-like first, so don't build only for the opening.",
   },
   {
     code: "dwl",
     name: "The Dunwich Legacy",
     kind: "campaign",
     packs: ["dwl", "tmm", "tece", "bota", "uau", "wda", "litas"],
-    note: "",
+    note: "Don't build a deck that draws through itself fast, and plan few upgrades: XP is scarce. Some intellect tests matter, so bring real intellect, not only testless clues, and keep moving. Treacheries deal damage more often than horror.",
   },
   {
     code: "ptc",
     name: "The Path to Carcosa",
     kind: "campaign",
     packs: ["ptc", "eotp", "tuo", "apot", "tpm", "bsr", "dca"],
-    note: "Heavy on horror, so willpower, sanity and horror healing pay off. Hidden treacheries sit in your hand and count toward your hand size, which a deck that likes a full hand will feel.",
+    note: "Heavy on horror: willpower, sanity and horror healing pay off. No enemy has 1 health, so every attack needs to deal real damage. Hidden treacheries sit in your hand and count toward hand size. Fine Clothes pays off in one parley-heavy scenario.",
   },
   {
     code: "tfa",
     name: "The Forgotten Age",
     kind: "campaign",
     packs: ["tfa", "tof", "tbb", "hote", "tcoa", "tdoy", "sha"],
-    note: "Exploring takes actions and can turn up a treachery instead of a location, so action economy and movement help. Some enemies add Vengeance when defeated, which makes later scenarios harder: a deck that can evade, not only fight, gets a choice.",
+    note: "Agility and evading matter more than in any other campaign: evade enemies with Vengeance rather than kill them, though weapons still matter. Expect poison and trauma, so bring allies, soak and healing. Actions are tight, and exploring costs them.",
   },
   {
     code: "tcu",
     name: "The Circle Undone",
     kind: "campaign",
     packs: ["tcu", "tsn", "wos", "fgg", "uad", "icc", "bbt"],
-    note: "Haunted locations trigger on every failed investigation, so reliable investigating (high intellect, test boosts, clues discovered without a test) is worth more than usual.",
+    note: "Willpower is tested most, about 40% of treachery tests, and low-willpower investigators struggle. Haunted locations punish failed investigations, so clue-gatherers need reliable intellect rather than fail-forward tricks. Self-sufficient decks beat narrow specialists; Alter Fate and Handcuffs earn their place.",
   },
   {
     code: "tde",
     name: "The Dream-Eaters",
     kind: "campaign",
     packs: ["tde", "sfk", "tsh", "dsm", "pnr", "wgd", "woc"],
-    note: "Swarming enemies arrive as a pack, with cards from the top of your deck as extra copies: each attacks and must be beaten separately, but evading the pack exhausts all of it. Damage that spreads, extra attacks and evasion pay off.",
+    note: "Swarming enemies arrive as packs taken from the top of your own deck: each swarm card attacks and is defeated separately, but one evade exhausts the whole pack, and area damage such as Dynamite Blast or Storm of Spirits is strong. Most enemies are ordinary ones, though, so don't build only for swarms.",
   },
   {
     code: "tic",
     name: "The Innsmouth Conspiracy",
     kind: "campaign",
     packs: ["tic", "itd", "def", "hhg", "lif", "lod", "itm"],
-    note: "Flooded locations make some enemies much stronger, and the campaign's player cards lean toward evasion: agility and ways to evade help.",
+    note: "Enemies are everywhere: bring plenty of enemy management, and healing or soak for both damage and horror, much of it testless. Evading Deep Ones again and again costs you, since they hurt you when they engage, and some enemies grow stronger in flooded locations. Movement matters.",
   },
   {
     code: "eote",
     name: "Edge of the Earth",
     kind: "campaign",
     packs: ["eoec"],
-    note: "Frost tokens join the chaos bag: the first one in a test is -1 and draws another token, a second one in the same test is an automatic failure. Pass tests by a wide margin, and value chaos bag control and effects that need no test. There is a lot of moving between locations, so movement earns its place.",
+    note: "Frost tokens join the chaos bag: the first in a test is -1 and draws another token, a second is an automatic failure, so pass tests by a margin and value chaos bag control. The maps are big, so movement earns its place; all-round investigators do better than specialists, and agility is more useful than usual. Story assets bloat your deck, so tutoring helps.",
   },
   {
     code: "tsk",
     name: "The Scarlet Keys",
     kind: "campaign",
     packs: ["tskc"],
-    note: "Concealed enemies hide among decoys until exposed, by fighting, evading or investigating at their location, or with an effect that damages, evades or discovers a clue without a test. Those testless effects are worth more here.",
+    note: "Concealed enemies must be exposed first, by fighting, evading or investigating against the location's shroud, or with an effect that damages, evades or discovers a clue without a test. Investigators with a free or extra fight, investigate or evade action shine, as does a 5 in one of those skills; Skeleton Key trivializes much of it.",
   },
   {
     code: "fhv",
     name: "The Feast of Hemlock Vale",
     kind: "campaign",
     packs: ["fhvc"],
-    note: "By night the island's creatures turn deadly, so even a clue-focused pair wants a way to fight or evade.",
+    note: "Evasion matters more than anywhere since The Forgotten Age: many enemies are Aloof or Elusive. All four skills are tested, agility most, and treacheries make you discard, so avoid discard-reliant decks. Some scenarios bring Elite enemies that need real damage.",
   },
   {
     code: "tdc",
     name: "The Drowned City",
     kind: "campaign",
     packs: ["tdcc"],
-    note: "",
+    note: "Movement and action economy are key, with a lot to do in little time. Agility for evading helps and willpower is tested often; enemy attacks deal far more damage than horror.",
   },
   { code: "rtnotz", name: "Return to the Night of the Zealot", kind: "return", packs: ["rtnotz"], note: "" },
   { code: "rtdwl", name: "Return to the Dunwich Legacy", kind: "return", packs: ["rtdwl"], note: "" },
