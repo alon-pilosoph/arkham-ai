@@ -142,6 +142,30 @@ function artStyle(card: CardDetail): CSSProperties {
   return { backgroundImage: `url(${card.image})`, backgroundSize: size, backgroundPosition: position };
 }
 
+/** One of ArkhamDB's scans, with a placeholder while it loads and a message if it can't. */
+const Scan: FC<{ src: string; alt: string }> = ({ src, alt }) => {
+  const [state, setState] = useState<"loading" | "loaded" | "failed">("loading");
+  if (state === "failed")
+    return (
+      <p className="text-muted-foreground flex aspect-[300/419] w-60 items-center justify-center rounded-lg border p-4 text-center font-sans text-sm">
+        ArkhamDB's scan of this card couldn't be loaded.
+      </p>
+    );
+  return (
+    <>
+      {state === "loading" ? <Skeleton className="aspect-[300/419] w-60 rounded-lg" /> : null}
+      {/* biome-ignore lint/performance/noImgElement: ArkhamDB's own scans, at their own size */}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => setState("loaded")}
+        onError={() => setState("failed")}
+        className={cn("max-h-[70dvh] max-w-full rounded-lg", state === "loading" && "hidden")}
+      />
+    </>
+  );
+};
+
 const Section: FC<{ label: string; children: ReactNode; defaultOpen?: boolean }> = ({ label, children, defaultOpen }) => (
   <Collapsible defaultOpen={defaultOpen} className="border-t">
     <CollapsibleTrigger className="group/more hover:bg-muted/60 flex w-full items-center gap-2 px-5 py-3 text-sm font-medium">
@@ -271,12 +295,8 @@ export const CardFaceView: FC<{
 
       {scan && card.image ? (
         <button type="button" className="flex w-full flex-col items-center gap-2 p-4" onClick={() => setScan(false)}>
-          {/* biome-ignore lint/performance/noImgElement: ArkhamDB's own scans, at their own size */}
-          <img src={card.image} alt={`The printed card: ${card.label}`} className="max-h-[70dvh] max-w-full rounded-lg" />
-          {card.backImage ? (
-            // biome-ignore lint/performance/noImgElement: as above
-            <img src={card.backImage} alt={`The back of ${card.label}`} className="max-h-[70dvh] max-w-full rounded-lg" />
-          ) : null}
+          <Scan src={card.image} alt={`The printed card: ${card.label}`} />
+          {card.backImage ? <Scan src={card.backImage} alt={`The back of ${card.label}`} /> : null}
           <span className="text-muted-foreground font-sans text-xs">Tap to go back to the text</span>
         </button>
       ) : (
