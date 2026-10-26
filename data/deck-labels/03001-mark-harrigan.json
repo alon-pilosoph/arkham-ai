@@ -10,6 +10,6 @@
     { "id": 3003, "role": "fighter", "secondaryRole": "support", "archetypes": [], "summary": "Frontline Mark who heals rather than soaks: First Aid, Emergency Aid and Smoking Pipe repair Sophie's damage, Taunt and True Grit protect the team, and Machete does the killing." },
     { "id": 53872, "role": "flex", "secondaryRole": null, "archetypes": ["tools"], "summary": "Flex Mark who investigates twice a turn with two Crowbars on a Tool Belt, boosted by Wolf Mask, and fights with Blessed Blade, Beat Cops and Hunter's Mark." },
     { "id": 17068, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "Hard-difficulty Mark: .45 Thompson and Enchanted Blade put him near 9 to fight, Sophie passes tests, heavy draw keeps him stocked, and Emergency Aid, Second Wind and Hallowed Mirror heal it all." },
-    { "id": 3025, "role": "fighter", "secondaryRole": null, "archetypes": [], "summary": "A variant of the Sophie Harrigan guide for solo or a Seeker partner: Colts and Machete, Beat Cop and Guard Dog, Dodge and Elusive, with Sophie standing in for skill cards." }
+    { "id": 11742, "role": "fighter", "secondaryRole": "support", "archetypes": ["firearms"], "summary": "Starter Mark who fights with two .32 Colts, a .45 Automatic, Machete and Beat Cop, draws off the damage he takes, and pulls enemies off partners with \"Let me handle this!\"; Flashlight for clues." }
   ]
 }

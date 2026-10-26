@@ -10,6 +10,6 @@
     {"id": 47878, "role": "support", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Story-mode Kate who sits at one location and blanks treacheries with Prophesiae Profana while killing enemies through Ancient Stone draws, leaving most clues to her friends."},
     {"id": 53686, "role": "cluever", "secondaryRole": null, "archetypes": ["tools", "succeed by exactly"], "summary": "Thematic science Kate with up to 14 Science and Tool assets: Fine Tuning on Chemistry Set or Antikythera, and Inquisitive and Steady-Handed to hit the exact results they pay for."},
     {"id": 47965, "role": "cluever", "secondaryRole": null, "archetypes": [], "summary": "A \"One for All\" template Kate built from a single shared card collection, with generic Seeker tools and filler upgrades; more a collection exercise than a tuned deck."},
-    {"id": 46705, "role": "cluever", "secondaryRole": null, "archetypes": ["card draw"], "summary": "Standalone cartographer Kate who draws a big hand with Cryptic Research, Practice Makes Perfect and Laboratory Assistants, oversucceeds with Magnifying Glass, and fires events through Farsight."}
+    { "id": 53193, "role": "cluever", "secondaryRole": null, "archetypes": ["tools"], "summary": "41 XP Kate who loads clues onto Microscope, Press Pass and Ravenous Myconid with her ability, draws with Research Notes, Quick Study and Laboratory Assistant, and closes with Crack the Case and Captivating Discovery." }
   ]
 }
