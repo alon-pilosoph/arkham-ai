@@ -23,7 +23,7 @@ to. Without an invite there is no way to create an account; the owner of the dep
 one exception, set by an environment variable.
 
 **Start a campaign.** Pick a Chapter 1 campaign (The Path to Carcosa, a standalone, a Return to
-box), name it, and set the taboo list on or off for it. The app lists its scenarios in play
+box), name it, choose the difficulty, and set the taboo list on or off for it. The app lists its scenarios in play
 order, by their published names only.
 
 **Invite.** The campaign's page has an invite link to copy and send. Whoever opens it, signs in
@@ -72,7 +72,7 @@ Open: none.
 
 | Thing | Holds | Notes |
 |---|---|---|
-| Campaign | Which Chapter 1 campaign, a name, taboo on or off, its owner | |
+| Campaign | Which Chapter 1 campaign, a name, the difficulty, taboo on or off, its owner | Difficulty shapes advice: Hard and Expert punish tests passed by a small margin |
 | Member | An account's place in a campaign: owner or member | Owners invite and remove; members do everything else |
 | Invite | A secret link token, who made it, when it ends | Replacing the link ends the old token |
 | Seat | A player in the campaign: a display name, the account playing it (optional), the investigator, killed or insane | One account can hold two seats |
@@ -107,8 +107,8 @@ overwrite each other.
 **The existing tools learn the campaign.** The XP advisor and replacement tools take a seat
 instead of a deck id when a campaign is open; campaign prep looks at the next scenario.
 
-Open: whether a member can apply a change to someone else's seat (proposed: yes, the table plays
-together, and the change history shows who did it).
+Any member can apply a change to any seat: the table plays together, and the change history
+shows who did what.
 
 ## 6. Hosting and accounts
 
@@ -123,7 +123,7 @@ in code and migrations committed.
 
 **Accounts: Better Auth,** with its tables in the same database. Sign in with Google, and with a
 one-time email link for anyone without Google (sent with a free email service, such as Resend).
-Sessions are cookies; every API route checks the session and, for campaign data, membership.
+Both from the start. Sessions are cookies; every API route checks the session and, for campaign data, membership.
 
 **Vercel Authentication goes.** The app's own sign-in replaces it, which also lifts the Hobby
 plan's one-outside-user limit. Invite-only sign-up keeps strangers off the API key, and a daily
@@ -136,8 +136,6 @@ Rejected: *Supabase* (free projects pause after a week idle, and campaigns are p
 apart); *the home Pi* (a second production system to keep up, and down with the house's power or
 internet); *keeping Assistant Cloud* (it stores chats per browser, anonymously, and cannot join a
 chat to a campaign).
-
-Open: whether email links are needed at first, or Google sign-in covers everyone for now.
 
 ## 7. Spoilers
 
@@ -187,5 +185,3 @@ written in `docs/deploying.md`), and an email service if email links are in.
 ## Open questions, all together
 
 1. Undo: the last change only, or further back?
-2. Can a member apply changes to someone else's seat?
-3. Email-link sign-in from the start, or Google only for now?
