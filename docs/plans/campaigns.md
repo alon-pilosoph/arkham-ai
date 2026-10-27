@@ -81,9 +81,9 @@ Open: none.
 | Trauma entry | Physical or mental, per seat, after a scenario | Also a ledger: it shapes what a deck needs (horror healing, soak) |
 | Next scenario | Where the campaign is, from its scenario list (section 9) | So prep and upgrade advice look ahead to the right scenario |
 | Chat | A conversation, in a campaign or personal | Campaign chats are shared by its members |
-| Change | Every applied change: what it was, who applied it, when, from which chat | Lets the campaign page show history and undo the last change |
+| Change | Every applied change: what it was, who applied it, when, from which chat | The campaign's history, and what a revert reverses (section 5) |
 
-Open: whether undo goes further back than the last change.
+Open: none.
 
 ## 5. How chat uses the campaign
 
@@ -109,6 +109,15 @@ instead of a deck id when a campaign is open; campaign prep looks at the next sc
 
 Any member can apply a change to any seat: the table plays together, and the change history
 shows who did what.
+
+**Undo is a revert, of any change.** Every change in the history has a Revert button. A revert
+erases nothing: it is a new change that cancels the old one, so the history reads "Dana reverted
+Alon's Lightning Gun swap". The server refuses a revert that later changes depend on, saying
+why: reverting XP that has since been spent (unspent XP would go negative; revert the purchase
+first), or a deck change whose cards a later change has replaced. In chat, "undo that swap" gets
+a revert proposed as a card, applied like any other change. A seat's deck page also lists its
+versions with "Restore this version", which is a deck change like any other: priced, and checked
+against unspent XP.
 
 ## 6. Hosting and accounts
 
@@ -149,7 +158,7 @@ added to a deck is named, since the players already hold it.
 - **Unit tests stay off the network.** The database in tests is PGlite, Postgres running in the
   test process, migrated from the same schema.
 - **The ledgers are tested with known answers:** unspent XP after a run of purchases, upgrades,
-  exceptional and myriad cards, customizations, and an undo.
+  exceptional and myriad cards, customizations, and reverts, including each refused revert.
 - **Every change kind** is tested for the server's checks: not a member, illegal deck, XP short,
   stale campaign version.
 - **End-to-end tests** run on the mock model with a test-only sign-in, from creating a campaign
@@ -177,11 +186,11 @@ merged first.
    hand editing.
 5. **Chat integration:** the state in every turn, `proposeChange` and its cards, the tools
    taking seats.
-6. **Export** of a seat's deck for ArkhamDB, and undo.
+6. **Export** of a seat's deck for ArkhamDB, reverts and restoring a version.
 
 What you would set up, once: Neon from Vercel's marketplace, a Google sign-in client (steps
 written in `docs/deploying.md`), and an email service if email links are in.
 
-## Open questions, all together
+## Open questions
 
-1. Undo: the last change only, or further back?
+None at the moment.
