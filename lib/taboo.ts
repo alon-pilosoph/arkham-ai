@@ -59,7 +59,7 @@ export function tabooChange(list: TabooList, e: TabooEntry): TabooChange {
 
 type TabooInForce = { list?: TabooList; error?: string };
 
-export async function tabooInForce(settings: Settings): Promise<TabooInForce> {
+export async function tabooInForce(settings: Pick<Settings, "taboo">): Promise<TabooInForce> {
   if (!settings.taboo) return {};
   try {
     const list = latest(await getTaboos());

@@ -7,9 +7,11 @@ import type { Customization } from "@/lib/card-text";
 import type { DeckCard } from "@/lib/decks";
 import type { DeckInput, DeckResult } from "@/lib/tools/deck";
 import { cardUrl } from "@/lib/urls";
+import { useDeckLabel } from "./deck-label";
 import {
   BadgePopover,
   CardMeta,
+  capital,
   DONE,
   Dot,
   FailureRow,
@@ -121,12 +123,12 @@ const DeckResultUI: FC<{ result: Extract<DeckResult, { ok: true }> }> = ({ resul
 };
 
 export const DeckUI: ToolCallMessagePartComponent<Partial<DeckInput>, DeckResult> = ({ args, result, status }) => {
-  const ref = args.ref ?? "";
-  if (!result) return <Pending status={status} label={`Reading deck ${ref}`} />;
+  const deck = useDeckLabel(args.ref);
+  if (!result) return <Pending status={status} label={`Reading ${deck}`} />;
   if (result.ok !== true)
-    return <FailureRow failure={result} notFound={`Deck ${ref} not found`} error={`Couldn't read deck ${ref}`} />;
+    return <FailureRow failure={result} notFound={`${capital(deck)} wasn't found`} error={`Couldn't read ${deck}`} />;
   return (
-    <ToolBoundary label={`Reading deck ${ref}`}>
+    <ToolBoundary label={`Reading ${deck}`}>
       <DeckResultUI result={result} />
     </ToolBoundary>
   );

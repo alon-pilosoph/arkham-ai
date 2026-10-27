@@ -75,11 +75,13 @@ original card is therefore computed by the same function in the app and in the p
    current; the tools fetch it again. The last 24 messages are kept, and the window always
    starts on a user message: an answer whose question fell out of the window is dropped with it.
 
-4. **A per-turn note** is prepended to the newest user message: today's date and whether the
-   taboo list is on (`turnNote` and `anchorTurn`, `lib/agent.ts`). It never goes into the system
+4. **A per-turn note** is prepended to the newest user message: today's date, whether the
+   taboo list is on, and the decks the players saved as their own and their partner's, if any,
+   by link, investigator and name, the name wrapped as untrusted (`turnNote` and `anchorTurn`,
+   `lib/agent.ts`). It never goes into the system
    prompt, whose bytes are identical on every request.
 
-5. **The agent loop** is one `streamText` call with four tools. The players' settings reach each
+5. **The agent loop** is one `streamText` call with five tools. The players' settings reach each
    tool through the AI SDK's per-tool context (`toolsContext`), not through the prompt. Before
    each step, `prepareStep` checks the budgets and moves the cache breakpoint (see below).
 
@@ -135,16 +137,18 @@ still running when time is up is aborted and reports `ERROR`.
 |---|---|---|
 | `cards` | The card store, official rulings, and the taboo list when it is on | Every version of each matching card, grouped by name, with text, errata, rulings and any taboo change. Long results are paged with an offset. |
 | `deck` | The deck, from ArkhamDB | The decoded list (customizable upgrades included), XP, cards not in the collection, the investigator's sides and deckbuilding choices, and the author's guide, paged with an offset |
+| `findDeck` | The deck index | The indexed decks closest to the way a player named one ("Boom Chakra Lacka", "my bless Mary deck"), ranked by title and investigator, then role and archetypes, then summary. The model reads one only when it clearly fits; otherwise it asks which, or for the deck's link. |
 | `recommendDecks` | The deck index | A shortlist, most liked first, one deck per investigator unless an investigator was asked for. With `pairWith`, decks in the roles that complement the given deck. |
 | `replaceCard` | The deck, the card store, the legality check, play rates | Legal, owned candidates to replace one card in one deck, for a goal: cheaper, the same job, a different job, or an owned stand-in for an unowned card |
 
-All four tools follow the same contracts:
+All five tools follow the same contracts:
 
 - **An error is never shown as absence.** ArkhamDB calls return a `Fetched<T>`
   (`lib/arkhamdb.ts`): the data, `not_found` or `error`. The model sees `ERROR: ...` or
   `NOT FOUND: ...`, never an empty result, and the prompt tells it never to report a failed
   lookup as "there are none".
-- **Untrusted text is wrapped.** Deck names, guides and free-text customization choices (a
+- **Untrusted text is wrapped.** Deck names (in tool results and in the saved decks of the
+  per-turn note), guides and free-text customization choices (a
   trait or skill the author typed) pass through `untrusted()`
   (`lib/format.ts`), which wraps them in `<untrusted_data>` tags and replaces every `<` inside
   with `‹`, so no tag in the text, however nested, can close the wrapper.
@@ -209,6 +213,16 @@ The store's behavior:
   reprint carries its original's taboo change.
 - **Ownership is by pack.** `lib/collection.json` lists the owned packs. A card is owned when any
   of its printings is in one of them, and only owned printings are named to the players.
+
+## Saved decks
+
+The **Decks** button in the header (`components/settings/deck-slots.tsx`) keeps two decks in the
+browser's settings: the player's own and their partner's. A pasted ArkhamDB link is read by
+`GET /api/deck?ref=` (`app/api/deck/route.ts`), through the same `fetchDeck` as the tools, into
+the deck's id, kind, name and investigator. Saved decks travel with every request as settings
+and reach the model in the per-turn note, so "my deck" and "my partner's deck" need no link.
+Tool rows name a saved deck by whose it is and any other as "the deck", never by its number
+(`components/tools/deck-label.ts`).
 
 ## The card dialog
 
@@ -332,9 +346,10 @@ answer.
 | `loader.test.ts` | The card set and taboo lists survive ArkhamDB being down: the last copy is served, one warning is logged, and retries wait a minute |
 | `mock-model.test.ts` | The mock model only calls tools that exist |
 | `card-detail.test.ts` | The card dialog's data: owned printings named once, every version (a parallel investigator by its pack), reprints opened as the original, the taboo change only with the switch on; the route's 200, 400 and 404; which links are card links; card markup rendered without passing other HTML through |
+| `find-deck.test.ts` | `findDeck` finds a deck by title, with or without its investigator, and by what it does; a name that fits many returns several candidates; an unknown name returns none and says to ask for the link; deck names are wrapped as untrusted; `GET /api/deck` reads a pasted link and refuses one that isn't |
 | `symbols.test.ts` | Game symbols in an answer become keycaps; links and other brackets are left alone |
 | `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
-| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, the taboo switch surviving a reload |
+| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, a deck slot refusing what isn't a link, the taboo switch surviving a reload |
 
 The unit tests never touch the network. `vitest.config.mts` sets `ARKHAM_CARDS_FILE` and
 `ARKHAM_TABOOS_FILE` to the card set and taboo lists in `tests/fixtures/`, and a `fetch` mock

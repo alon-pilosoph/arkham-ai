@@ -6,6 +6,7 @@ import { useCardClick } from "@/components/cards/card-link";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "@/components/ui/item";
 import type { Candidate, Goal, ReplaceInput, ReplaceResult } from "@/lib/tools/replace-card";
 import { cardUrl } from "@/lib/urls";
+import { useDeckLabel } from "./deck-label";
 import {
   CardMeta,
   capital,
@@ -76,20 +77,17 @@ const ReplaceResultUI: FC<{ result: Extract<ReplaceResult, { kind: "replacements
 
 export const ReplaceUI: ToolCallMessagePartComponent<Partial<ReplaceInput>, ReplaceResult> = ({ args, result, status }) => {
   const card = args.card ?? "the card";
+  const deck = useDeckLabel(args.deck);
   if (!result) return <Pending status={status} label={`Finding replacements for ${card}`} />;
   if (result.ok !== true) {
     if (result.deckList)
       return (
-        <NotFound label={`${card} isn't in deck ${args.deck ?? ""}`}>
+        <NotFound label={`${card} isn't in ${deck}`}>
           <p className="text-muted-foreground text-sm">The deck runs {result.deckList.join(", ")}.</p>
         </NotFound>
       );
     return (
-      <FailureRow
-        failure={result}
-        notFound={`Deck ${args.deck ?? ""} not found`}
-        error={`Couldn't find replacements for ${card}`}
-      />
+      <FailureRow failure={result} notFound={`${capital(deck)} wasn't found`} error={`Couldn't find replacements for ${card}`} />
     );
   }
   if (result.kind === "ambiguous")

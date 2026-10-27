@@ -9,12 +9,13 @@ import {
 } from "ai";
 import { getCards } from "./cards";
 import { withSignal } from "./deadline";
-import { toolError } from "./format";
+import { toolError, untrusted } from "./format";
 import { trimHistory } from "./history";
 import { repairLinks } from "./link-repair";
 import { SYSTEM_PROMPT } from "./prompt";
-import { DEFAULT_SETTINGS, type Settings } from "./settings";
+import { DEFAULT_SETTINGS, type SavedDeck, type Settings } from "./settings";
 import { type ToolName, tools } from "./tools";
+import { deckUrl } from "./urls";
 
 export const BUDGET = {
   maxSteps: 10,
@@ -35,8 +36,16 @@ const CACHE_LONG = { anthropic: { cacheControl: { type: "ephemeral" as const, tt
 export const FINAL_NOTE =
   "[The tool budget for this answer is spent. Answer now from what the tools returned, and say plainly what you could not check.]";
 
+function savedDeck(whose: string, d: SavedDeck): string {
+  return `${whose} is ${untrusted("deck name", d.name || "(untitled)")}, ${d.investigator} (${deckUrl(d.id, d.kind)})`;
+}
+
 export function turnNote(today: string, settings: Settings): string {
-  return `(Today is ${today}. Taboo list: ${settings.taboo ? "on, the current list" : "off"}.)`;
+  const decks = [
+    settings.myDeck ? savedDeck("The asking player's own deck", settings.myDeck) : "",
+    settings.partnerDeck ? savedDeck("Their partner's deck", settings.partnerDeck) : "",
+  ].filter(Boolean);
+  return `(Today is ${today}. Taboo list: ${settings.taboo ? "on, the current list" : "off"}.${decks.map((d) => ` ${d}.`).join("")})`;
 }
 
 export function anchorTurn(messages: ModelMessage[], note: string): ModelMessage[] {

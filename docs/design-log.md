@@ -258,3 +258,18 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   pack and position, so printings are listed once per pack and position; and a parallel
   investigator has the same name as the original, so versions that would read the same are
   labeled by pack.
+
+## Decks by name, and saved decks (October 25)
+
+- **Why.** Examples and answers called decks by ArkhamDB id ("deck 33170"), which is nobody's
+  name for a deck. The welcome examples, the README, the eval cases and every tool row now name
+  decks by investigator and title, and the guidance tells the model never to call a deck by its
+  number. A fourth eval check flags it when it does.
+- **Two ways to point at a deck without a link.** The **Decks** button saves the player's own
+  deck and their partner's from a pasted link, once, and the per-turn note names them. A deck
+  can also be named: `findDeck` ranks the index by title and investigator, then role and
+  archetypes, then summary, and the model reads a match only when it clearly is the deck meant;
+  otherwise it asks which, or for the link. Matching stays inside the index on purpose
+  ([design-decisions.md](design-decisions.md#decks-are-named-never-numbered)).
+- **Found on the way.** The mock model stripped the per-turn note up to its first ")", which a
+  saved deck's link now contains.

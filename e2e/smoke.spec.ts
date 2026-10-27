@@ -50,6 +50,20 @@ test("a deck search shortlists indexed decks that link to ArkhamDB", async ({ pa
   expect(await decks.count()).toBeGreaterThan(1);
 });
 
+test("a deck named instead of linked is looked up by name", async ({ page }) => {
+  await ask(page, "How do I play the Boom Chakra Lacka deck?");
+  const found = page.locator("[data-slot=tool-fallback-trigger]").filter({ hasText: "Boom Chakra Lacka" });
+  await found.click();
+  await expect(page.getByText("Lily - Boom Chakra Lacka (Deck Guide)")).toBeVisible();
+});
+
+test("a deck slot says so when what was pasted isn't a deck link", async ({ page }) => {
+  await page.getByRole("button", { name: "Your decks" }).click();
+  await page.getByLabel("Your deck", { exact: true }).fill("my lily deck");
+  await page.getByRole("button", { name: "Save" }).first().click();
+  await expect(page.getByText("That isn't an ArkhamDB deck link.")).toBeVisible();
+});
+
 test("the taboo switch is remembered across a reload", async ({ page }) => {
   const taboo = page.getByRole("switch", { name: /taboo/i });
   await expect(taboo).not.toBeChecked();

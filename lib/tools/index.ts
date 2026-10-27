@@ -1,5 +1,6 @@
 import { cardsTool } from "./cards";
 import { deckTool } from "./deck";
+import { findDeckTool } from "./find-deck";
 import { recommendDecksTool } from "./recommend-decks";
 import { replaceCardTool } from "./replace-card";
 
@@ -7,6 +8,7 @@ import { replaceCardTool } from "./replace-card";
 export const tools = {
   cards: cardsTool,
   deck: deckTool,
+  findDeck: findDeckTool,
   recommendDecks: recommendDecksTool,
   replaceCard: replaceCardTool,
 };

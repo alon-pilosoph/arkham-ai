@@ -3,12 +3,14 @@
 import { defineToolkit, Tools, useAui } from "@assistant-ui/react";
 import { CardsUI } from "./cards-ui";
 import { DeckUI } from "./deck-ui";
+import { FindDeckUI } from "./find-deck-ui";
 import { RecommendUI } from "./recommend-decks-ui";
 import { ReplaceUI } from "./replace-card-ui";
 
 const arkhamToolkit = defineToolkit({
   cards: { type: "backend", render: CardsUI },
   deck: { type: "backend", render: DeckUI },
+  findDeck: { type: "backend", render: FindDeckUI },
   recommendDecks: { type: "backend", render: RecommendUI },
   replaceCard: { type: "backend", render: ReplaceUI },
 });

@@ -36,13 +36,19 @@ function linkedCodes(answer: string): string[] {
   return [...answer.matchAll(/\]\(https:\/\/arkhamdb\.com\/card\/([^)]+)\)/g)].map((m) => m[1]);
 }
 
-type Checks = { invalidCardLinks: string[]; tabooMentioned: boolean; empty: boolean };
+// "deck 33170" or "deck #33170" in the prose; a link's URL carries the number and doesn't count
+function deckByNumber(answer: string): boolean {
+  return /\bdeck(?:list)?\s*#?\d{3,}/i.test(answer.replace(/\]\([^)]*\)/g, "]"));
+}
+
+type Checks = { invalidCardLinks: string[]; tabooMentioned: boolean; deckByNumber: boolean; empty: boolean };
 
 function checkTurn(answer: string, toolResults: unknown, tabooOn: boolean): Checks {
   const seen = codesIn(JSON.stringify(toolResults));
   return {
     invalidCardLinks: linkedCodes(answer).filter((code) => !seen.has(code)),
     tabooMentioned: !tabooOn && /taboo/i.test(answer),
+    deckByNumber: deckByNumber(answer),
     empty: answer.trim().length === 0,
   };
 }
@@ -51,6 +57,7 @@ function failedChecks(checks: Checks): string[] {
   const out: string[] = [];
   if (checks.invalidCardLinks.length) out.push(`invented card code(s) ${checks.invalidCardLinks.join(", ")}`);
   if (checks.tabooMentioned) out.push("mentioned taboo while it is off");
+  if (checks.deckByNumber) out.push("called a deck by its number");
   if (checks.empty) out.push("empty answer");
   return out;
 }

@@ -14,6 +14,8 @@ export function route(q: string): { toolName: string; input: Record<string, unkn
   if (deck && replace)
     return { toolName: "replaceCard", input: { deck, card: replace.trim(), goal: /cheap/i.test(q) ? "cheaper" : "same_job" } };
   if (deck) return { toolName: "deck", input: { ref: deck } };
+  const named = q.match(/how do i play (?:the )?(.+?)(?: deck)?\?/i)?.[1];
+  if (named) return { toolName: "findDeck", input: { name: named } };
   if (/suggest|recommend|find me/i.test(q)) {
     const input: Record<string, unknown> = {};
     const cls = q.match(/guardian|seeker|rogue|mystic|survivor/i)?.[0];
@@ -51,7 +53,7 @@ export function mockModel() {
     doStream: async ({ prompt }) => {
       const last = prompt[prompt.length - 1];
       if (last.role !== "tool") {
-        const question = textOf(last.content).replace(/^\(Today is [^)]*\.\)\s*/, "");
+        const question = textOf(last.content).replace(/^\(Today is [\s\S]*?\.\)\s*/, "");
         const { toolName, input } = route(question);
         return stream([
           { type: "tool-call", toolCallId: `mock-${Date.now()}`, toolName, input: JSON.stringify(input) },
