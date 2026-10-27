@@ -334,3 +334,11 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   walks. Codes that alias another now stop after one page, settling gets five rounds, and each
   fallback is recorded with its reason. The second run took 420 pages in 14 minutes; five busy
   investigators still fell back to date walks, each over a tie group one deck short.
+
+## Campaign prep by scenario (October 27)
+
+- **Why.** The prep table listed packs, so its first row, "The Path to Carcosa", was the deluxe
+  box: two scenarios and the sets the whole campaign shares, read as if it were one scenario.
+- **Now** each campaign's scenarios come from its scenario cards, in printed order, and the
+  table has one row per scenario counting the set made for it, with the shared sets counted
+  apart. The same list will tell a campaign which scenario is next.

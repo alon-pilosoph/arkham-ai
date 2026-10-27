@@ -69,7 +69,7 @@ test("campaign prep sizes up a campaign without naming its cards", async ({ page
   const prep = page.locator("[data-slot=tool-fallback-trigger]").filter({ hasText: "What The Path to Carcosa asks of you" });
   await expect(prep).toContainText("Spoiler-light");
   await prep.click();
-  await expect(page.getByText("By pack, in play order")).toBeVisible();
+  await expect(page.getByText("By scenario")).toBeVisible();
 });
 
 test("a deck saved in a slot shows by investigator and name, and is remembered", async ({ page }) => {

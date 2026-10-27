@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { CAMPAIGNS, type Campaign, encounterCards, findCampaign, type Profile, profile } from "../campaigns";
+import { CAMPAIGNS, type Campaign, encounterCards, findCampaign, type Profile, profile, scenarios } from "../campaigns";
 import { getCards } from "../cards";
 import { type Failure, failureText, notFound, safely, toolText } from "../format";
 import { SettingsSchema } from "../settings";
@@ -10,8 +10,10 @@ export type CampaignPrepResult =
       ok: true;
       campaign: Pick<Campaign, "code" | "name" | "kind" | "note">;
       profile: Profile;
-      /** The older cycles only: each pack's own encounter cards, in play order. */
-      stages: { pack: string; name: string; profile: Profile }[];
+      /** Each scenario's own encounter set, in printed order; empty for a single scenario. */
+      scenarios: { name: string; profile: Profile }[];
+      /** The sets several scenarios draw on, counted apart; null when there are none. */
+      shared: Profile | null;
     }
   | Failure;
 
@@ -26,15 +28,19 @@ export async function campaignPrep(name: string): Promise<CampaignPrepResult> {
   if (hits.length > 1) return notFound(`"${name}" could be ${hits.map((c) => c.name).join(" or ")}. Ask which.`);
   const c = hits[0];
   const store = await getCards();
-  const packName = (code: string) => [...store.byCode.values()].find((x) => x.pack_code === code)?.pack_name ?? code;
+  const cards = encounterCards(store, c.packs);
+  const list = scenarios(store, c);
+  const own = new Set(list.map((s) => s.set));
+  const shared = cards.filter((x) => !own.has(x.encounter_code ?? ""));
   return {
     ok: true,
     campaign: { code: c.code, name: c.name, kind: c.kind, note: c.note },
-    profile: profile(encounterCards(store, c.packs)),
-    stages:
-      c.packs.length > 1
-        ? c.packs.map((p) => ({ pack: p, name: packName(p), profile: profile(encounterCards(store, [p])) }))
+    profile: profile(cards),
+    scenarios:
+      list.length > 1
+        ? list.map((s) => ({ name: s.name, profile: profile(cards.filter((x) => x.encounter_code === s.set)) }))
         : [],
+    shared: list.length > 1 && shared.length ? profile(shared) : null,
   };
 }
 
@@ -70,11 +76,12 @@ export function campaignPrepText(r: CampaignPrepResult): string {
     `\nIts encounter cards, as counts only (no card is named, so nothing here is a spoiler):`,
     profileText(r.profile),
   ];
-  if (r.stages.length) {
+  if (r.scenarios.length) {
     out.push(
-      `\nBy pack, in play order: the first is the deluxe box (the opening scenarios), each later pack is the scenario it is named for. A pack lists only the cards new in it; later scenarios also reuse sets from the deluxe box.`,
+      `\nBy scenario, in printed order: each counts only the encounter set made for it. Scenarios also shuffle in sets they share, counted apart at the end.`,
     );
-    for (const s of r.stages) out.push(`${s.name}:\n${profileText(s.profile)}`);
+    for (const s of r.scenarios) out.push(`${s.name}:\n${profileText(s.profile)}`);
+    if (r.shared) out.push(`Sets shared by several scenarios:\n${profileText(r.shared)}`);
   }
   out.push(
     "\nTurn this into advice on preparing (skills, healing, movement, fighting or evading, what to buy), and keep it spoiler-light: describe tendencies, never encounter cards, enemies, story or how a scenario ends.",
@@ -96,7 +103,7 @@ export const campaignPrepTool = tool({
   description:
     "Spoiler-light preparation for a Chapter 1 campaign or standalone scenario: what its encounter cards ask of the " +
     "investigators, as counts and averages (which skills its treacheries test, horror against damage, how tough and how " +
-    "many its enemies are, keywords, frost and other tokens), overall and by scenario pack, plus a note on its structure. " +
+    "many its enemies are, keywords, frost and other tokens), overall and by scenario, plus a note on what it asks of a deck. " +
     "Names no encounter card. Use it only when the players ask how to prepare for a campaign or scenario.",
   inputSchema,
   contextSchema: SettingsSchema,
