@@ -21,12 +21,13 @@ what a right answer must contain:
 
 `npm run eval` runs every case through the real agent loop, tools and system prompt, and writes
 one transcript per case: the answer, every tool call with the text the model got back, token
-counts and cost. It does not grade answers. It does run three automatic checks on every turn,
+counts and cost. It does not grade answers. It does run four automatic checks on every turn,
 flags any failure in its output, and exits with an error if one failed:
 
 1. Every card code linked in the answer appears in that turn's own tool results.
 2. The taboo list is never mentioned when it is off.
-3. The answer is not empty.
+3. No deck is called by its number ("deck 33170"); a link's URL doesn't count.
+4. The answer is not empty.
 
 The first check tests whether the model followed the rule about where a card code comes from, not
 whether the link is correct. The two are different, as

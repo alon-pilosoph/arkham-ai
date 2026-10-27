@@ -9,6 +9,7 @@ import { Thread } from "@/components/assistant-ui/elements/thread.aui";
 import { ThreadListSidebar } from "@/components/assistant-ui/elements/threadlist-sidebar.aui";
 import { TooltipIconButton } from "@/components/assistant-ui/elements/tooltip-icon-button";
 import { CardDialogProvider } from "@/components/cards/card-dialog";
+import { DeckSlots } from "@/components/settings/deck-slots";
 import { TabooSwitch } from "@/components/settings/taboo-switch";
 import { useArkhamTools } from "@/components/tools/tool-ui";
 import { Separator } from "@/components/ui/separator";
@@ -18,17 +19,16 @@ import { useDesktopPointer } from "@/hooks/use-desktop-pointer";
 import { readSettings, useSettings } from "@/hooks/use-settings";
 import { trimHistory } from "@/lib/history";
 
-const EXAMPLES: { title: string; prompt: string; label?: string }[] = [
+const EXAMPLES: { title: string; prompt: string }[] = [
   { title: "A rules question", prompt: "Does doom on an enemy count toward the agenda's doom threshold?" },
   { title: "What a card does", prompt: "What does Ward of Protection do at each level?" },
+  { title: "How to run a deck", prompt: "How do I play Lily Chen's Boom Chakra Lacka deck?" },
   {
-    title: "How to run a deck",
-    label: "How do I play deck 33170?",
-    prompt: "How do I play this deck? https://arkhamdb.com/decklist/view/33170",
+    title: "Replace a card",
+    prompt: "In the Carolyn Fern Destroys Carcosa deck, what could replace Archive of Conduits with something cheaper?",
   },
-  { title: "Replace a card", prompt: "In deck 45147, what could replace Archive of Conduits with something cheaper?" },
   { title: "Find a deck", prompt: "Suggest a mystic cluever deck." },
-  { title: "Find a partner", prompt: "My partner plays deck 33170. What should I play with them?" },
+  { title: "Find a partner", prompt: "My partner plays Lily Chen's Boom Chakra Lacka. What should I play with them?" },
 ];
 
 // Without an Assistant Cloud URL threads live in memory; `anonymous` keys history to the browser, no sign-in.
@@ -58,7 +58,7 @@ const Welcome = () => (
           }
         >
           <span className="font-medium">{e.title}</span>
-          <span className="text-muted-foreground line-clamp-2">{e.label ?? e.prompt}</span>
+          <span className="text-muted-foreground line-clamp-2">{e.prompt}</span>
         </ThreadPrimitive.Suggestion>
       ))}
     </div>
@@ -84,6 +84,7 @@ const Header = ({ taboo, onTaboo }: { taboo: boolean; onTaboo: (on: boolean) => 
       ) : null}
       <span className="min-w-0 truncate font-medium">{name}</span>
       <div className="ms-auto flex shrink-0 items-center gap-2">
+        <DeckSlots />
         <TabooSwitch on={taboo} onChange={onTaboo} />
       </div>
     </header>

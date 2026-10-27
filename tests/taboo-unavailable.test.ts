@@ -1,6 +1,7 @@
 // Its own file: the taboo lists load once per module graph, and here that load fails.
 import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
 import { runAgent } from "@/lib/agent";
+import { DEFAULT_SETTINGS } from "@/lib/settings";
 import { answer, callTools, DECK, scriptedModel, toolResultsSent } from "./helpers";
 
 beforeAll(() => {
@@ -25,7 +26,7 @@ async function toolTexts(taboo: boolean) {
         )
       : answer("done"),
   );
-  await runAgent({ model, messages: [{ role: "user", content: "?" }], settings: { taboo } }).consumeStream();
+  await runAgent({ model, messages: [{ role: "user", content: "?" }], settings: { ...DEFAULT_SETTINGS, taboo } }).consumeStream();
   return toolResultsSent(model, 1);
 }
 

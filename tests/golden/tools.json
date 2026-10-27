@@ -46,6 +46,23 @@
       "additionalProperties": false
     }
   },
+  "findDeck": {
+    "description": "Find a deck in the deck index by the way a player names it instead of linking it: its title, its investigator, its role or what it is built around. Returns the closest indexed decks for you to judge. A deck outside the index can't be found by name: ask for its ArkhamDB link.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "How the player named the deck: its title, its investigator, what it does (\"the bless Mary deck\")."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  },
   "recommendDecks": {
     "description": "Shortlist ArkhamDB decks from the deck index: each owned investigator's most liked decks that the collection can build, each with a role, a one-line summary and any archetype it is built around. Filter by class, role, archetype, ArkhamDB tag, XP, investigator, or a key card the deck runs. With pairWith, find partners for a given deck in the roles that fill its gap, never the same investigator; for a deck outside the index, read it first and pass role once you have judged its gap. The shortlist is a starting point: read a deck with the deck tool before recommending it.",
     "inputSchema": {

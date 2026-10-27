@@ -19,14 +19,19 @@ deck, that the players can build from their own collection.
 |---|---|
 | *Does doom on an enemy count toward the agenda?* | From the complete Rules Reference, which is part of the system prompt |
 | *What does Ward of Protection do at each level?* | `cards` tool: every level and printing together, with errata and rulings |
-| *How do I play deck 33170?* | `deck` tool: the decoded list and the author's guide, read live from ArkhamDB |
+| *How do I play Boom Chakra Lacka?* | `findDeck` finds the deck by its name, then the `deck` tool reads the decoded list and the author's guide live from ArkhamDB |
 | *What could replace Archive of Conduits with something cheaper?* | `replaceCard` tool: legal, owned substitutes, with how often each is played |
 | *Suggest a mystic cluever deck.* | `recommendDecks` tool: searches an index of 660 of the most-liked published decks by class, role, archetype, XP, investigator or key card |
-| *My partner plays deck 33170. What should I play?* | `recommendDecks` with `pairWith`: decks whose role covers what the partner's deck lacks, never the same investigator |
+| *What should I play with my partner's deck?* | `recommendDecks` with `pairWith`: decks whose role covers what the partner's deck lacks, never the same investigator |
 
 Every card an answer names is a link. Tapping one opens the card in the app, laid out like the
 printed card with its game symbols, art, owned printings, other levels and official rulings;
 with the taboo list on, its taboo change too.
+
+Decks are named the way players name them, never by number. A deck can be linked, named
+("Boom Chakra Lacka", "the bless Mary deck", matched against the index; when the match is unsure
+the assistant asks, and when nothing fits it asks for the link), or saved once under **Decks** as
+yours or your partner's, so "my deck" is enough.
 
 A few rules hold everywhere, enforced in code rather than left to the model:
 
@@ -54,7 +59,7 @@ flowchart LR
 ```
 
 The app is a Next.js chat page and a single API route. Each question runs an agent loop
-(the [AI SDK](https://ai-sdk.dev)'s `streamText`) with four tools. The system prompt holds the
+(the [AI SDK](https://ai-sdk.dev)'s `streamText`) with five tools. The system prompt holds the
 whole Rules Reference (about 39,500 words) and never changes between requests, so the provider
 can cache it. Anything that changes from turn to turn, such as the date and the players'
 settings, is added to the newest message instead. Steps, tool calls and wall time are capped in
@@ -137,7 +142,7 @@ every pull request.
 The evals (`evals/cases.ts`) are the product's use cases run against a real model, with a
 spending cap. Each case writes a transcript to `evals/results/` (git-ignored) for a person to
 read. The evals don't grade answers, but they flag card codes that no tool returned, taboo
-mentions while the list is off, and empty answers.
+mentions while the list is off, a deck called by its number, and empty answers.
 
 ```sh
 set -a && . ./.env.local && set +a     # load the API keys into the shell

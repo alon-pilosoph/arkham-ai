@@ -202,6 +202,24 @@ two-player deck.
 
 ---
 
+### Decks are named, never numbered
+
+**Decision.** Answers, examples and tool rows name a deck by its investigator and title. A deck
+can be linked, saved under **Decks** as the player's own or their partner's, or named. A name is
+matched against the deck index only (`findDeck`), and the model decides among the closest
+candidates: it reads one only when it clearly fits, asks which when several could be, and asks
+for the deck's ArkhamDB link when none fits.
+
+**Why.** A deck id is ArkhamDB's name for a deck, not a player's. The index holds the decks the
+players are likely to name, with titles, roles, archetypes and summaries to match against, and
+the model is better at judging "the bless Mary deck" from five candidates than any scoring rule
+is at picking one; the scoring only has to put the right deck among them.
+
+**Rejected.** *Embedding search over the index:* an API call per lookup, for 660 short rows that
+word matching already ranks well. *ArkhamDB's own deck-name search:* it would match thousands of
+strangers' decks, most of which the players can't build. *Signing in to ArkhamDB to read the
+players' decks:* a feature to build and an account to hold, where pasting a link once does.
+
 ## 4. The agent loop
 
 ### Budgets are enforced in code, and the last step is kept for the answer

@@ -6,6 +6,7 @@ import { untrusted } from "@/lib/format";
 import { DECK_INDEX } from "@/lib/index/decks";
 import { CLASSES } from "@/lib/index/schema";
 import { rulesFor } from "@/lib/legality";
+import { DEFAULT_SETTINGS } from "@/lib/settings";
 import { getTaboos, latest, type TabooList } from "@/lib/taboo";
 import { cardsText, findCards } from "@/lib/tools/cards";
 import { deckText, readDeck } from "@/lib/tools/deck";
@@ -155,7 +156,7 @@ describe("deck tool", () => {
   });
 
   test("with the taboo list off, applies and mentions no taboo change", async () => {
-    const r = expectOk(await readDeck(DECK.lilyChen, 0, { taboo: false }));
+    const r = expectOk(await readDeck(DECK.lilyChen, 0, { ...DEFAULT_SETTINGS, taboo: false }));
     expect(r.taboo).toBeNull();
     expect(r.cards.some((c) => c.taboo)).toBe(false);
     const text = deckText(r);
@@ -164,7 +165,7 @@ describe("deck tool", () => {
   });
 
   test("with the taboo list on, applies the current list and notes the one the author built under", async () => {
-    const r = expectOk(await readDeck(DECK.lilyChen, 0, { taboo: true }));
+    const r = expectOk(await readDeck(DECK.lilyChen, 0, { ...DEFAULT_SETTINGS, taboo: true }));
     expect(r.taboo?.code).toBe("010");
     expect(r.builtUnderTaboo).toBe(4);
     expect(deckText(r)).toMatch(/Taboo list 010 .* is on.*built the deck under list 004/);
@@ -180,7 +181,7 @@ describe("deck tool", () => {
   });
 
   test("gives a card's taboo change as data: the list, its date and the change", async () => {
-    const r = expectOk(await readDeck(DECK.luciusGalloway, 0, { taboo: true }));
+    const r = expectOk(await readDeck(DECK.luciusGalloway, 0, { ...DEFAULT_SETTINGS, taboo: true }));
     const quickThinking = r.cards.find((c) => c.code === "02229");
     expect(quickThinking?.taboo).toEqual({
       list: "010",
@@ -337,8 +338,8 @@ describe("replaceCard tool", () => {
   describe("under the taboo list", () => {
     const DOUBLE_OR_NOTHING = "02026"; // forbidden by list 010
     const skidsCandidates = (card: string, taboo: boolean) =>
-      replaceCard({ deck: DECK.skids, card, goal: "different_job", maxXp: 5, limit: 20 }, { taboo }).then((r) =>
-        expectOk(r, "replacements"),
+      replaceCard({ deck: DECK.skids, card, goal: "different_job", maxXp: 5, limit: 20 }, { ...DEFAULT_SETTINGS, taboo }).then(
+        (r) => expectOk(r, "replacements"),
       );
 
     test("never offers a card the list forbids while it is on", async () => {
@@ -404,7 +405,7 @@ describe("recommendDecks tool", () => {
     const [a, b] = DECK_INDEX.filter((r, i, all) => all.findIndex((x) => x.investigatorCode === r.investigatorCode) === i);
     const heavy = { ...a, likes: 100, xp: 40, xpTaboo: 40, tags: ["solo" as const] };
     const light = { ...b, likes: 50, xp: 0, xpTaboo: 0, tags: [] };
-    const r = expectOk(await recommend({}, { taboo: false }, [light, heavy]), "shortlist");
+    const r = expectOk(await recommend({}, { ...DEFAULT_SETTINGS, taboo: false }, [light, heavy]), "shortlist");
     expect(r.decks.map((d) => d.deckId)).toEqual([heavy.deckId, light.deckId]);
   });
 
@@ -456,9 +457,15 @@ describe("recommendDecks tool", () => {
     });
 
     test("finds decks running a forbidden key card only while the list is off", async () => {
-      const off = expectOk(await recommend({ keyCard: "Double or Nothing", limit: 10 }, { taboo: false }), "shortlist");
+      const off = expectOk(
+        await recommend({ keyCard: "Double or Nothing", limit: 10 }, { ...DEFAULT_SETTINGS, taboo: false }),
+        "shortlist",
+      );
       expect(off.matched).toBeGreaterThan(0);
-      const on = expectOk(await recommend({ keyCard: "Double or Nothing", limit: 10 }, { taboo: true }), "shortlist");
+      const on = expectOk(
+        await recommend({ keyCard: "Double or Nothing", limit: 10 }, { ...DEFAULT_SETTINGS, taboo: true }),
+        "shortlist",
+      );
       expect(on.matched).toBe(0);
     });
 
@@ -466,18 +473,18 @@ describe("recommendDecks tool", () => {
       const forbidden = await forbiddenCodes();
       const runsForbidden = (id: number) => DECK_INDEX.find((d) => d.deckId === id)!.cards.some((c) => forbidden.includes(c));
       for (const cls of CLASSES) {
-        const r = expectOk(await recommend({ class: cls, limit: 10 }, { taboo: true }), "shortlist");
+        const r = expectOk(await recommend({ class: cls, limit: 10 }, { ...DEFAULT_SETTINGS, taboo: true }), "shortlist");
         expect(r.decks.filter((d) => runsForbidden(d.deckId))).toEqual([]);
       }
     });
 
     test("says when the index was built under an older list, only while the list is on", async () => {
-      const current = expectOk(await recommend({ class: "rogue" }, { taboo: true }), "shortlist");
+      const current = expectOk(await recommend({ class: "rogue" }, { ...DEFAULT_SETTINGS, taboo: true }), "shortlist");
       expect(current.note).toBeUndefined();
       const older = DECK_INDEX.map((d) => ({ ...d, tabooList: "009" }));
-      const stale = expectOk(await recommend({ class: "rogue" }, { taboo: true }, older), "shortlist");
+      const stale = expectOk(await recommend({ class: "rogue" }, { ...DEFAULT_SETTINGS, taboo: true }, older), "shortlist");
       expect(recommendText(stale)).toMatch(/The index checks taboo list 009, but 010 is current/);
-      const off = expectOk(await recommend({ class: "rogue" }, { taboo: false }, older), "shortlist");
+      const off = expectOk(await recommend({ class: "rogue" }, { ...DEFAULT_SETTINGS, taboo: false }, older), "shortlist");
       expect(off.note).toBeUndefined();
       expect(off.filters.some((f) => f.kind === "taboo")).toBe(false);
       expect(recommendText(off)).not.toMatch(/index checks taboo|legal under taboo/);
@@ -522,7 +529,10 @@ describe("untrusted text", () => {
   });
 
   test("fences a deck's name in recommendDecks' shortlist", async () => {
-    const r = expectOk(await recommend({}, { taboo: false }, [{ ...DECK_INDEX[0], name: EVIL_NAME }]), "shortlist");
+    const r = expectOk(
+      await recommend({}, { ...DEFAULT_SETTINGS, taboo: false }, [{ ...DECK_INDEX[0], name: EVIL_NAME }]),
+      "shortlist",
+    );
     const text = recommendText(r);
     expect(text).toContain(`<untrusted_data source="deck name">${FENCED_NAME}`);
     expect(text).not.toContain(EVIL_NAME);

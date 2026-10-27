@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/components/ui/item";
 import { roleText } from "@/lib/index/schema";
 import type { Filter, RecommendInput, RecommendResult, Shortlisted } from "@/lib/tools/recommend-decks";
+import { useDeckLabel } from "./deck-label";
 import { capital, DONE, Dots, FailureRow, Info, ListItem, NotFound, Pending, Tool, ToolBoundary } from "./parts";
 
 function filterLabel(f: Exclude<Filter, { kind: "partner" }>): string {
@@ -36,7 +37,9 @@ const Filters: FC<{ filters: Filter[] }> = ({ filters }) => {
   ) : null;
 };
 
-const DeckRow: FC<{ d: Shortlisted }> = ({ d }) => (
+export const DeckRow: FC<{ d: Omit<Shortlisted, "xp" | "published" | "tags" | "investigatorCode"> & { xp?: number } }> = ({
+  d,
+}) => (
   <ListItem>
     <Item size="sm" className="items-start max-sm:px-0" render={<a href={d.url} target="_blank" rel="noopener noreferrer" />}>
       <Dots classes={[d.class]} />
@@ -56,7 +59,7 @@ const DeckRow: FC<{ d: Shortlisted }> = ({ d }) => (
           {d.likes}
           <span className="sr-only">likes</span>
         </span>
-        <span className="whitespace-nowrap">{d.xp} XP</span>
+        {d.xp !== undefined ? <span className="whitespace-nowrap">{d.xp} XP</span> : null}
       </ItemActions>
     </Item>
   </ListItem>
@@ -90,18 +93,18 @@ const RecommendResultUI: FC<{ result: Extract<RecommendResult, { kind: "shortlis
 
 export const RecommendUI: ToolCallMessagePartComponent<Partial<RecommendInput>, RecommendResult> = ({ args, result, status }) => {
   const partnerOf = args.pairWith;
-  if (!result)
-    return <Pending status={status} label={partnerOf ? `Finding partners for deck ${partnerOf}` : "Searching the deck index"} />;
+  const deck = useDeckLabel(partnerOf);
+  if (!result) return <Pending status={status} label={partnerOf ? `Finding partners for ${deck}` : "Searching the deck index"} />;
   if (result.ok !== true)
     return (
       <FailureRow
         failure={result}
-        notFound={partnerOf ? `Deck ${partnerOf} not found` : "Nothing found"}
+        notFound={partnerOf ? `${capital(deck)} wasn't found` : "Nothing found"}
         error="Couldn't search the deck index"
       />
     );
   if (result.kind === "needs_role")
-    return <Info label={`Deck ${result.deck.id} isn't indexed: reading it first to see what it lacks`} />;
+    return <Info label={`${result.deck.investigator}'s deck isn't in the index: reading it first to see what it lacks`} />;
   return (
     <ToolBoundary label="Deck shortlist">
       <RecommendResultUI result={result} />
