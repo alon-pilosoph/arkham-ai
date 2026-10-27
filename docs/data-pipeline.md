@@ -47,7 +47,9 @@ until `status` reports every selected deck labeled.
 The crawl reads ArkhamDB's decklist search in likes order, 30 decks a page, one investigator at
 a time. Investigators are grouped by their original printing's code, and every code in the card
 set is walked (reprints, parallels and Chapter 2 included), since a deck is filed under the code
-its author picked; a code with no decks costs one empty page. Each row records the deck's id,
+its author picked; a code with no decks costs one empty page. ArkhamDB answers a search for a
+parallel investigator's code with the original's decks, so a code whose first page holds no deck
+filed under it is taken for such an alias and walked no further. Each row records the deck's id,
 name, likes, favorites, comments, author, date, investigator and ArkhamDB tags.
 
 An investigator is walked only as deep as it needs: down to 10 likes, for the usage counts, and
@@ -60,10 +62,10 @@ show one of its decks twice and another never. The walk detects this rather than
 Where the group sits does not move: the decks with more likes come before it in every ordering.
 So the number of places the group fills on the pages, as first fetched, is its true size, and
 the group is settled once that many distinct decks have been seen with its like count. An
-unsettled group's pages are fetched again, up to three times, each fetch adding what it shows. A
-round that shows nothing new means the order has stopped moving, and a group that will not
-settle is replaced by a walk of the investigator in date order: stable, but it reads every deck
-the investigator has. Once settled, every deck with at least the walk's lowest complete like
+unsettled group's pages are fetched again, up to five times, each fetch adding what it shows, and
+a group that still will not settle is replaced by a walk of the investigator in date order:
+stable, but it reads every deck the investigator has. The run's summary and manifest name each
+such fallback and the groups that caused it. Once settled, every deck with at least the walk's lowest complete like
 count (its frontier) has been seen, whatever order the requests came back in.
 
 ArkhamDB serves no search page past 99, so a walk that would need more stops the crawl with an
@@ -81,7 +83,10 @@ that no investigator code was left out.
 Replaying the census of all 39,462 published decklists (October 2026) through the walk, with
 ties reshuffled on every request, selected the same 660 decks and the same usage counts in 170 to
 210 search pages. Even if ArkhamDB stopped reshuffling ties, forcing date walks, it took 580. The
-census it replaced took about 1,400.
+census it replaced took about 1,400. The first live run (October 27) passed every check and chose
+the same 660 decks, but took 953 pages in 32 minutes: it walked each parallel investigator's
+code as a full copy of its original, and its busiest investigators fell back to date walks
+more often than the replay predicted. The alias check and longer settling followed.
 
 ### 2. The selection (`pipeline/selection.ts`)
 

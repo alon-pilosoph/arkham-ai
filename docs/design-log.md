@@ -256,3 +256,9 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   ArkhamDB reshuffles ties even for the same page.
 - **Also.** A request budget, Retry-After, a dry run, a progress line, and a committed manifest
   of each run.
+- **The first live run** passed every check with the same 660 decks, but took 953 pages and 32
+  minutes, not about 200. ArkhamDB answers a parallel investigator's code with the original's
+  decks, which the replay had not modeled, so each parallel was walked as a full copy; and ties
+  settled less often than under random reshuffling, so busy investigators fell back to date
+  walks. Codes that alias another now stop after one page, settling gets five rounds, and each
+  fallback is recorded with its reason.

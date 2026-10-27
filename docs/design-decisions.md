@@ -112,8 +112,8 @@ paging can show a deck twice and skip another. The places a tie group fills do n
 size is known, and a skipped deck shows up as a count that comes up short. The walk therefore
 knows when it is complete instead of assuming it. It reads only what the index uses: replaying
 the October 2026 census through it chose the same 660 decks and the same usage counts in about
-200 search pages, against the census's 1,400, so a refresh takes minutes of ArkhamDB's time
-rather than hours.
+200 search pages, against the census's 1,400. The first live run took 953 (32 minutes), still
+well under the census's three to four hours, before the fixes the design log describes.
 
 **Rejected.** *A census of every published decklist* (39,462 in October 2026), walked by date,
 the source of truth until October 2026: complete, but it read decks the index never uses, for

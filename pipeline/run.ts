@@ -15,7 +15,7 @@ import {
   selectForInvestigator,
 } from "./selection";
 import { USAGE_MIN_LIKES } from "./usage";
-import { InvestigatorWalk, type WalkStats } from "./walk";
+import { InvestigatorWalk, noStats, type WalkStats } from "./walk";
 
 export const CROSS_CHECK_PAGES = 10;
 
@@ -38,6 +38,8 @@ export type WalkResult = {
   mismatches: Mismatch[];
   crossChecked: number;
   stats: WalkStats;
+  /** Each walk that fell back to the date order, and the tie groups that would not settle. */
+  dateWalks: string[];
 };
 
 /** Every investigator code, grouped under its original printing's: a deck is filed under the code
@@ -67,7 +69,7 @@ async function walkInvestigator(
     if (frontier > USAGE_MIN_LIKES) continue;
     const selection = owned && (await selectForInvestigator(store, taboos, owned, walk.rows(), loadDeck));
     if (!selection || selection.decks.length === DECKS_PER_INVESTIGATOR || frontier <= MIN_LIKES)
-      return { selection, frontier, rows: walk.rows(), stats: walk.stats() };
+      return { selection, frontier, rows: walk.rows(), stats: walk.stats(), walks: walk.walks };
   }
 }
 
@@ -102,8 +104,10 @@ export async function walkIndex(
   const { state } = opts;
   const owned = ownedInvestigators(store);
   const groups = investigatorCodes(store);
-  const stats: WalkStats = { pages: 0, refetched: 0, settledGroups: 0, dateWalks: 0 };
+  const stats = noStats();
+  const dateWalks: string[] = [];
   const selection: InvestigatorSelection[] = [];
+  opts.onProgress?.({ done: 0, total: groups.size });
   for (const [i, [code, codes]] of [...groups].entries()) {
     const name = owned.get(code);
     const investigator = name ? { code, name } : undefined;
@@ -114,6 +118,7 @@ export async function walkIndex(
       const walked = await walkInvestigator(store, taboos, codes, investigator, loadDeck);
       if (walked.selection) selection.push(walked.selection);
       addStats(stats, walked.stats);
+      for (const w of walked.walks) if (w.dateWalkReason) dateWalks.push(`${w.investigator} (${w.dateWalkReason})`);
       state.investigators[code] = { frontier: walked.frontier, rows: walked.rows };
       opts.save(state);
     }
@@ -127,6 +132,7 @@ export async function walkIndex(
     mismatches: check.mismatches,
     crossChecked: check.checked,
     stats,
+    dateWalks,
   };
 }
 

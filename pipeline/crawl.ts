@@ -38,7 +38,14 @@ type Manifest = {
   resumed: boolean;
   requests: { total: number; searchPages: number; refetchedPages: number; decklists: number; retries: number };
   ArkhamDB: { slowAnswers: number; retryAfterWaits: number };
-  walks: { investigators: number; tieGroupsSettled: number; dateWalks: number; usageDecks: number; crossChecked: number };
+  walks: {
+    investigators: number;
+    aliasCodes: number;
+    tieGroupsSettled: number;
+    dateWalks: string[];
+    usageDecks: number;
+    crossChecked: number;
+  };
   index: { decks: number; skipped: Record<string, number>; short: { investigator: string; decks: number }[] };
   checks: { missingFromWalks: number; decklistsUnavailable: number };
 };
@@ -129,8 +136,9 @@ async function main(): Promise<number> {
 
     console.log(report.summary);
     console.log(
-      `walks: ${Object.keys(state.investigators).length} investigators, ${walked.usageRows.length} decks with 10+ likes for the usage counts, ${walked.stats.settledGroups} tie groups across page breaks settled, ${walked.stats.dateWalks} date walks`,
+      `walks: ${Object.keys(state.investigators).length} investigators, ${walked.usageRows.length} decks with 10+ likes for the usage counts, ${walked.stats.settledGroups} tie groups across page breaks settled, ${walked.stats.dateWalks} date walks, ${walked.stats.aliases} codes that alias another`,
     );
+    for (const d of walked.dateWalks) console.log(`  date walk: ${d}`);
     console.log(
       `cross-check: ${walked.crossChecked} of the most liked decks, ${walked.mismatches.length} missing from the walks`,
     );
@@ -155,7 +163,8 @@ async function main(): Promise<number> {
       walks: {
         investigators: Object.keys(state.investigators).length,
         tieGroupsSettled: walked.stats.settledGroups,
-        dateWalks: walked.stats.dateWalks,
+        aliasCodes: walked.stats.aliases,
+        dateWalks: walked.dateWalks,
         usageDecks: walked.usageRows.length,
         crossChecked: walked.crossChecked,
       },

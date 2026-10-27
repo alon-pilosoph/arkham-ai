@@ -6,7 +6,7 @@ import { BudgetExceeded, configureHttp, getText, httpStats, resetHttp, retryAfte
 import { crossCheck, investigatorCodes, type WalkState, walkIndex } from "@/pipeline/run";
 import type { SearchRow } from "@/pipeline/search";
 import { DECKS_PER_INVESTIGATOR, type LoadDeck } from "@/pipeline/selection";
-import { InvestigatorWalk, LikesWalk } from "@/pipeline/walk";
+import { InvestigatorWalk, LikesWalk, SETTLE_ROUNDS } from "@/pipeline/walk";
 import { deckRow, descending, FAKE_BASE, type FakeDeck, fakeArkhamDB, page } from "./fake-arkhamdb";
 import { indexedDecks } from "./helpers";
 
@@ -69,15 +69,16 @@ describe("LikesWalk", () => {
     expect(calls.every((c) => c.includes("sort=likes"))).toBe(true);
   });
 
-  test("a tie that never settles makes the walk read every deck by date, after one refetch that showed nothing new", async () => {
+  test("a tie that never settles makes the walk read every deck by date, saying why", async () => {
     // page 1 shows the tie in id order, page 2 in reverse: decks 103 and 104 are never on either
     const decks = straddling().map((d, i) => ({ ...d, date: `2024-01-${String(i + 1).padStart(2, "0")}` }));
     fakeArkhamDB(decks, { tieOrder: (tied, { page }) => (page === 1 ? tied : [...tied].reverse()) });
     const walk = new LikesWalk(ROLAND);
     await walk.next();
     await walk.next();
-    expect(walk.stats.refetched).toBe(2);
+    expect(walk.stats.refetched).toBe(2 * SETTLE_ROUNDS);
     expect(walk.stats.dateWalks).toBe(1);
+    expect(walk.dateWalkReason).toBe("50 likes: 4 of 6 seen");
     expect(walk.frontier()).toBe(0);
     expect(ids(walk.rows())).toEqual(ids(decks.map((d) => ({ id: d.id }) as SearchRow)));
   });
@@ -90,6 +91,18 @@ describe("LikesWalk", () => {
     const walk = new LikesWalk(ROLAND);
     await walk.next();
     expect(walk.rows()).toHaveLength(10);
+    expect(calls).toHaveLength(1);
+  });
+
+  test("a code whose first page holds only another code's decks is an alias, and walked no further", async () => {
+    // ArkhamDB answers a parallel investigator's code with the original's decks
+    const roland = descending(ROLAND, 1, 100, 30).map((d) => deckRow(d.id, "x", "", ROLAND, d.likes));
+    const { calls } = fakeArkhamDB([], { override: () => new Response(page(...roland)) });
+    const walk = new LikesWalk("90024");
+    await walk.next();
+    expect(walk.done).toBe(true);
+    expect(walk.rows()).toEqual([]);
+    expect(walk.stats.aliases).toBe(1);
     expect(calls).toHaveLength(1);
   });
 

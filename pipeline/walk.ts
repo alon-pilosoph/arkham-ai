@@ -6,16 +6,19 @@
 // before it in every ordering, those with fewer after. So the number of positions the group fills
 // on the pages, as first fetched, is its true size. A group is settled once that many distinct
 // decks have been seen with its like count. An unsettled group's pages are fetched again, up to
-// SETTLE_ROUNDS times, and each fetch adds what it shows. Should ArkhamDB give the same page the
-// same order every time, refetching cannot help: a round that shows no new deck ends the attempts.
-// A group that will not settle is replaced by a walk of the investigator in date order, which is
-// stable but reads every deck the investigator has.
+// SETTLE_ROUNDS times, and each fetch adds what it shows. A group that will not settle is replaced
+// by a walk of the investigator in date order, which is stable but reads every deck it has.
+//
+// ArkhamDB answers a search for a parallel investigator's code with the original's decks. A code
+// whose first page holds no deck filed under it is such an alias, and its walk stops there.
 
 import { fetchSearchPage, MAX_PAGES, PAGE_SIZE, PageError, type SearchRow } from "./search";
 
-export const SETTLE_ROUNDS = 3;
+export const SETTLE_ROUNDS = 5;
 
-export type WalkStats = { pages: number; refetched: number; settledGroups: number; dateWalks: number };
+export type WalkStats = { pages: number; refetched: number; settledGroups: number; dateWalks: number; aliases: number };
+
+export const noStats = (): WalkStats => ({ pages: 0, refetched: 0, settledGroups: 0, dateWalks: 0, aliases: 0 });
 
 export class LikesWalk {
   /** Each page as first fetched: the positions every tie group is counted by. */
@@ -24,7 +27,9 @@ export class LikesWalk {
   private readonly seen = new Map<number, SearchRow>();
   private readonly seenWithLikes = new Map<number, Set<number>>();
   private ended = false;
-  readonly stats: WalkStats = { pages: 0, refetched: 0, settledGroups: 0, dateWalks: 0 };
+  readonly stats: WalkStats = noStats();
+  /** Why the walk fell back to the date order, if it did. */
+  dateWalkReason?: string;
 
   constructor(readonly investigator: string) {}
 
@@ -56,6 +61,13 @@ export class LikesWalk {
         throw new PageError(
           `the likes walk for ${this.investigator}, page ${page}: likes rise from ${rows[i - 1].likes} to ${rows[i].likes}`,
         );
+    if (page === 1 && rows.length && rows.every((r) => r.investigatorCode !== this.investigator)) {
+      this.stats.aliases++;
+      this.seen.clear();
+      this.seenWithLikes.clear();
+      this.ended = true;
+      return;
+    }
     this.pages.push(rows);
     if (rows.length < PAGE_SIZE) this.ended = true;
     await this.settle();
@@ -99,15 +111,16 @@ export class LikesWalk {
     for (let round = 0; round < SETTLE_ROUNDS; round++) {
       const open = this.unsettled();
       if (!open.length) return this.countSettled();
-      const before = this.seen.size;
       for (const page of new Set(open.flatMap((g) => g.pages))) {
         this.remember(await fetchSearchPage(page, "likes", this.investigator));
         this.stats.refetched++;
       }
-      // the same pages in the same order: this investigator's ties will not move, so stop asking
-      if (this.seen.size === before) break;
     }
-    if (!this.unsettled().length) return this.countSettled();
+    const open = this.unsettled();
+    if (!open.length) return this.countSettled();
+    this.dateWalkReason = open
+      .map((g) => `${g.likes} likes: ${this.seenWithLikes.get(g.likes)?.size ?? 0} of ${g.size} seen`)
+      .join("; ");
     await this.walkByDate();
   }
 
@@ -160,7 +173,7 @@ export class InvestigatorWalk {
   }
 
   stats(): WalkStats {
-    const total: WalkStats = { pages: 0, refetched: 0, settledGroups: 0, dateWalks: 0 };
+    const total = noStats();
     for (const w of this.walks) for (const k of Object.keys(total) as (keyof WalkStats)[]) total[k] += w.stats[k];
     return total;
   }
