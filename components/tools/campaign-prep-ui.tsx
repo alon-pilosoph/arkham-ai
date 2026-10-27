@@ -68,21 +68,21 @@ export const CampaignPrepUI: ToolCallMessagePartComponent<Partial<CampaignPrepIn
         <div className="flex flex-col gap-3">
           {result.campaign.note ? <GameText text={result.campaign.note} className="text-sm" /> : null}
           <ProfileView p={result.profile} />
-          {result.stages.length ? (
+          {result.scenarios.length ? (
             <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground text-xs font-medium uppercase">By pack, in play order</span>
+              <span className="text-muted-foreground text-xs font-medium uppercase">By scenario</span>
               <table className="text-xs tabular-nums">
                 <thead className="text-muted-foreground text-start">
                   <tr>
-                    <th className="py-0.5 text-start font-normal">Pack</th>
+                    <th className="py-0.5 text-start font-normal">Scenario</th>
                     <th className="text-end font-normal">Horror</th>
                     <th className="text-end font-normal">Damage</th>
                     <th className="text-end font-normal">Enemies</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {result.stages.map((s) => (
-                    <tr key={s.pack} className="border-t">
+                  {[...result.scenarios, ...(result.shared ? [{ name: "Shared sets", profile: result.shared }] : [])].map((s) => (
+                    <tr key={s.name} className="border-t">
                       <td className="py-0.5">{s.name}</td>
                       <td className="text-end">{pct(s.profile.treacheries.horror, s.profile.treacheries.copies)}%</td>
                       <td className="text-end">{pct(s.profile.treacheries.damage, s.profile.treacheries.copies)}%</td>
@@ -91,6 +91,9 @@ export const CampaignPrepUI: ToolCallMessagePartComponent<Partial<CampaignPrepIn
                   ))}
                 </tbody>
               </table>
+              <span className="text-muted-foreground text-xs">
+                Each scenario counts only the set made for it; the sets several scenarios share are counted apart.
+              </span>
             </div>
           ) : null}
         </div>

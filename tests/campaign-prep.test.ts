@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { CAMPAIGNS, encounterCards, findCampaign, profile } from "@/lib/campaigns";
+import { CAMPAIGNS, encounterCards, findCampaign, profile, scenarios } from "@/lib/campaigns";
 import { getCards } from "@/lib/cards";
 import { campaignPrep, campaignPrepText } from "@/lib/tools/campaign-prep";
 import { expectOk } from "./helpers";
@@ -31,10 +31,42 @@ describe("campaign prep", () => {
     expect((await prep("Carcosa")).profile.tokens.frost).toBe(0);
   });
 
-  test("breaks an older cycle down by pack in play order, deluxe box first; a campaign box has none", async () => {
+  test("breaks a campaign down by scenario in play order, the deluxe box's two apart, shared sets counted once", async () => {
     const ptc = await prep("Carcosa");
-    expect(ptc.stages.map((s) => s.pack)).toEqual(["ptc", "eotp", "tuo", "apot", "tpm", "bsr", "dca"]);
-    expect((await prep("Edge of the Earth")).stages).toEqual([]);
+    expect(ptc.scenarios.map((s) => s.name)).toEqual([
+      "Curtain Call",
+      "The Last King",
+      "Echoes of the Past",
+      "The Unspeakable Oath",
+      "A Phantom of Truth",
+      "The Pallid Mask",
+      "Black Stars Rise",
+      "Dim Carcosa",
+    ]);
+    const parts = [...ptc.scenarios.map((s) => s.profile.cards), ptc.shared?.cards ?? 0];
+    expect(parts.reduce((a, b) => a + b, 0)).toBe(ptc.profile.cards);
+    expect((await prep("Edge of the Earth")).scenarios.map((s) => s.name)).toEqual([
+      "Ice and Death",
+      "Fatal Mirage",
+      "To the Forbidden Peaks",
+      "City of the Elder Things",
+      "The Heart of Madness",
+    ]);
+    expect((await prep("Night of the Zealot")).scenarios.map((s) => s.name)).toEqual([
+      "The Gathering",
+      "The Midnight Masks",
+      "The Devourer Below",
+    ]);
+  });
+
+  test("a standalone is one scenario, with no breakdown", async () => {
+    const r = await prep("Carnevale of Horrors");
+    expect(r.scenarios).toEqual([]);
+    expect(r.shared).toBeNull();
+  });
+
+  test("every campaign lists its scenarios", () => {
+    for (const c of CAMPAIGNS) expect(scenarios(store, c).length, c.code).toBeGreaterThan(0);
   });
 
   test("counts each copy, and never counts a reprint twice", () => {
@@ -45,9 +77,13 @@ describe("campaign prep", () => {
 
   test("names no encounter card, so it spoils nothing", async () => {
     const text = campaignPrepText(await prep("Carcosa"));
-    const names = encounterCards(store, CAMPAIGNS.find((c) => c.code === "ptc")?.packs ?? [])
+    const ptc = CAMPAIGNS.find((c) => c.code === "ptc");
+    // scenario titles are published, so they may appear; any other card name may not
+    const titles = ptc ? scenarios(store, ptc).map((x) => x.name.toLowerCase()) : [];
+    const names = encounterCards(store, ptc?.packs ?? [])
       .map((c) => c.name)
-      .filter((n) => n.length > 6 && !/carcosa|pallid|mask|oath|phantom|truth|echoes|past|black stars|rise|dim/i.test(n));
+      .filter((n) => n.length > 6 && !titles.some((t) => t.includes(n.toLowerCase())))
+      .filter((n) => !/carcosa|pallid|mask|oath|phantom|truth|echoes|past|black stars|rise|dim/i.test(n));
     for (const n of names) expect(text, n).not.toContain(n);
   });
 

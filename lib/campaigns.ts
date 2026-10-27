@@ -171,6 +171,30 @@ export function encounterCards(store: CardStore, packs: string[]): RawCard[] {
   return [...store.byCode.values()].filter((c) => c.encounter_code && wanted.has(c.pack_code) && !store.isReprint(c.code));
 }
 
+/** A scenario of a campaign, by its published name, and the encounter set made for it. */
+export type Scenario = { name: string; set: string };
+
+/** A campaign's scenarios in printed order (play order for every linear campaign), read from its
+ *  scenario cards. A Return to box lists its own versions ("Return to Curtain Call"). */
+export function scenarios(store: CardStore, campaign: Campaign): Scenario[] {
+  const out: Scenario[] = [];
+  for (const pack of campaign.packs) {
+    const cards = [...store.byCode.values()]
+      .filter((c) => c.pack_code === pack && c.type_code === "scenario" && c.encounter_code && !store.isReprint(c.code))
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+    for (const c of cards)
+      if (c.encounter_code && !out.some((x) => x.set === c.encounter_code)) out.push({ name: c.name, set: c.encounter_code });
+  }
+  if (out.length || campaign.kind !== "standalone") return out;
+  // a standalone ArkhamDB gives no scenario card (The Blob That Ate Everything ELSE!) is its own one
+  // scenario, made of its most used set
+  const sets = new Map<string, number>();
+  for (const c of encounterCards(store, campaign.packs))
+    if (c.encounter_code) sets.set(c.encounter_code, (sets.get(c.encounter_code) ?? 0) + (c.quantity ?? 1));
+  const [set] = [...sets].sort((a, b) => b[1] - a[1])[0] ?? [""];
+  return [{ name: campaign.name, set }];
+}
+
 export function profile(cards: RawCard[]): Profile {
   const p: Profile = {
     cards: 0,
