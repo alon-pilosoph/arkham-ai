@@ -207,5 +207,35 @@
       ],
       "additionalProperties": false
     }
+  },
+  "upgrades": {
+    "description": "Plan how to spend experience on an ArkhamDB deck between scenarios. Lists what the XP can buy that is owned and legal for the deck: higher levels of cards it runs (paying the difference), unmarked customization checkboxes, and new cards ranked by how often this investigator's liked decks play them, each with its exact XP price under the taboo setting. Choose the purchases yourself, and say what each new card replaces.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "deck": {
+          "type": "string",
+          "description": "A deck id or arkhamdb.com deck link."
+        },
+        "xp": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 60,
+          "description": "The experience the player has to spend now."
+        },
+        "limit": {
+          "description": "How many new cards to list, default 12.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 25
+        }
+      },
+      "required": [
+        "deck",
+        "xp"
+      ],
+      "additionalProperties": false
+    }
   }
 }
