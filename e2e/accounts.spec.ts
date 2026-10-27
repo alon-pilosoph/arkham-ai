@@ -31,10 +31,11 @@ test.describe("a session of its own", () => {
   // signing out ends the session for every tab holding it, so not the shared one
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test("signing out ends the session", async ({ page }) => {
+  test("signing out ends the session", async ({ page }, info) => {
+    // one project only: two runs signing the same account in at once would race for its link
+    test.skip(info.project.name !== "desktop", "runs on desktop only");
     await signIn(page, OWNER);
     const signOut = page.getByRole("button", { name: /Sign out/ });
-    if (!(await signOut.isVisible())) await page.getByRole("button", { name: "Toggle Sidebar" }).first().click();
     await signOut.click();
     await expect(page).toHaveURL(/\/sign-in$/);
     await page.goto("/");

@@ -97,3 +97,34 @@ test("the taboo switch is remembered across a reload", async ({ page }) => {
   await page.reload();
   await expect(page.getByRole("switch", { name: /taboo/i })).toBeChecked();
 });
+
+/** Opens the sidebar on a phone, where it is a sheet; on a desktop it is already open. */
+async function sidebar(page: Page) {
+  // the sidebar is a sheet below the md breakpoint (768 px) and always open above it
+  if ((page.viewportSize()?.width ?? 1280) < 768) await page.getByRole("button", { name: "Toggle Sidebar" }).first().click();
+  await expect(page.getByRole("searchbox", { name: "Search chats" })).toBeVisible();
+}
+
+test("a chat is kept: after a reload it is listed under its first question, with its answer", async ({ page }, info) => {
+  const question = `What does Ward of Protection do? ${info.project.name} ${Date.now() % 100000}`;
+  await ask(page, question);
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "What are you playing tonight?" })).toBeVisible();
+  await sidebar(page);
+  await page.getByRole("button", { name: question }).click();
+  await expect(page.getByRole("paragraph").filter({ hasText: question })).toBeVisible();
+  await expect(page.getByText(ANSWERED)).toBeVisible();
+});
+
+test("a deleted chat is gone after a reload", async ({ page }, info) => {
+  const question = `What does Shrivelling do? ${info.project.name} ${Date.now() % 100000}`;
+  await ask(page, question);
+  await sidebar(page);
+  const item = page.locator("[data-slot=aui_thread-list-item]").filter({ hasText: question });
+  await item.hover();
+  await item.getByRole("button", { name: "More options" }).click();
+  await page.getByRole("menuitem", { name: "Delete" }).click();
+  await page.reload();
+  await sidebar(page);
+  await expect(page.getByRole("button", { name: question })).toHaveCount(0);
+});

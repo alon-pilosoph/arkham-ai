@@ -39,7 +39,6 @@ export default defineConfig({
       ARKHAM_CARDS_FILE: "tests/fixtures/cards.json.gz",
       ARKHAM_DECKS_DIR: "tests/fixtures",
       ARKHAM_TABOOS_FILE: "tests/fixtures/taboos.json",
-      NEXT_PUBLIC_ASSISTANT_BASE_URL: "",
       ARKHAM_DB_DIR: "memory://",
       ARKHAM_OUTBOX: OUTBOX,
       OWNER_EMAIL: OWNER,

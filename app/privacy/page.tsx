@@ -28,7 +28,6 @@ export default function PrivacyPage() {
           Anthropic), under their API terms.
         </li>
         <li>Decks you link to are read from ArkhamDB.</li>
-        <li>For now, chat history is kept by Assistant Cloud, the chat service of assistant-ui.</li>
         <li>The app runs on Vercel, its database on Neon (in Frankfurt), and sign-in emails are sent with Resend.</li>
       </ul>
       <p>Nothing is sold or shared with anyone else, and there is no tracking or analytics.</p>

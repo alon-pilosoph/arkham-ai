@@ -103,7 +103,8 @@ All settings are environment variables, read from `.env.local` in development.
 | `ANTHROPIC_API_KEY` | Uses Anthropic, when no OpenAI key is set. |
 | `ARKHAM_MODEL` | Optional. Overrides the model as `provider:model`. The defaults are `openai:gpt-6-sol` and `anthropic:claude-opus-5-5`; `mock:local` is the mock model. |
 | `ARKHAM_EFFORT` | Optional. Reasoning effort: `low`, `medium`, `high`, `xhigh` or `max`. Defaults to `medium` for OpenAI and `high` for Anthropic. |
-| `NEXT_PUBLIC_ASSISTANT_BASE_URL` | Optional. An [Assistant Cloud](https://cloud.assistant-ui.com) project URL, which saves chats per browser and gives them titles. Without it, chats are kept in memory only. It is read at build time. |
+| `DATABASE_URL` | Optional locally. Postgres for accounts and chats; without it the app keeps them in PGlite under `.data/`. |
+| `OWNER_EMAIL`, `BETTER_AUTH_SECRET` | The account that can sign up without an invite, and the key that signs sessions. Sign-in also needs `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, or `RESEND_API_KEY` for emailed links (without it the link is printed in the server log). See [docs/deploying.md](docs/deploying.md). |
 
 For how the default model was chosen, see [docs/evals.md](docs/evals.md). For hosting it
 privately on Vercel, see [docs/deploying.md](docs/deploying.md).

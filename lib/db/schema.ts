@@ -1,7 +1,7 @@
 // The database: Better Auth's four tables, as its drizzle adapter expects them, and the app's own.
 // A change here needs a migration: npm run db:generate, then commit drizzle/.
 
-import { boolean, date, index, integer, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, date, index, integer, jsonb, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 
 const now = () => new Date();
 
@@ -81,3 +81,36 @@ export const messageCount = pgTable(
 );
 
 export const authSchema = { user, session, account, verification };
+
+/** A conversation. Personal for now: campaigns will share theirs with their members. */
+export const chat = pgTable(
+  "chat",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    title: text("title"),
+    archived: boolean("archived").notNull().default(false),
+    createdAt: timestamp("created_at").notNull().$defaultFn(now),
+    updatedAt: timestamp("updated_at").notNull().$defaultFn(now),
+  },
+  (t) => [index("chat_user_id_idx").on(t.userId, t.updatedAt)],
+);
+
+/** A chat's messages, stored as assistant-ui hands them over: each with its parent, so edits
+ *  and regenerations keep their branches, in the format assistant-ui names. */
+export const chatMessage = pgTable(
+  "chat_message",
+  {
+    chatId: text("chat_id")
+      .notNull()
+      .references(() => chat.id, { onDelete: "cascade" }),
+    id: text("id").notNull(),
+    parentId: text("parent_id"),
+    format: text("format").notNull(),
+    content: jsonb("content").notNull(),
+    createdAt: timestamp("created_at").notNull().$defaultFn(now),
+  },
+  (t) => [primaryKey({ columns: [t.chatId, t.id] })],
+);

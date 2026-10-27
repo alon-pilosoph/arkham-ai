@@ -1,6 +1,6 @@
 # Plan: campaigns with accounts
 
-Status: **approved.** Step 1 (scenario lists) is done; step 2 (database and accounts) is in progress.
+Status: **approved.** Steps 1 to 3 (scenario lists, accounts, chats in the database) are done; step 4 (campaigns) is next.
 
 ## 1. The goal
 
