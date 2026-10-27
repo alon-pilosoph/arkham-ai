@@ -5,10 +5,16 @@ Status: **draft, for review.** Nothing here is built. Each section ends with wha
 ## 1. The goal
 
 Today every chat starts from nothing: the players re-explain their decks, their XP and where
-they are in the campaign each time. A campaign gives the app a memory. Players create one, invite
-the people they play with, lock in their decks, and every chat inside it starts from the
-campaign's current state. After each scenario they tell the chat what happened, the chat records
-it, and the next question ("what should I buy with 5 XP?") starts from the truth.
+they are in the campaign each time. A campaign gives the app a memory, of the deckbuilding side
+only. Players create one, invite the people they play with, lock in their decks, and every chat
+inside it starts from what the decks are now. After each scenario they tell the chat what changed
+for their decks, the chat records it, and the next question ("what should I buy with 5 XP?")
+starts from the truth.
+
+**The app is not a campaign tracker.** The players keep their campaign log, story choices and
+scenario results in another app. This one tracks only what decks are built from: the decks
+themselves, XP earned and spent, trauma, investigators killed or driven insane, and cards the
+campaign adds to a deck.
 
 ## 2. What players do
 
@@ -32,17 +38,18 @@ and a seat can belong to someone without an account.
 **Play a scenario.** Before it: "how should we prepare for the next one?" uses the campaign
 prep counts for that scenario, spoiler-light as today.
 
-**After a scenario.** "We won Curtain Call, 3 XP each, Roland took a mental trauma." The chat
-proposes the change as a card: the scenario result, XP earned per seat, trauma. A member clicks
-Apply, or Discard. Nothing is written without that click.
+**After a scenario.** "Curtain Call is done: 3 XP each, Roland took a mental trauma and earned a
+story asset." The chat proposes the change as a card: XP earned per seat, trauma, cards the
+campaign added, and which scenario is next. A member clicks Apply, or Discard. Nothing is written
+without that click. Who won and what the story did stays in the players' own tracker.
 
 **Upgrade.** "I keep failing willpower tests, what should I buy?" The XP advisor answers from the
 seat's actual list and unspent XP. Agreeing on a swap ("take out Machete, put in Lightning Gun")
 proposes a deck change, priced by the advisor's rules (levels, exceptional, myriad,
 customizations, taboo). Applying it makes a new version of the deck and spends the XP.
 
-**Look back.** The campaign page shows each seat's deck and its versions, the XP ledger, trauma,
-the scenario log and the campaign's chats. Everything the chat can change can also be changed by
+**Look back.** The campaign page shows each seat's deck and its versions, the XP ledger, trauma
+and the campaign's chats. Everything the chat can change can also be changed by
 hand there.
 
 **See others' changes.** By refreshing. There is no live sync: when a change is applied, other
@@ -56,8 +63,9 @@ Open: none.
 - **Old chats.** They were test chats; they are not moved over.
 - **Writing to ArkhamDB.** Decks are exported as text that ArkhamDB imports; the app never logs
   in to ArkhamDB.
-- **A rules engine for the campaign log.** The app does not work out XP or trauma from a
-  scenario's resolution; the players say what they got, as they would write it on the log.
+- **Campaign tracking.** No scenario results, campaign log, story choices or chaos bag: the
+  players keep those in their own tracker. The app does not work out XP or trauma from a
+  resolution either; the players say what they got.
 - **Chapter 2.** Unchanged: out of scope on purpose.
 
 ## 4. What a campaign holds
@@ -68,12 +76,10 @@ Open: none.
 | Member | An account's place in a campaign: owner or member | Owners invite and remove; members do everything else |
 | Invite | A secret link token, who made it, when it ends | Replacing the link ends the old token |
 | Seat | A player in the campaign: a display name, the account playing it (optional), the investigator, killed or insane | One account can hold two seats |
-| Deck version | A seat's list at one point: cards, customizations, parallel sides, the taboo list it was built under | Each applied change makes a new version; the newest is the deck |
-| XP entry | A seat's XP earned (from a scenario) or spent (by a deck change) | A ledger, not a total: unspent XP is the sum, and every entry says where it came from |
-| Trauma entry | Physical or mental, per seat, per scenario | Also a ledger |
-| Scenario entry | A scenario played: result in the players' words, the date, a note | Scenarios come from the campaign's list (section 9) |
-| Log note | Free text the players add: the campaign log as they keep it | Only what they write; the app adds nothing from the box |
-| Chaos bag | The tokens, as the players set them | |
+| Deck version | A seat's list at one point: cards, customizations, parallel sides, the taboo list it was built under, and cards the campaign added (story assets, weaknesses) | Each applied change makes a new version; the newest is the deck. Campaign-added cards cost no XP and are kept apart from the cards the player chose |
+| XP entry | A seat's XP earned (after a scenario) or spent (by a deck change) | A ledger, not a total: unspent XP is the sum, and every entry says where it came from |
+| Trauma entry | Physical or mental, per seat, after a scenario | Also a ledger: it shapes what a deck needs (horror healing, soak) |
+| Next scenario | Where the campaign is, from its scenario list (section 9) | So prep and upgrade advice look ahead to the right scenario |
 | Chat | A conversation, in a campaign or personal | Campaign chats are shared by its members |
 | Change | Every applied change: what it was, who applied it, when, from which chat | Lets the campaign page show history and undo the last change |
 
@@ -87,11 +93,11 @@ stay pinned. The note holds the summary: campaign, next scenario, each seat's in
 unspent XP, trauma and deck size. Full lists are read with a tool when needed, so a long
 campaign does not grow every turn.
 
-**Text the players wrote is untrusted.** Seat names, log notes and scenario notes go through
-`untrusted()`, as deck names do now.
+**Text the players wrote is untrusted.** Seat names and deck names go through `untrusted()`, as
+deck names do now.
 
-**Changes are proposals.** A new tool, `proposeChange`, takes a typed change (scenario result,
-XP, trauma, deck swap, killed or insane, chaos bag, log note) and returns a card with Apply and
+**Changes are proposals.** A new tool, `proposeChange`, takes a typed change (XP earned, trauma,
+a deck swap, a card the campaign added, killed or insane, the next scenario) and returns a card with Apply and
 Discard; the tool itself writes nothing. Apply goes to the server, which checks it again: the
 member is in the campaign, the deck stays legal (`deckViolation`), the XP is affordable and
 priced by the advisor's rules. Each campaign has a version number: a change proposed before
@@ -136,8 +142,9 @@ Open: whether email links are needed at first, or Google sign-in covers everyone
 ## 7. Spoilers
 
 The app names scenarios by their published titles and says nothing of what is in them beyond
-what campaign prep says today. The campaign log is whatever the players write. Nothing about
-resolutions, story choices or later scenarios' contents comes from the app.
+what campaign prep says today. It keeps no campaign log, and nothing about resolutions, story
+choices or later scenarios' contents comes from the app. A story asset or weakness the campaign
+added to a deck is named, since the players already hold it.
 
 ## 8. Testing
 
@@ -168,7 +175,8 @@ merged first.
 2. **Database and accounts:** Neon, Drizzle, Better Auth, invite-only sign-up, sessions on every
    route, Vercel Authentication off.
 3. **Chats in the database,** personal ones first; Assistant Cloud removed.
-4. **Campaigns:** create, invite, seats, decks, ledgers, the campaign page with hand editing.
+4. **Campaigns:** create, invite, seats, decks, the XP and trauma ledgers, the campaign page with
+   hand editing.
 5. **Chat integration:** the state in every turn, `proposeChange` and its cards, the tools
    taking seats.
 6. **Export** of a seat's deck for ArkhamDB, and undo.
