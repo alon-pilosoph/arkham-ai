@@ -12,3 +12,4 @@ evals/results/
 
 # local database (PGlite)
 .data/
+.vercel

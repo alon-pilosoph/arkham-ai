@@ -59,9 +59,7 @@ original card is therefore computed by the same function in the app and in the p
    never go over the wire.
 
    The composer accepts text only: there is no attachment adapter, and pasting a file attaches
-   nothing. Threads are kept in memory unless `NEXT_PUBLIC_ASSISTANT_BASE_URL` names an
-   [Assistant Cloud](https://cloud.assistant-ui.com) project, which stores them per browser,
-   anonymously, and gives them generated titles.
+   nothing. Chats are stored in the database (see [Chats](#chats)).
 
 2. **The route** (`app/api/chat/route.ts`) first checks who is asking: a request without a
    session gets a 401, and an account past its daily questions a 429 (see
@@ -116,6 +114,18 @@ branch. Without `DATABASE_URL` it is [PGlite](https://pglite.dev), Postgres runn
 server's own process, which migrates itself when it opens: on disk under `.data/` for local
 runs, in memory for the unit and end-to-end tests. A schema change is made in
 `lib/db/schema.ts`, then `npm run db:generate` writes its migration into `drizzle/`.
+
+## Chats
+
+Each account's chats live in the database (`chat` and `chat_message`, `lib/chats.ts`), so they
+follow the account from device to device. The page talks to them through assistant-ui's own
+extension points (`hooks/use-chat-runtime.ts`): a thread-list adapter backs the sidebar (list,
+create, rename, archive, delete) with `/api/chats`, and a history adapter per chat stores each
+message as assistant-ui encodes it, with its parent, through
+`PUT /api/chats/<id>/messages/<messageId>`, so edited questions and regenerated answers keep
+their branches. A chat is created when its first message is stored, and titled with its first
+question, cut at a word (no model call). Every query is scoped to the asking account, so another
+account's chat is simply not found; a stored message is capped at 512 KB.
 
 ## The system prompt and caching
 
@@ -372,6 +382,7 @@ answer.
 | `link-repair.test.ts` | A correct link is left alone, a level pins a name to one version, an ambiguous or unknown name becomes plain text |
 | `accounts.test.ts` | Accounts against PGlite: the owner's sign-in link signs them in; a stranger gets no email, and no account even holding a link; a link works once; a forged cookie is nobody; the daily question cap and its reset |
 | `proxy.test.ts` | Signed-out pages go to the sign-in page (keeping where they were going and why a sign-in was refused), signed-out API calls get a 401, public paths pass |
+| `chats.test.ts` | Chats through their routes on PGlite: messages stored, rewritten in place and listed with their parents; another account's chat not found for reading, writing, renaming or deleting; archive and delete; malformed, oversized and signed-out requests refused; titles cut at a word |
 | `route.test.ts` | The chat route: a 401 when signed out, a 429 past the daily cap, 400s for bad bodies, a 413 for an oversized one, partial settings, provider errors shown in plain words, a cut-off answer that says so |
 | `taboo-unavailable.test.ts` | With the taboo switch on and the taboo lists unavailable, every tool reports an error instead of an answer without the taboo list applied |
 | `loader.test.ts` | The card set and taboo lists survive ArkhamDB being down: the last copy is served, one warning is logged, and retries wait a minute |
@@ -383,7 +394,7 @@ answer.
 | `symbols.test.ts` | Game symbols in an answer become keycaps; links and other brackets are left alone |
 | `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
 | `e2e/accounts.spec.ts` | Playwright: a visitor sent to sign in, the privacy page, a stranger told a link is coming and kept out, the invite-only message, signing out. `e2e/sign-in.setup.ts` signs the owner in through an emailed link once, and the other tests reuse that session |
-| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, a deck slot refusing what isn't a link, campaign prep, the taboo switch surviving a reload |
+| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: a chat kept across a reload and listed under its first question, a deleted chat gone, the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, a deck slot refusing what isn't a link, campaign prep, the taboo switch surviving a reload |
 
 The unit tests never touch the network. Every test runs signed in with questions to spare
 (`tests/setup.ts` mocks `currentUser` and `takeQuestion`); `accounts.test.ts` tests the real ones,

@@ -1,8 +1,7 @@
 "use client";
 
-import { AssistantChatTransport, useChatRuntime } from "@assistant-ui/ai-sdk";
+import { AssistantChatTransport } from "@assistant-ui/ai-sdk";
 import { AssistantRuntimeProvider, ThreadListPrimitive, ThreadPrimitive } from "@assistant-ui/react";
-import { AssistantCloud } from "assistant-cloud";
 import { SquarePenIcon } from "lucide-react";
 import { useState } from "react";
 import { Thread } from "@/components/assistant-ui/elements/thread.aui";
@@ -15,6 +14,7 @@ import { useArkhamTools } from "@/components/tools/tool-ui";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { useChatName } from "@/hooks/use-chat-name";
+import { useStoredChatRuntime } from "@/hooks/use-chat-runtime";
 import { useDesktopPointer } from "@/hooks/use-desktop-pointer";
 import { readSettings, useSettings } from "@/hooks/use-settings";
 import { trimHistory } from "@/lib/history";
@@ -31,11 +31,7 @@ const EXAMPLES: { title: string; prompt: string }[] = [
   { title: "Find a partner", prompt: "My partner plays Lily Chen's Boom Chakra Lacka. What should I play with them?" },
 ];
 
-// Without an Assistant Cloud URL threads live in memory; `anonymous` keys history to the browser, no sign-in.
-const cloudUrl = process.env.NEXT_PUBLIC_ASSISTANT_BASE_URL;
-const cloud = cloudUrl ? new AssistantCloud({ baseUrl: cloudUrl, anonymous: true }) : undefined;
-
-// Disables attachments: overrides both the AI SDK's default adapter and the cloud's uploader.
+// Disables attachments: overrides the AI SDK's default adapter.
 const ADAPTERS = { attachments: undefined };
 
 const Welcome = () => (
@@ -104,7 +100,7 @@ export const Assistant = () => {
         }),
       }),
   );
-  const runtime = useChatRuntime({ transport, cloud, adapters: ADAPTERS });
+  const runtime = useStoredChatRuntime(transport, ADAPTERS);
   const aui = useArkhamTools();
   const autoFocus = useDesktopPointer();
 

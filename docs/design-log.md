@@ -356,3 +356,12 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
 - **Found on the way.** A refused sign-in returns to the page it was for, with the reason in the
   address; the redirect to the sign-in page now carries the reason along, so "invite-only" is
   what the person sees.
+
+## Chats in the app's own database (October 27)
+
+- **Why.** Assistant Cloud kept chats per browser and anonymously: a chat started on the phone
+  was not on the laptop, and a campaign's chats could never be shared by its members.
+- **Built.** Chats and their messages are stored per account in Postgres, through assistant-ui's
+  thread-list and history adapters, so the chat interface did not change. Titles are the first
+  question, cut at a word, instead of a model-written title: free, and plain about what the chat
+  was. Assistant Cloud is gone, and with it the chats kept there, which were test chats.

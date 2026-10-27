@@ -3,9 +3,8 @@
 The app is a single Next.js project on Vercel's free Hobby plan, at `arkham.alonp.dev`, with its
 functions in Frankfurt (`vercel.json`). Its database is Postgres on Neon's free plan, also in
 Frankfurt. People sign in with Google or with a one-time link emailed through Resend, and the app
-is invite-only ([ARCHITECTURE.md](ARCHITECTURE.md#accounts-and-the-database)). If Assistant Cloud
-is configured, chat history is stored there, anonymously and per browser, until chats move into
-the database.
+is invite-only ([ARCHITECTURE.md](ARCHITECTURE.md#accounts-and-the-database)); each account's
+chats are stored in the database.
 
 ## First-time setup
 
@@ -41,7 +40,6 @@ the database.
    | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | From step 3 | Google sign-in. Without them the sign-in page offers email links only. |
    | `RESEND_API_KEY` | From step 4 | Sign-in emails. |
    | `OWNER_EMAIL` | The owner's address | The one account that can sign up without an invite. Without it nobody can. |
-   | `NEXT_PUBLIC_ASSISTANT_BASE_URL` | An Assistant Cloud project URL | Saved chats with generated titles, until chats move into the database. Read at build time. |
 
    Optional: `DAILY_QUESTIONS` (questions per account per day, 150 by default), `EMAIL_FROM` (the
    sender, `Arkham assistant <signin@mail.alonp.dev>` by default), and `BETTER_AUTH_URL` (the
@@ -62,8 +60,6 @@ in the server log instead of emailed.
 - **A monthly spending limit** on the OpenAI key (platform.openai.com, Settings, then Limits), or
   on the Anthropic key (console.anthropic.com, Settings, then Limits) if Claude is answering. With
   the daily question cap, this bounds what a lost phone with a session on it can cost.
-- **Assistant Cloud allowed origins.** If chats don't persist on the deployed site, check whether
-  the cloud project has a list of allowed origins, and add the production domain to it.
 
 ## After deployment
 
