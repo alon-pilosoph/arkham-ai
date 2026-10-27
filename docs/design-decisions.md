@@ -100,15 +100,19 @@ decks that still need labels.
 ### The census, not the likes order, is the source of truth
 
 **Decision.** The crawl first takes a census: it lists every published decklist by walking
-ArkhamDB's decklist search in date order. It then walks the search in likes order down to 10
-likes, and fails if any deck found there is missing from the census.
+ArkhamDB's decklist search in date order, one investigator at a time. It then walks the search in
+likes order down to 10 likes, reads the newest decks across all investigators, and fails if any
+deck found there is missing from the census.
 
 **Why.** The likes order has many ties, and ArkhamDB orders tied decks differently from one
 request to the next, so paging through them can skip or repeat decks. The date order is stable.
 The census found 38,984 published decklists, and all 1,981 with 10 or more likes were in it.
 
 **Rejected.** *Walking the likes order alone* (the previous version's crawl). It cannot tell a
-complete walk from one that skipped a page.
+complete walk from one that skipped a page. *One date walk of every deck*, the census until
+October 2026: ArkhamDB stopped serving search pages past 99, and that walk needs about 1,300.
+*ArkhamDB's decklists-by-date API*: one request a day since 2016, but it has no likes, and the
+index is chosen by likes.
 
 ### Republished lists count once
 

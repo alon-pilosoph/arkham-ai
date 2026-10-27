@@ -1,6 +1,6 @@
 <!-- BEGIN:nextjs-agent-rules -->
 
-# This is NOT the Next.js you know
+## This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
@@ -65,7 +65,7 @@ error if any turn fails one of those checks. See [docs/evals.md](docs/evals.md).
 
 The data commands (`data:crawl`, `data:index`, `data:sheet`, `data:rules`, `data:faq`,
 `data:collection`) are described in [docs/data-pipeline.md](docs/data-pipeline.md). They run
-offline, make at most one request a second to ArkhamDB, and are never run by the app.
+offline, make at most one request every two seconds to ArkhamDB (slower when it is slow), and are never run by the app.
 
 ## Tests
 

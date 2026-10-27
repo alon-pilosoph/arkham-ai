@@ -1,7 +1,13 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { faqJson, parseFaqPage, rulingText } from "@/pipeline/faq";
 import { rulesMarkdown } from "@/pipeline/rules";
-import { parseSearchPage } from "@/pipeline/search";
+import { census, MAX_PAGES, parseSearchPage, searchUrl } from "@/pipeline/search";
+
+// The census's search pages, by URL; any other page is past the last, and empty.
+const pages = vi.hoisted(() => new Map<string, string>());
+vi.mock("@/pipeline/http", () => ({
+  getText: async (url: string) => ({ ok: true, data: pages.get(url) ?? "<table></table>" }),
+}));
 
 describe("rulesMarkdown", () => {
   test("converts headings, nested lists, emphasis, icons and tables, and drops what is outside #rules", () => {
@@ -57,25 +63,25 @@ describe("parseFaqPage and faqJson", () => {
   });
 });
 
-describe("parseSearchPage", () => {
-  const deckRow = (id: number, name: string, tags = "") => `<tr>
-    <td class="decklist-hero-image"><div class="card-thumbnail-wide"></div></td>
-    <td><div class="decklist-header">
-      <h4><a href="/decklist/view/${id}/slug" class="decklist-name">${name}</a></h4>
-      <div class="social">
-        <span class="social-icon-like"><span class="fa fa-heart"></span> <span class="num">42</span></span>
-        <span class="social-icon-favorite"><span class="fa fa-star"></span> <span class="num">7</span></span>
-        <span class="social-icon-comment"><span class="fa fa-comment"></span> <span class="num">3</span></span>
-      </div>
-      <div class="username"><a href="/user/profile/1234/someone" class="fg-seeker">someone</a> <small class="reputation">567</small></div>
-      <time datetime="2024-01-02T10:00:00+00:00">2 Jan 2024</time>
+const deckRow = (id: number, name: string, tags = "", investigator = "06002") => `<tr>
+  <td class="decklist-hero-image"><div class="card-thumbnail-wide"></div></td>
+  <td><div class="decklist-header">
+    <h4><a href="/decklist/view/${id}/slug" class="decklist-name">${name}</a></h4>
+    <div class="social">
+      <span class="social-icon-like"><span class="fa fa-heart"></span> <span class="num">42</span></span>
+      <span class="social-icon-favorite"><span class="fa fa-star"></span> <span class="num">7</span></span>
+      <span class="social-icon-comment"><span class="fa fa-comment"></span> <span class="num">3</span></span>
     </div>
-    <div><a class="card card-tip" data-code="06002" href="/card/06002">Lily
-      Chen</a> ${tags ? `<span>${tags}</span>` : ""}</div></td>
-  </tr>`;
-  const page = (...rows: string[]) =>
-    `<table class="table"><thead><tr><th>Deck</th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
+    <div class="username"><a href="/user/profile/1234/someone" class="fg-seeker">someone</a> <small class="reputation">567</small></div>
+    <time datetime="2024-01-02T10:00:00+00:00">2 Jan 2024</time>
+  </div>
+  <div><a class="card card-tip" data-code="${investigator}" href="/card/${investigator}">Lily
+    Chen</a> ${tags ? `<span>${tags}</span>` : ""}</div></td>
+</tr>`;
+const page = (...rows: string[]) =>
+  `<table class="table"><thead><tr><th>Deck</th></tr></thead><tbody>${rows.join("")}</tbody></table>`;
 
+describe("parseSearchPage", () => {
   test("reads one row per deck with every field, allowing a blank name and no tags", () => {
     const rows = parseSearchPage(page(deckRow(33170, "Lily Boom", "[solo, multiplayer]"), deckRow(45147, "")));
     expect(rows[0]).toEqual({
@@ -110,5 +116,37 @@ describe("parseSearchPage", () => {
     expect(() =>
       parseSearchPage(page(deckRow(33170, "Lily Boom").replace('<span class="num">42</span>', '<span class="num">many</span>'))),
     ).toThrow(/non-integer likes/);
+  });
+});
+
+describe("census", () => {
+  const full = (from: number, investigator: string) =>
+    page(...Array.from({ length: 30 }, (_, i) => deckRow(from + i, `deck ${from + i}`, "", investigator)));
+
+  test("walks each investigator by date to its last page, and counts a deck once", () => {
+    pages.clear();
+    pages.set(searchUrl(1, "date", "01001"), full(1, "01001"));
+    pages.set(searchUrl(2, "date", "01001"), page(deckRow(31, "last Roland", "", "01001")));
+    // a deck filed under two codes (a reprint's) is still one deck
+    pages.set(searchUrl(1, "date", "01501"), page(deckRow(31, "last Roland", "", "01001"), deckRow(32, "revised", "", "01501")));
+    return expect(
+      census(["01001", "01501", "99999"]).then((rows) => rows.map((r) => r.id).sort((a, b) => a - b)),
+    ).resolves.toEqual(Array.from({ length: 32 }, (_, i) => i + 1));
+  });
+
+  test("resumes: an investigator already walked is not fetched again, and its rows still count", async () => {
+    pages.clear();
+    pages.set(searchUrl(1, "date", "01002"), page(deckRow(40, "Daisy", "", "01002")));
+    const walked: string[] = [];
+    const roland = parseSearchPage(page(deckRow(7, "saved Roland", "", "01001")));
+    const rows = await census(["01001", "01002"], { done: { "01001": roland }, onInvestigator: (code) => walked.push(code) });
+    expect(walked).toEqual(["01002"]);
+    expect(rows.map((r) => r.id).sort((a, b) => a - b)).toEqual([7, 40]);
+  });
+
+  test("fails, rather than come back short, for an investigator past the last page ArkhamDB serves", async () => {
+    pages.clear();
+    for (let p = 1; p <= MAX_PAGES; p++) pages.set(searchUrl(p, "date", "01001"), full(p * 100, "01001"));
+    await expect(census(["01001"])).rejects.toThrow(/more than 99 pages/);
   });
 });

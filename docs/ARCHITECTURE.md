@@ -172,7 +172,8 @@ strongest candidates with `deck` before choosing.
 "different job" goal, how dissimilar) plus how often it is played:
 `4 × investigator share + 2 × class share`, from `lib/index/card-usage.json`. Those play rates count every published decklist with 10 or more
 likes, owned or not, so an investigator with few published decks still gets a signal from its
-class.
+class. A leveled card's share is taken among the decks whose list holds at least its level in XP
+(`playRate`, `lib/index/usage.ts`), so starting decks don't dilute it.
 
 ## The card store
 

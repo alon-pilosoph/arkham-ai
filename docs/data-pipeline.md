@@ -19,15 +19,15 @@ offline, by hand; the app never runs any of it. The reasons it is built this way
 
 `data/cache/` is ignored by git. Every other output in the table is committed.
 
-The scripts wait their turn between requests, one a second, and identify themselves with their
-own user agent (`pipeline/http.ts`). A 429, a 5xx or a network failure is retried twice, after 3
-and then 10 seconds; a 404 is reported as `not_found` and never retried. ArkhamDB is run by
-volunteers, and a full crawl takes about an hour of its time.
+The scripts wait their turn between requests, one every two seconds, back off further when ArkhamDB answers slowly (ten times as long as a slow answer took, up to two minutes), and identify themselves with their
+own user agent (`pipeline/http.ts`). A 429, a 5xx or a network failure is retried four times, after 3,
+10, 30 and 60 seconds, since a crawl runs for hours; a 404 is reported as `not_found` and never retried. ArkhamDB is run by
+volunteers, and a full crawl takes three to four hours of its time, best run overnight.
 
 ## Refreshing the deck index
 
 ```sh
-npm run data:crawl            # census, cross-check, fetch decklists (~1 h)
+npm run data:crawl            # census, cross-checks, fetch decklists (3-4 h; resumes if stopped)
 npm run data:sheet -- status  # how many selected decks still need labels
 npm run data:sheet -- next    # label sheets for the next investigator
 npm run data:index            # build; fails, listing them, if any lack labels
@@ -40,17 +40,30 @@ until `status` reports every selected deck labeled.
 ### 1. The census (`pipeline/search.ts`, `pipeline/crawl.ts`)
 
 The census is the complete list of published decklists. The crawl builds it by walking
-ArkhamDB's decklist search in date order, 30 decks a page, until a page comes back empty: about
-1,300 pages and 38,984 published decklists at the last crawl. Each row records the deck's id,
-name, likes, favorites, comments, author, date, investigator and ArkhamDB tags.
+ArkhamDB's decklist search in date order, 30 decks a page, once for each investigator code in the
+card set (reprints, parallels and Chapter 2 included, since a deck is filed under the code its
+author picked), until a page comes back short. A code with no decks costs one empty page. Each
+row records the deck's id, name, likes, favorites, comments, author, date, investigator and
+ArkhamDB tags, and a deck found under two codes is counted once.
+
+ArkhamDB serves no search page past 99, filtered or not, so a single walk of every deck (about
+1,300 pages) is no longer possible. The busiest investigator, Roland Banks, fills under 80 pages.
+An investigator that ever needs more than 99 stops the crawl with an error naming it, rather than
+leaving the census short.
+
+The census is saved after each investigator (`data/cache/census-partial.json`). A crawl that
+stops, on a network outage for instance, resumes from there the next time it runs, unless the
+saved walk is more than two days old or `--fresh` is given.
 
 A search page is parsed one table row at a time. Every field except the deck name is required,
 and a page whose rows do not account for every deck link on it is an error, never a shorter list,
 so a row with unexpected markup cannot silently drop out of the census.
 
-The crawl then cross-checks the census against the likes order, walking it down to 10 likes. If a
-deck found there is missing from the census, the run fails and names the deck. Below 10 likes the
-likes order has too many ties to page through reliably, which is why the census exists.
+The crawl then cross-checks the census twice. It walks the likes order down to 10 likes (about 66
+pages), and it reads the 10 newest pages across every investigator. If a deck found by either is
+missing from the census, the run fails and names the deck and its investigator code; the newest
+pages catch a code the census did not walk. Below 10 likes the likes order has too many ties to
+page through reliably, which is why the census exists.
 
 ### 2. The selection (`pipeline/selection.ts`)
 
@@ -78,8 +91,14 @@ so the three can never disagree about which decks were selected.
 
 Every census deck with 10 or more likes is fetched, whether the collection can build it or not.
 Its distinct cards (excluding weaknesses and investigator cards, with reprints folded into their
-originals) are counted per investigator and per class. `replaceCard` reads these counts as play
-rates.
+originals) are counted per investigator and per class, along with how many of those decks hold at
+least 0, 1, 2, 3, 4 and 5 XP in their list (`xpAtLeast`, the XP counted as the index counts it).
+`replaceCard` reads these counts as play rates.
+
+A published list is one moment in a campaign: many are starting decks with no XP, others are a
+campaign's last list. So a card's play rate is the share of the decks that could hold it, those
+with at least its level in XP, rather than of every deck; a level 5 card is not diluted by the
+starting decks that could never run it.
 
 ### 4. Labels (`data/deck-labels/`, `pipeline/labels.ts`)
 

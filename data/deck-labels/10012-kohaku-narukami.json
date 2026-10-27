@@ -10,6 +10,6 @@
     {"id": 46443, "role": "flex", "secondaryRole": null, "archetypes": ["curse", "bless"], "summary": "Theorycrafted blursed folklorist Kōhaku with Eye of Chaos and Wicked Athame, Flashlight for clues, and Paradoxical Covenant rewarding the mix of bless and curse."},
     {"id": 46685, "role": "flex", "secondaryRole": null, "archetypes": ["curse", "bless"], "summary": "Thematic blursed Kōhaku with Armageddon and Eye of Chaos, Olive McBride and Dark Prophecy to pick tokens, and Paradoxical Covenant and Rite of Sanctification balancing the bag."},
     {"id": 48178, "role": "flex", "secondaryRole": null, "archetypes": ["curse"], "summary": "Curse Kōhaku who turns curses into blesses for his teammates with Tides of Fate, fights with Armageddon and Spectral Razor, and investigates with Read the Signs."},
-    {"id": 51301, "role": "flex", "secondaryRole": null, "archetypes": ["curse"], "summary": "Level 0 Kōhaku with Shrivelling and Storm of Spirits, Drawn to the Flame for clues, and Rod of Carnamagos and Control Variable; the guide is a short upgrade list."}
+    { "id": 50188, "role": "flex", "secondaryRole": null, "archetypes": ["curse", "actions matter"], "summary": "Starter curse Kōhaku who fills the bag with Faustian Bargain, Promise of Power and Diabolical Luck, spends the tokens for extra actions, fights with Shrivelling and Armageddon and investigates with Sixth Sense." }
   ]
 }

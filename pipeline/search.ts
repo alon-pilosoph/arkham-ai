@@ -25,9 +25,12 @@ export class PageError extends Error {
 }
 
 // No packs[] filter: ArkhamDB's pack filter drops some buildable decks (33170).
-export function searchUrl(page: number, order: SearchOrder): string {
-  return `/decklists/find/${page}?sort=${order}`;
+export function searchUrl(page: number, order: SearchOrder, investigator?: string): string {
+  return `/decklists/find/${page}?sort=${order}${investigator ? `&investigator=${investigator}` : ""}`;
 }
+
+// Since October 2026 ArkhamDB answers 503 for any search page past 99, filtered or not.
+export const MAX_PAGES = 99;
 
 function required(value: string | undefined, field: string, row: string): string {
   if (!value) throw new PageError(`row without ${field}: ${row.slice(0, 200)}`);
@@ -92,35 +95,64 @@ export function parseSearchPage(html: string): SearchRow[] {
   return rows;
 }
 
-export async function fetchSearchPage(page: number, order: SearchOrder): Promise<SearchRow[]> {
-  const res = await getText(searchUrl(page, order));
-  if (!res.ok) throw new Error(`search page ${page} (${order}): ${res.message}`);
+export async function fetchSearchPage(page: number, order: SearchOrder, investigator?: string): Promise<SearchRow[]> {
+  const what = `search page ${page} (${order}${investigator ? `, investigator ${investigator}` : ""})`;
+  const res = await getText(searchUrl(page, order, investigator));
+  if (!res.ok) throw new Error(`${what}: ${res.message}`);
   try {
     return parseSearchPage(res.data);
   } catch (e) {
-    if (e instanceof PageError) throw new PageError(`search page ${page} (${order}): ${e.message}`);
+    if (e instanceof PageError) throw new PageError(`${what}: ${e.message}`);
     throw e;
   }
 }
 
 // Walked by date, not likes: dozens of decks share each low like count and ArkhamDB orders those
 // ties differently per request, so likes paging skips and repeats decks. A deck published
-// mid-walk only pushes a row onto the next page, where it is de-duplicated.
-export async function census(onPage?: (page: number, total: number) => void): Promise<SearchRow[]> {
+// mid-walk only pushes a row onto the next page, where it is de-duplicated. One walk per
+// investigator, since a single walk of every deck runs far past the last page ArkhamDB serves;
+// the busiest investigator (Roland) fills under 80 pages.
+export async function census(
+  investigators: string[],
+  opts: {
+    /** Investigators already walked, with their rows: a resumed census skips them. */
+    done?: Record<string, SearchRow[]>;
+    onInvestigator?: (code: string, rows: SearchRow[], index: number, total: number) => void;
+  } = {},
+): Promise<SearchRow[]> {
   const seen = new Map<number, SearchRow>();
-  for (let page = 1; ; page++) {
-    const rows = await fetchSearchPage(page, "date");
+  for (const [i, code] of investigators.entries()) {
+    let rows = opts.done?.[code];
+    if (!rows) {
+      rows = [];
+      for (let page = 1; ; page++) {
+        if (page > MAX_PAGES)
+          throw new PageError(`investigator ${code} has more than ${MAX_PAGES} pages of decks, past what ArkhamDB serves`);
+        const found = await fetchSearchPage(page, "date", code);
+        rows.push(...found);
+        if (found.length < PAGE_SIZE) break;
+      }
+      opts.onInvestigator?.(code, rows, i, investigators.length);
+    }
     for (const r of rows) if (!seen.has(r.id)) seen.set(r.id, r);
-    onPage?.(page, seen.size);
-    if (rows.length === 0) return [...seen.values()];
   }
+  return [...seen.values()];
 }
 
-export async function likesWalk(minLikes: number): Promise<SearchRow[]> {
+/** The newest decks across every investigator, to catch an investigator code the census missed. */
+export async function newest(pages: number): Promise<SearchRow[]> {
   const out: SearchRow[] = [];
-  for (let page = 1; ; page++) {
-    const rows = await fetchSearchPage(page, "likes");
-    out.push(...rows.filter((r) => r.likes >= minLikes));
-    if (rows.length < PAGE_SIZE || rows[rows.length - 1].likes < minLikes) return out;
+  for (let page = 1; page <= pages; page++) out.push(...(await fetchSearchPage(page, "date")));
+  return out;
+}
+
+/** Decks with minLikes or more, as far as ArkhamDB serves; `capped` when it stopped first. */
+export async function likesWalk(minLikes: number): Promise<{ rows: SearchRow[]; capped: boolean }> {
+  const rows: SearchRow[] = [];
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const found = await fetchSearchPage(page, "likes");
+    rows.push(...found.filter((r) => r.likes >= minLikes));
+    if (found.length < PAGE_SIZE || found[found.length - 1].likes < minLikes) return { rows, capped: false };
   }
+  return { rows, capped: true };
 }

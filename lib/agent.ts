@@ -128,6 +128,8 @@ export function runAgent(opts: {
   now?: () => number;
   /** Called if the answer is cut off at the deadline (not when the player leaves). */
   onDeadline?: () => void;
+  /** Called once per failure; without it the AI SDK logs the error itself. */
+  onError?: (error: unknown) => void;
 }) {
   const settings = opts.settings ?? DEFAULT_SETTINGS;
   const toolsContext = Object.fromEntries(Object.keys(tools).map((name) => [name, settings])) as Record<ToolName, Settings>;
@@ -150,6 +152,7 @@ export function runAgent(opts: {
     tools: budgeted.tools,
     toolsContext,
     abortSignal: cutOff,
+    onError: ({ error }) => opts.onError?.(error),
     experimental_transform: linkRepairTransform(),
     stopWhen: [isStepCount(BUDGET.maxSteps), () => finalIssued],
     prepareStep: ({ stepNumber, initialMessages, responseMessages }) => {
