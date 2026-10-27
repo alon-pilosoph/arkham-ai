@@ -41,6 +41,9 @@ A chat assistant for two Arkham Horror LCG players. Read [README.md](README.md) 
 - **One implementation of each fact.** The pipeline uses the app's own card store, XP counting
   and legality check, so the index can never disagree with the tools.
 - **`lib/settings.ts` is imported by the client.** Keep it free of server modules.
+- **Every route checks the session.** `proxy.ts` only redirects on a missing cookie; a route
+  that reads or spends anything calls `currentUser` (`lib/session.ts`) and answers 401 without
+  one. Accounts are invite-only: nothing but `mayJoin` (`lib/access.ts`) admits a new address.
 
 ## Commands
 
@@ -50,6 +53,7 @@ npm run check    # typecheck, Biome lint and format check, unit tests
 npm run format   # apply Biome fixes and formatting
 npm run build    # production build
 npm run e2e      # Playwright end-to-end tests (no API key needed)
+npm run db:generate  # after changing lib/db/schema.ts: writes the migration into drizzle/
 npm run eval -- --model openai:gpt-6-sol --max-usd 2   # costs money
 ```
 
@@ -70,7 +74,9 @@ offline, make at most one request every two seconds to ArkhamDB (slower when it 
 
 ## Tests
 
-The unit tests never touch the network. `vitest.config.mts` sets `ARKHAM_CARDS_FILE` and
+The unit tests never touch the network, and need no database server: the database is PGlite in
+memory, migrated from `drizzle/`. Every test runs signed in (`tests/setup.ts` mocks the session
+and the daily cap); `tests/accounts.test.ts` tests the real ones. `vitest.config.mts` sets `ARKHAM_CARDS_FILE` and
 `ARKHAM_TABOOS_FILE` to the card set and taboo lists in `tests/fixtures/`, and the loaders
 (`lib/loader.ts`) read those files instead of ArkhamDB. `npm run data:index` rewrites those two
 snapshots and `tests/fixtures/indexed-decks.json` together with the index.

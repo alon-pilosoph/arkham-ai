@@ -11,6 +11,8 @@ import { OUT_OF_TIME_ANSWER, runAgent, toModelMessages } from "@/lib/agent";
 import { getCards } from "@/lib/cards";
 import { errorMessage } from "@/lib/format";
 import { languageModel } from "@/lib/model";
+import { takeQuestion } from "@/lib/question-cap";
+import { currentUser, SIGNED_OUT } from "@/lib/session";
 import { DEFAULT_SETTINGS, SettingsSchema } from "@/lib/settings";
 
 // Vercel Hobby's max. Segment config must be a literal, so tests/route.test.ts keeps it above BUDGET.deadlineMs.
@@ -58,6 +60,8 @@ function parseJson(bytes: ArrayBuffer): unknown {
 }
 
 export async function POST(req: Request) {
+  const user = await currentUser(req.headers);
+  if (!user) return SIGNED_OUT();
   const tooLarge = () => new Response("This chat is too long to send. Start a new chat.", { status: 413 });
   if (Number(req.headers.get("content-length")) > LIMITS.bodyBytes) return tooLarge();
   const body = await req.arrayBuffer().catch(() => null);
@@ -69,6 +73,8 @@ export async function POST(req: Request) {
     return new Response(`Bad request: ${issue?.message ?? "invalid body"}${where}`, { status: 400 });
   }
   const settings = { ...DEFAULT_SETTINGS, ...parsed.data.settings };
+  if (!(await takeQuestion(user.id)))
+    return new Response("That's today's questions used up for this account. Ask again tomorrow.", { status: 429 });
 
   let model: LanguageModel;
   try {

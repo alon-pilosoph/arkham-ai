@@ -9,3 +9,6 @@ next-env.d.ts
 evals/results/
 /test-results/
 /playwright-report/
+
+# local database (PGlite)
+.data/

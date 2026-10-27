@@ -63,7 +63,9 @@ original card is therefore computed by the same function in the app and in the p
    [Assistant Cloud](https://cloud.assistant-ui.com) project, which stores them per browser,
    anonymously, and gives them generated titles.
 
-2. **The route** (`app/api/chat/route.ts`) validates the body, `{messages, settings}`, with zod.
+2. **The route** (`app/api/chat/route.ts`) first checks who is asking: a request without a
+   session gets a 401, and an account past its daily questions a 429 (see
+   [Accounts](#accounts-and-the-database)). It then validates the body, `{messages, settings}`, with zod.
    A malformed body or message part gets a 400, and a body over 512 KB a 413. Settings are
    optional and merged over the defaults, so a tab opened before a new setting existed still
    works. The route then picks the model (`lib/model.ts`) and streams the agent's output back as
@@ -89,6 +91,31 @@ original card is therefore computed by the same function in the app and in the p
    model (`toModelOutput`), wrapping any text written by ArkhamDB users as untrusted data. The UI
    shows every result in assistant-ui's own tool card (running, done, stopped or failed), with
    shadcn/ui components inside.
+
+## Accounts and the database
+
+The app is invite-only, with accounts of its own (`lib/auth.ts`, [Better Auth](https://www.better-auth.com)):
+sign in with Google, or with a one-time link emailed through Resend (`lib/email.ts`).
+Before Better Auth creates any account, by either method, it asks `validateUserInfo`, which
+admits only an address `mayJoin` allows (`lib/access.ts`): for now the owner of the deployment,
+`OWNER_EMAIL`; campaigns will add invites. A sign-in link is emailed only to an address that has
+an account or may join, and the page says the same thing either way.
+
+Sessions are cookies that last 60 days. `proxy.ts` sends a visit without a session cookie to
+`/sign-in`, and answers an API call without one with a 401; that is only an optimistic check.
+Every route checks the session itself (`currentUser`, `lib/session.ts`). The sign-in and privacy
+pages and Better Auth's own endpoints (`app/api/auth/[...all]`) are the only public paths.
+
+Each account may ask `DAILY_QUESTIONS` questions a UTC day (150 by default), counted in the
+database (`lib/question-cap.ts`), which bounds what any one account can spend of the model key.
+
+The database (`lib/db/`) is Postgres through [Drizzle](https://orm.drizzle.team). Deployed it is
+Neon, in Frankfurt like the app's functions (`vercel.json`), and the build applies `drizzle/`'s
+migrations before `next build` (`npm run db:migrate`); each preview deployment gets its own Neon
+branch. Without `DATABASE_URL` it is [PGlite](https://pglite.dev), Postgres running in the
+server's own process, which migrates itself when it opens: on disk under `.data/` for local
+runs, in memory for the unit and end-to-end tests. A schema change is made in
+`lib/db/schema.ts`, then `npm run db:generate` writes its migration into `drizzle/`.
 
 ## The system prompt and caching
 
@@ -343,19 +370,24 @@ answer.
 | `providers.test.ts` | The request each provider actually receives: Anthropic's cache breakpoints (1 h on the system prompt, 5 min on the newest message) and its own `tool_choice`, and a valid OpenAI Responses call |
 | `model.test.ts` | Which provider `modelSpec` picks from the keys that are set, `ARKHAM_MODEL` and `ARKHAM_EFFORT` |
 | `link-repair.test.ts` | A correct link is left alone, a level pins a name to one version, an ambiguous or unknown name becomes plain text |
-| `route.test.ts` | The chat route: 400s for bad bodies, a 413 for an oversized one, partial settings, provider errors shown in plain words, a cut-off answer that says so |
+| `accounts.test.ts` | Accounts against PGlite: the owner's sign-in link signs them in; a stranger gets no email, and no account even holding a link; a link works once; a forged cookie is nobody; the daily question cap and its reset |
+| `proxy.test.ts` | Signed-out pages go to the sign-in page (keeping where they were going and why a sign-in was refused), signed-out API calls get a 401, public paths pass |
+| `route.test.ts` | The chat route: a 401 when signed out, a 429 past the daily cap, 400s for bad bodies, a 413 for an oversized one, partial settings, provider errors shown in plain words, a cut-off answer that says so |
 | `taboo-unavailable.test.ts` | With the taboo switch on and the taboo lists unavailable, every tool reports an error instead of an answer without the taboo list applied |
 | `loader.test.ts` | The card set and taboo lists survive ArkhamDB being down: the last copy is served, one warning is logged, and retries wait a minute |
 | `mock-model.test.ts` | The mock model only calls tools that exist |
 | `card-detail.test.ts` | The card dialog's data: owned printings named once, every version (a parallel investigator by its pack), reprints opened as the original, the taboo change only with the switch on; the route's 200, 400 and 404; which links are card links; card markup rendered without passing other HTML through |
 | `find-deck.test.ts` | `findDeck` finds a deck by title, with or without its investigator, and by what it does; a name that fits many returns several candidates; an unknown name returns none and says to ask for the link; deck names are wrapped as untrusted; `GET /api/deck` reads a pasted link and refuses one that isn't |
 | `upgrades.test.ts` | XP spending: an upgrade pays the difference for every copy, nothing costs more than the budget or is unowned, a new card's price (level, at least 1, exceptional doubled, the taboo surcharge only when on), level 0 cards listed apart, deck-creation cards never offered, customization boxes within the sheet's 10, a card the deck runs is an upgrade and never a purchase |
-| `campaign-prep.test.ts` | Campaigns found by name or code (a Return to box only when asked for), every campaign's packs present in the card set, Carcosa's treacheries dealing more horror than damage, Edge of the Earth's frost, the by-pack breakdown, copies counted once, and no encounter card named in the output |
+| `campaign-prep.test.ts` | Campaigns found by name or code (a Return to box only when asked for), every campaign's packs present in the card set, Carcosa's treacheries dealing more horror than damage, Edge of the Earth's frost, every campaign's scenarios in play order with the shared sets counted apart, copies counted once, and no encounter card named in the output |
 | `symbols.test.ts` | Game symbols in an answer become keycaps; links and other brackets are left alone |
 | `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
+| `e2e/accounts.spec.ts` | Playwright: a visitor sent to sign in, the privacy page, a stranger told a link is coming and kept out, the invite-only message, signing out. `e2e/sign-in.setup.ts` signs the owner in through an emailed link once, and the other tests reuse that session |
 | `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, a deck slot refusing what isn't a link, campaign prep, the taboo switch surviving a reload |
 
-The unit tests never touch the network. `vitest.config.mts` sets `ARKHAM_CARDS_FILE` and
+The unit tests never touch the network. Every test runs signed in with questions to spare
+(`tests/setup.ts` mocks `currentUser` and `takeQuestion`); `accounts.test.ts` tests the real ones,
+on a PGlite database in memory. `vitest.config.mts` sets `ARKHAM_CARDS_FILE` and
 `ARKHAM_TABOOS_FILE` to the card set and taboo lists in `tests/fixtures/`, and a `fetch` mock
 (`tests/helpers.ts`) answers deck requests from `tests/fixtures/decklist-<id>.json` and throws on
 any other URL. `npm run data:index` rewrites the card set, the taboo lists and
