@@ -342,3 +342,17 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
 - **Now** each campaign's scenarios come from its scenario cards, in printed order, and the
   table has one row per scenario counting the set made for it, with the shared sets counted
   apart. The same list will tell a campaign which scenario is next.
+
+## Accounts of its own (October 27)
+
+- **Why.** Campaigns will be shared by the people who play them, which needs to know who is who.
+  Vercel Authentication only kept strangers out.
+- **Built.** Sign-in with Google or an emailed link (Better Auth), invite-only from the first
+  account: Better Auth asks before creating any account, and only the owner's address is
+  admitted until campaigns bring invites. A link is never emailed to a stranger, and the page
+  says the same either way. Every route checks the session; each account has a daily question
+  cap. The database is Neon in production and PGlite, Postgres inside the process, everywhere
+  else, so tests and local runs need no database server.
+- **Found on the way.** A refused sign-in returns to the page it was for, with the reason in the
+  address; the redirect to the sign-in page now carries the reason along, so "invite-only" is
+  what the person sees.

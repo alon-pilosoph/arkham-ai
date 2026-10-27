@@ -1,11 +1,13 @@
 import { getCards } from "@/lib/cards";
 import { fetchDeck, parseRef } from "@/lib/decks";
 import { errorMessage } from "@/lib/format";
+import { currentUser, SIGNED_OUT } from "@/lib/session";
 import type { SavedDeck } from "@/lib/settings";
 
 /** GET /api/deck?ref=<an ArkhamDB deck link>: the deck a player is saving as theirs or their
  *  partner's, with its name and investigator for the deck slots to show. */
 export async function GET(req: Request) {
+  if (!(await currentUser(req.headers))) return SIGNED_OUT();
   const ref = new URL(req.url).searchParams.get("ref") ?? "";
   const parsed = parseRef(ref);
   if (!parsed) return new Response("That isn't an ArkhamDB deck link.", { status: 400 });

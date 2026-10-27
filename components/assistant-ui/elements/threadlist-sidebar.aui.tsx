@@ -1,5 +1,6 @@
 import { ExternalLinkIcon, MessagesSquare } from "lucide-react";
 import type * as React from "react";
+import { AccountMenu } from "@/components/account/account-menu";
 import { ThreadList } from "@/components/assistant-ui/elements/thread-list.aui";
 import {
   Sidebar,
@@ -46,6 +47,7 @@ export function ThreadListSidebar({ ...props }: React.ComponentProps<typeof Side
               <span>ArkhamDB</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
+          <AccountMenu />
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>

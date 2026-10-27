@@ -301,6 +301,23 @@ never the network.
 edits. Taking the snapshots from the same build means that a test like "the index's XP matches the
 deck tool's" compares like with like, and CI needs no network access.
 
+### Accounts are the app's own, and invite-only
+
+**Decision.** Players sign in with Google or an emailed link, through Better Auth with its tables
+in the app's own Postgres. No account is created unless the address may join: the deployment's
+owner, or (with campaigns) someone invited. Every route checks the session; each account has a
+daily question cap.
+
+**Why.** Campaigns will be shared by the people who play them, and Vercel Authentication, which
+guarded the app until then, has no notion of who is who and lets in a single outside user on the
+Hobby plan. Keeping the accounts in the same database as the campaigns lets one query answer "is
+this person in this campaign". The cap bounds what a lost phone can spend of the model key.
+
+**Rejected.** *Vercel Authentication*, as above. *Neon's built-in auth*: a second system next to
+the one the invites need. *Supabase*: its free projects pause after a week idle, and campaigns
+are played weeks apart. *A local Postgres for development*: PGlite runs the same SQL inside the
+process, so local runs and tests need no database server.
+
 ### The rules page is parsed as written
 
 **Decision.** `pipeline/rules.ts` parses the Rules Reference page with htmlparser2, not with a

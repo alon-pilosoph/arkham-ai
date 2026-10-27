@@ -1,6 +1,6 @@
 # Plan: campaigns with accounts
 
-Status: **draft, for review.** Nothing here is built. Each section ends with what is still open.
+Status: **approved.** Step 1 (scenario lists) is done; step 2 (database and accounts) is in progress.
 
 ## 1. The goal
 

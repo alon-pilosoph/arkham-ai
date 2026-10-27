@@ -2,6 +2,8 @@ import { APICallError } from "ai";
 import { MockLanguageModelV4 } from "ai/test";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { BUDGET } from "@/lib/agent";
+import { takeQuestion } from "@/lib/question-cap";
+import { currentUser } from "@/lib/session";
 
 // What the route's model does in the current test: answer as the local stand-in, fail with a
 // provider status, or never answer.
@@ -46,9 +48,26 @@ const ask = { id: "1", role: "user", parts: [{ type: "text", text: "What does do
 const askWith = (text: string) => ({ ...ask, parts: [{ type: "text", text }] });
 
 beforeEach(() => {
+  vi.mocked(takeQuestion).mockClear();
   model.failWith = 0;
   model.hang = false;
   vi.spyOn(console, "error").mockImplementation(() => {});
+});
+
+describe("POST /api/chat asks who is asking", () => {
+  test("refuses a signed-out request with a 401, before reading it", async () => {
+    vi.mocked(currentUser).mockResolvedValueOnce(null);
+    const res = await post({ messages: [ask] });
+    expect(res.status).toBe(401);
+    expect(takeQuestion).not.toHaveBeenCalled();
+  });
+
+  test("refuses with a 429 once the account has asked its questions for the day", async () => {
+    vi.mocked(takeQuestion).mockResolvedValueOnce(false);
+    const res = await post({ messages: [ask] });
+    expect(res.status).toBe(429);
+    expect(await res.text()).toMatch(/today's questions/);
+  });
 });
 
 describe("POST /api/chat refuses, with a 400", () => {
