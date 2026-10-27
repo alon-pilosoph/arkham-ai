@@ -1,0 +1,38 @@
+{
+  "startedAt": "2026-10-27T08:20:11.222Z",
+  "finishedAt": "2026-10-27T08:51:56.173Z",
+  "minutes": 32,
+  "resumed": false,
+  "requests": {
+    "total": 953,
+    "searchPages": 953,
+    "refetchedPages": 60,
+    "decklists": 0,
+    "retries": 0
+  },
+  "ArkhamDB": {
+    "slowAnswers": 0,
+    "retryAfterWaits": 0
+  },
+  "walks": {
+    "investigators": 96,
+    "tieGroupsSettled": 21,
+    "dateWalks": 14,
+    "usageDecks": 1988,
+    "crossChecked": 300
+  },
+  "index": {
+    "decks": 660,
+    "skipped": {
+      "not owned": 0,
+      "illegal": 3,
+      "same list": 9,
+      "unavailable": 0
+    },
+    "short": []
+  },
+  "checks": {
+    "missingFromWalks": 0,
+    "decklistsUnavailable": 0
+  }
+}
