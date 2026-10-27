@@ -105,11 +105,11 @@ export async function selectForInvestigator(
 export async function selectIndex(
   store: CardStore,
   taboos: Map<number, TabooList>,
-  census: SearchRow[],
+  rows: SearchRow[],
   loadDeck: LoadDeck,
 ): Promise<InvestigatorSelection[]> {
   const rowsByInvestigator = new Map<string, SearchRow[]>();
-  for (const row of census) {
+  for (const row of rows) {
     const code = store.canonical(row.investigatorCode);
     const rows = rowsByInvestigator.get(code);
     if (rows) rows.push(row);

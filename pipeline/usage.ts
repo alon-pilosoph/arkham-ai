@@ -24,13 +24,13 @@ function sorted(counts: UsageCounts): UsageCounts {
 
 export async function cardUsage(
   store: CardStore,
-  census: SearchRow[],
+  rows: SearchRow[],
   loadDeck: LoadDeck,
 ): Promise<{ usage: CardUsage; unavailable: number[] }> {
   const investigators: Record<string, UsageCounts> = {};
   const classes: Record<string, UsageCounts> = {};
   const unavailable: number[] = [];
-  for (const row of census.filter((r) => r.likes >= USAGE_MIN_LIKES).sort((a, b) => a.id - b.id)) {
+  for (const row of rows.filter((r) => r.likes >= USAGE_MIN_LIKES).sort((a, b) => a.id - b.id)) {
     const loaded = await loadDeck(row.id);
     if (!loaded.ok) {
       unavailable.push(row.id);

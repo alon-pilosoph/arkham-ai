@@ -10,9 +10,10 @@ import { type DeckList, deckCards, deckMeta, xpInList } from "@/lib/decks";
 import { CLASSES, type IndexRow, IndexRowSchema } from "@/lib/index/schema";
 import { deckViolation } from "@/lib/legality";
 import { getTaboos, latest, type TabooList } from "@/lib/taboo";
-import { loadCachedDeck, ROOT, readCensus } from "./cache";
+import { loadCachedDeck, ROOT, readWalk } from "./cache";
 import { type DeckLabel, readLabels } from "./labels";
 import { selectionReport } from "./report";
+import { walkedRows } from "./run";
 import { type Selected, selectIndex } from "./selection";
 import { cardUsage } from "./usage";
 
@@ -65,9 +66,9 @@ function writeSnapshot(store: CardStore, taboos: Map<number, TabooList>): void {
 
 async function main(): Promise<number> {
   const [store, taboos] = await Promise.all([getCards(), getTaboos()]);
-  const { rows: census } = readCensus();
-  const selection = await selectIndex(store, taboos, census, loadCachedDeck);
-  const { usage, unavailable: usageUnavailable } = await cardUsage(store, census, loadCachedDeck);
+  const walked = walkedRows(readWalk());
+  const selection = await selectIndex(store, taboos, walked, loadCachedDeck);
+  const { usage, unavailable: usageUnavailable } = await cardUsage(store, walked, loadCachedDeck);
   const labels = readLabels();
   const current = latest(taboos);
   if (!current) throw new Error("ArkhamDB lists no taboo list");
@@ -95,7 +96,7 @@ async function main(): Promise<number> {
   console.log(report.summary);
   if (stale.length) console.log(`${stale.length} labels are for decks no longer selected: ${stale.join(", ")}`);
   const uncached = report.skipped.unavailable + usageUnavailable.length;
-  if (uncached) console.log(`${uncached} decklists are not cached: run npm run data:crawl -- --reuse-census`);
+  if (uncached) console.log(`${uncached} decklists are not cached: run npm run data:crawl -- --reuse`);
   if (unlabeled.length) {
     console.log(`${unlabeled.length} selected decks have no label:\n  ${unlabeled.join("\n  ")}`);
     return 1;
