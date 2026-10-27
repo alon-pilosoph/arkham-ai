@@ -17,29 +17,32 @@ import type { Failure } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { CLASS_TOKENS, KEYCAP, SYMBOL_PUNCT, symbolLabel, symbolsToCode } from "./symbols";
 
-const CLASS_COLOR: Record<string, string> = {
-  guardian: "bg-sky-600 dark:bg-sky-500",
-  seeker: "bg-amber-500 dark:bg-amber-400",
-  rogue: "bg-emerald-600",
-  mystic: "bg-violet-600 dark:bg-violet-500",
-  survivor: "bg-red-600 dark:bg-red-500",
-  neutral: "bg-zinc-500 dark:bg-zinc-400",
+// app/globals.css defines --class-<name> for light and dark
+const color = (cls: string) => `var(--class-${cls}, var(--class-neutral))`;
+
+/** A multiclass card's dot is split between its classes, like a pie. */
+function fill(classes: string[]): string {
+  if (classes.length < 2) return color(classes[0] ?? "neutral");
+  const step = 100 / classes.length;
+  return `conic-gradient(${classes.map((c, i) => `${color(c)} ${i * step}% ${(i + 1) * step}%`).join(", ")})`;
+}
+
+export const Dot: FC<{ classes: string[] }> = ({ classes }) => {
+  const label = classes.join(" and ") || "neutral";
+  return (
+    <span
+      role="img"
+      aria-label={label}
+      title={label}
+      className="inline-block size-2.5 shrink-0 rounded-full"
+      style={{ background: fill(classes) }}
+    />
+  );
 };
 
-export const Dot: FC<{ cls: string }> = ({ cls }) => (
-  <span
-    role="img"
-    aria-label={cls}
-    title={cls}
-    className={cn("inline-block size-2 shrink-0 rounded-full", CLASS_COLOR[cls] ?? "bg-zinc-400")}
-  />
-);
-
 export const Dots: FC<{ classes: string[] }> = ({ classes }) => (
-  <span className="flex w-2 shrink-0 flex-col gap-0.5 pt-1.5">
-    {classes.map((c) => (
-      <Dot key={c} cls={c} />
-    ))}
+  <span className="flex w-2.5 shrink-0 pt-1.5">
+    <Dot classes={classes} />
   </span>
 );
 

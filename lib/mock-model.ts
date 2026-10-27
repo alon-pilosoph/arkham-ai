@@ -18,6 +18,8 @@ export function route(q: string): { toolName: string; input: Record<string, unkn
   if (deck) return { toolName: "deck", input: { ref: deck } };
   const named = q.match(/how do i play (?:the )?(.+?)(?: deck)?\?/i)?.[1];
   if (named) return { toolName: "findDeck", input: { name: named } };
+  const campaign = q.match(/(?:prepare for|expect (?:in|from)|starting) (.+?)[?.]?$/i)?.[1];
+  if (campaign) return { toolName: "campaignPrep", input: { campaign } };
   if (/suggest|recommend|find me/i.test(q)) {
     const input: Record<string, unknown> = {};
     const cls = q.match(/guardian|seeker|rogue|mystic|survivor/i)?.[0];

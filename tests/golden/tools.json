@@ -237,5 +237,22 @@
       ],
       "additionalProperties": false
     }
+  },
+  "campaignPrep": {
+    "description": "Spoiler-light preparation for a Chapter 1 campaign or standalone scenario: what its encounter cards ask of the investigators, as counts and averages (which skills its treacheries test, horror against damage, how tough and how many its enemies are, keywords, frost and other tokens), overall and by scenario pack, plus a note on its structure. Names no encounter card. Use it only when the players ask how to prepare for a campaign or scenario.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "campaign": {
+          "type": "string",
+          "description": "The campaign or standalone scenario, e.g. \"The Path to Carcosa\", \"Edge of the Earth\", \"Return to the Dunwich Legacy\"."
+        }
+      },
+      "required": [
+        "campaign"
+      ],
+      "additionalProperties": false
+    }
   }
 }

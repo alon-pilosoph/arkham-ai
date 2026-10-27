@@ -290,3 +290,24 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   burying the leveled cards XP is usually spent on; leveled and level 0 cards are now listed
   apart. The deck tool's customization view lists only options with marks, so unmarked options
   are read from the card's upgrade sheet.
+
+## Campaign prep, spoiler-light (October 25)
+
+- **Why.** "How should we prepare for Carcosa?" had no source but the model's memory, which is
+  where spoilers live. `campaignPrep` answers from the encounter cards instead, as counts only,
+  and the guidance keeps it to when the players ask.
+- **What the numbers show.** The players' own impressions hold up: Carcosa's treacheries mention
+  horror about twice as often as damage (34 of 81 copies against 16), and Edge of the Earth has
+  46 encounter cards that work with frost tokens; no other campaign has any.
+- **The notes.** Each campaign carries one hand-written line on what the cards can't show, kept
+  to what is certain and spoiler-free. They are the one part of the tool not derived from data.
+
+## Campaign notes about decks, verified (October 26)
+
+- **First drafts missed twice.** The notes were first written from memory, then from publishers'
+  descriptions; both described story structure (Doubt and Conviction, choosing an approach),
+  which changes nothing in a deck.
+- **Now each note says what a campaign asks of a deck**, and only with claims two independent
+  sources agree on, a rule, or a count of its encounter cards
+  ([research/campaigns.md](research/campaigns.md)). The counts settled two questions (Carcosa's
+  horror, the agility in The Forgotten Age and Hemlock Vale) and overruled three claims.

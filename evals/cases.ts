@@ -4,7 +4,7 @@ import type { Settings } from "@/lib/settings";
 
 export type EvalCase = {
   id: string;
-  useCase: "rules" | "card" | "deck" | "replace" | "upgrade" | "find" | "partner" | "scope";
+  useCase: "rules" | "card" | "deck" | "replace" | "upgrade" | "find" | "partner" | "prep" | "scope";
   question: string;
   followUps?: string[];
   settings?: Partial<Settings>;
@@ -172,6 +172,20 @@ export const CASES: EvalCase[] = [
     useCase: "deck",
     question: "How do I play the Zorblax Express deck?",
     expect: "findDeck finds nothing; asks the player to paste the deck's ArkhamDB link instead of guessing.",
+  },
+  {
+    id: "prep-carcosa",
+    useCase: "prep",
+    question: "We're starting The Path to Carcosa next week. How should we prepare?",
+    expect:
+      "Calls campaignPrep. Says the campaign leans on horror from the opening scenarios, so willpower, sanity and horror healing matter. Names no encounter card, enemy or story beat.",
+  },
+  {
+    id: "prep-eote",
+    useCase: "prep",
+    question: "What should we expect in Edge of the Earth?",
+    expect:
+      "Calls campaignPrep. A lot of moving, frost tokens in the bag, expedition partners; advice on movement and on the frost. No spoilers.",
   },
   {
     id: "out-of-scope",

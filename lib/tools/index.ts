@@ -1,3 +1,4 @@
+import { campaignPrepTool } from "./campaign-prep";
 import { cardsTool } from "./cards";
 import { deckTool } from "./deck";
 import { findDeckTool } from "./find-deck";
@@ -13,6 +14,7 @@ export const tools = {
   recommendDecks: recommendDecksTool,
   replaceCard: replaceCardTool,
   upgrades: upgradesTool,
+  campaignPrep: campaignPrepTool,
 };
 
 export type ToolName = keyof typeof tools;

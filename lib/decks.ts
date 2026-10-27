@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { type Fetched, getJson } from "./arkhamdb";
 import type { CardFace, Customization } from "./card-text";
 import { type CardStore, cardFace, cleanText, DECK_CARD_TYPES, getCards, type RawCard } from "./cards";
@@ -43,8 +45,19 @@ export function parseRef(ref: string | number): DeckRef | null {
   return null;
 }
 
+/** ARKHAM_DECKS_DIR serves decklists from `decklist-<id>.json` files instead of ArkhamDB, as
+ *  ARKHAM_CARDS_FILE does for the card set: the Playwright run and offline screenshots use it. */
+function deckFromDir(dir: string, ref: DeckRef): Fetched<{ deck: RawDeck; kind: DeckKind }> {
+  const file = path.join(dir, `decklist-${ref.id}.json`);
+  if (ref.kind === "deck" || !fs.existsSync(file))
+    return { ok: false, status: "not_found", message: `No deck ${ref.id} in ${dir}.` };
+  return { ok: true, data: { deck: JSON.parse(fs.readFileSync(file, "utf8")) as RawDeck, kind: "decklist" } };
+}
+
 /** Decklists and personal decks have separate id spaces; a bare id tries decklists first. */
 export async function fetchDeck(ref: DeckRef): Promise<Fetched<{ deck: RawDeck; kind: DeckKind }>> {
+  const dir = process.env.ARKHAM_DECKS_DIR;
+  if (dir) return deckFromDir(dir, ref);
   const kinds: DeckKind[] = ref.kind ? [ref.kind] : ["decklist", "deck"];
   const errors: string[] = [];
   for (const kind of kinds) {

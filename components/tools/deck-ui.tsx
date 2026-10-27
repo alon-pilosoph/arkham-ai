@@ -39,7 +39,7 @@ const CardRow: FC<{ c: DeckCard }> = ({ c }) => (
   <li className="flex items-start gap-1.5 leading-5 pointer-coarse:py-1.5">
     <span className="text-muted-foreground w-5 shrink-0 text-end tabular-nums">{c.qty}x</span>
     <span className="flex h-5 items-center">
-      <Dot cls={c.classes[0] ?? "neutral"} />
+      <Dot classes={c.classes} />
     </span>
     <span className="min-w-0">
       <Popover>
