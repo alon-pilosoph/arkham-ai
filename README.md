@@ -24,6 +24,10 @@ deck, that the players can build from their own collection.
 | *Suggest a mystic cluever deck.* | `recommendDecks` tool: searches an index of 660 of the most-liked published decks by class, role, archetype, XP, investigator or key card |
 | *My partner plays deck 33170. What should I play?* | `recommendDecks` with `pairWith`: decks whose role covers what the partner's deck lacks, never the same investigator |
 
+Every card an answer names is a link. Tapping one opens the card in the app, laid out like the
+printed card with its game symbols, art, owned printings, other levels and official rulings;
+with the taboo list on, its taboo change too.
+
 A few rules hold everywhere, enforced in code rather than left to the model:
 
 - **Only owned cards.** Every recommendation and replacement can be built from the players'
@@ -197,11 +201,13 @@ Games or ArkhamDB.
   official FAQ rulings (`data/faq.json`) are © Fantasy Flight Games.
 - Card data, taboo lists, rulings and decklists come from [ArkhamDB](https://arkhamdb.com), a
   volunteer-run community site. The pipeline fetches at most one page every two seconds, and slows down further when the site is busy.
+- The game-symbol font (`app/fonts/arkham-icons.woff`) and the card scans the card dialog shows
+  are ArkhamDB's.
 - Deck guides, and the decks themselves, belong to their authors. The assistant reads them live
   and links back to them.
 
 ## License
 
 The code is released under the [MIT License](LICENSE). The license does not cover the
-third-party material listed above: `data/rules.md`, `data/faq.json`, the deck index in
+third-party material listed above: `data/rules.md`, `app/fonts/arkham-icons.woff`, `data/faq.json`, the deck index in
 `lib/index/` (built from public decklists) and the ArkhamDB snapshots in `tests/fixtures/`.

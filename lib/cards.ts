@@ -54,6 +54,15 @@ export type RawCard = {
   enemy_horror?: number;
   hidden?: boolean;
   url?: string;
+  flavor?: string;
+  back_flavor?: string;
+  back_name?: string;
+  illustrator?: string;
+  position?: number;
+  quantity?: number;
+  imagesrc?: string;
+  backimagesrc?: string;
+  double_sided?: boolean;
 };
 
 export type DeckOption = {

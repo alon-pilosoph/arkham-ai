@@ -10,14 +10,26 @@ import {
   useIsMarkdownCodeBlock,
 } from "@assistant-ui/react-markdown";
 import { CheckIcon, CopyIcon } from "lucide-react";
-import { type FC, memo, useMemo, useRef } from "react";
+import { type ComponentProps, type FC, memo, useMemo, useRef } from "react";
 import remarkGfm from "remark-gfm";
-
 import { TooltipIconButton } from "@/components/assistant-ui/elements/tooltip-icon-button";
+import { useCardClick } from "@/components/cards/card-link";
 import { KEYCAP, SYMBOL_NAMES, symbolsToCode } from "@/components/tools/symbols";
 import { Kbd } from "@/components/ui/kbd";
 import { useCopyToClipboard } from "@/hooks/use-copy-to-clipboard";
 import { cn } from "@/lib/utils";
+
+// A card link opens the card dialog (components/cards); every other link opens a new tab.
+const MarkdownLink: FC<ComponentProps<"a">> = ({ className, href, ...props }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    onClick={useCardClick(href)}
+    className={cn("aui-md-a text-primary hover:text-primary/80 underline underline-offset-2", className)}
+    {...props}
+  />
+);
 
 type MarkdownTextProps = Partial<TextMessagePartProps> & {
   components?: Parameters<typeof memoizeMarkdownComponents>[0];
@@ -100,14 +112,7 @@ const defaultComponents = memoizeMarkdownComponents({
   p: ({ className, ...props }) => (
     <p className={cn("aui-md-p my-3 leading-relaxed first:mt-0 last:mb-0", className)} {...props} />
   ),
-  a: ({ className, ...props }) => (
-    <a
-      target="_blank"
-      rel="noopener noreferrer"
-      className={cn("aui-md-a text-primary hover:text-primary/80 underline underline-offset-2", className)}
-      {...props}
-    />
-  ),
+  a: ({ className, ...props }) => <MarkdownLink className={className} {...props} />,
   blockquote: ({ className, ...props }) => (
     <blockquote
       className={cn("aui-md-blockquote border-muted-foreground/30 text-muted-foreground my-3 border-s-2 ps-4", className)}

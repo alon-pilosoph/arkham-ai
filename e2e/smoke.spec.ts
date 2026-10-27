@@ -26,6 +26,22 @@ test("a card lookup shows every level of the card", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Ward of Protection (5)" })).toBeVisible();
 });
 
+test("a card link opens the card in a dialog, not a new tab", async ({ page }) => {
+  await ask(page, "What does Shrivelling do?");
+  await page.locator("[data-slot=tool-fallback-trigger]").filter({ hasText: "Shrivelling" }).click();
+  await page.getByRole("link", { name: "Shrivelling (3)" }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("heading", { name: /Shrivelling/ })).toBeVisible();
+  await expect(dialog).toContainText("Uses (4 charges)");
+  await dialog.getByRole("link", { name: "Level 5" }).click();
+  await expect(dialog).toContainText("Uses (4 charges)");
+  await dialog.getByRole("button", { name: "Back" }).click();
+  await expect(dialog.getByRole("link", { name: "Level 3" })).toHaveAttribute("aria-current", "true");
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  expect(page.context().pages()).toHaveLength(1);
+});
+
 test("a deck search shortlists indexed decks that link to ArkhamDB", async ({ page }) => {
   await ask(page, "Suggest a mystic cluever deck.");
   await expect(page.locator("[data-slot=tool-fallback-trigger]").filter({ hasText: "Deck shortlist" })).toBeVisible();

@@ -240,3 +240,21 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   cards looked rarer than they are. Each deck's list XP is now recorded with the counts, and a
   card's share is taken among the decks holding at least its level in XP. Until the index is
   rebuilt, the old counts fall back to every deck.
+
+## Card links open in the app (October 25)
+
+- **Why.** A card link opened ArkhamDB in a new tab, which on a phone at the table meant leaving
+  the chat to read one card. Card links now open the card in a dialog (a bottom sheet on a
+  phone), laid out after the ArkhamCards app: a class-colored header with the cost, type and
+  traits, commit icons, a crop of the art, the card text with real game symbols, flavor, the
+  illustrator and the owned printings, then the back, customization options and the FAQ.
+- **Rendered from data, not a scan.** The scan alone would show the printed text: no errata, and
+  no taboo change. The dialog reads the same `cardView` the `cards` tool returns, and the scan is
+  one tap away.
+- **ArkhamDB's own symbol font.** ArkhamDB draws the five class symbols from PNGs, but its font
+  has them too, so one font covers every symbol in card text except the wild icon, which is a
+  bold "?" as on ArkhamDB.
+- **Found on the way.** A hidden promo printing (98004 for Roland, 01001) shares its original's
+  pack and position, so printings are listed once per pack and position; and a parallel
+  investigator has the same name as the original, so versions that would read the same are
+  labeled by pack.

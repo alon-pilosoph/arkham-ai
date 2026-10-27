@@ -210,6 +210,27 @@ The store's behavior:
 - **Ownership is by pack.** `lib/collection.json` lists the owned packs. A card is owned when any
   of its printings is in one of them, and only owned printings are named to the players.
 
+## The card dialog
+
+A card link, in an answer or in a tool's result, opens the card in the app instead of on
+ArkhamDB: a dialog on desktop and a bottom sheet on a phone, laid out like the ArkhamCards app.
+A click with a modifier key still opens ArkhamDB in a new tab.
+
+- `components/cards/card-link.tsx` recognizes `arkhamdb.com/card/<code>` links, and
+  `CardDialogProvider` (`components/cards/card-dialog.tsx`) is the context they open.
+- The dialog asks `GET /api/card/<code>?taboo=0|1` (`app/api/card/[code]/route.ts`), which
+  builds `cardDetail` (`lib/card-detail.ts`) from the same store and the same `cardView` as the
+  `cards` tool, so the dialog and the model never disagree about a card. The taboo change is
+  included only when the switch is on.
+- The card text keeps ArkhamDB's markup. `components/cards/rich-text.tsx` turns a fixed set of
+  tags (`<b>`, `<i>`, `<blockquote>` and a few more), `[[Trait]]` and `[icon]` into elements;
+  anything else is dropped to its text and nothing is ever set as HTML.
+- Game symbols come from ArkhamDB's own icon font (`app/fonts/arkham-icons.woff`); card text
+  is set in Alegreya, as on the printed cards.
+- The art is a crop of ArkhamDB's scan, placed by card type; tapping it shows the whole scan.
+  Only owned printings are listed, and a link inside the dialog (another level, a card named in
+  a ruling) opens on top of it, with a back button.
+
 ## Legality
 
 `lib/legality.ts` evaluates ArkhamDB's deckbuilding options the way ArkhamDB does: a card is
@@ -310,9 +331,10 @@ answer.
 | `taboo-unavailable.test.ts` | With the taboo switch on and the taboo lists unavailable, every tool reports an error instead of an answer without the taboo list applied |
 | `loader.test.ts` | The card set and taboo lists survive ArkhamDB being down: the last copy is served, one warning is logged, and retries wait a minute |
 | `mock-model.test.ts` | The mock model only calls tools that exist |
+| `card-detail.test.ts` | The card dialog's data: owned printings named once, every version (a parallel investigator by its pack), reprints opened as the original, the taboo change only with the switch on; the route's 200, 400 and 404; which links are card links; card markup rendered without passing other HTML through |
 | `symbols.test.ts` | Game symbols in an answer become keycaps; links and other brackets are left alone |
 | `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
-| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: the welcome screen, a card lookup, a deck shortlist, the taboo switch surviving a reload |
+| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, the taboo switch surviving a reload |
 
 The unit tests never touch the network. `vitest.config.mts` sets `ARKHAM_CARDS_FILE` and
 `ARKHAM_TABOOS_FILE` to the card set and taboo lists in `tests/fixtures/`, and a `fetch` mock
