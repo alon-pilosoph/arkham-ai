@@ -4,8 +4,9 @@
 import collection from "@/lib/collection.json";
 import { getJsonText } from "./http";
 
-// Chapter 2 (2026 Core Set and standalone investigators): known and not owned.
-const NOT_OWNED = new Set(["core_2026", "tom", "car", "and", "mar", "mig"]);
+// Chapter 2 (the 2026 Core Set, its standalone investigators and its campaigns) is out of scope:
+// the app covers Chapter 1 only.
+const NOT_OWNED = new Set(["core_2026", "tom", "car", "and", "mar", "mig", "cob"]);
 
 async function main(): Promise<number> {
   const res = await getJsonText<{ code: string; name: string }[]>("/api/public/packs/");

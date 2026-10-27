@@ -100,7 +100,9 @@ describe("POST /api/chat answers", () => {
     const text = await (await post({ messages: [ask] })).text();
     expect(text).toContain("The model is busy right now");
     expect(text).not.toContain("credit balance");
-    expect(String(vi.mocked(console.error).mock.calls[0]?.[1])).toContain("credit balance");
+    const logged = vi.mocked(console.error).mock.calls;
+    expect(logged).toHaveLength(1);
+    expect(String(logged[0]?.[1])).toContain("credit balance");
   });
 
   test("an answer cut off at the deadline by saying so, instead of ending empty", async () => {

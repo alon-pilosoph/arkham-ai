@@ -81,7 +81,7 @@ describe("cards tool", () => {
     const store = await getCards();
     const first = expectOk(findCards(store, { query: "spell" }));
     expect(first.mode).toBe("text");
-    expect(first.total).toBe(176);
+    expect(first.total).toBe(177); // 176 before Children of Blood added Sanguine Song (13066)
     expect(first.groups.length).toBe(3);
     expect(first.others?.length).toBe(15);
     expect(first.nextOffset).toBe(18);

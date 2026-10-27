@@ -103,7 +103,8 @@ function score(goal: Goal, likeness: number, pop: number): number {
 }
 
 function percent(s: Share): string {
-  return s.decks ? `${Math.round(100 * s.share)}% of ${s.decks}` : "none of 0";
+  const of = `${s.decks}${s.minXp ? ` with ${s.minXp}+ XP` : ""}`;
+  return s.decks ? `${Math.round(100 * s.share)}% of ${of}` : `none of 0${s.minXp ? ` with ${s.minXp}+ XP` : ""}`;
 }
 
 type Target = { kind: "found"; card: DeckCard } | { kind: "ambiguous"; hits: DeckCard[] } | { kind: "missing"; list: string[] };
@@ -183,7 +184,7 @@ export async function replaceCard(
   for (const c of candidatePool(store, target, targetCard, goal, maxXp, inDeck)) {
     const v = rules.check(c, rest, target.qty);
     if (!v.legal) continue;
-    const played = playRate(store.canonical(inv.code), inv.faction_code, c.code);
+    const played = playRate(store.canonical(inv.code), inv.faction_code, c.code, c.xp ?? 0);
     scored.push({ c, score: score(goal, similarity(targetCard, c), popularity(played)), why: v.reason, played });
   }
   scored.sort((a, b) => b.score - a.score || (a.c.xp ?? 0) - (b.c.xp ?? 0));

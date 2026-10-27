@@ -196,7 +196,7 @@ Games or ArkhamDB.
 - *Arkham Horror: The Card Game*, its card text, the Rules Reference (`data/rules.md`) and the
   official FAQ rulings (`data/faq.json`) are © Fantasy Flight Games.
 - Card data, taboo lists, rulings and decklists come from [ArkhamDB](https://arkhamdb.com), a
-  volunteer-run community site. The pipeline fetches at most one page a second.
+  volunteer-run community site. The pipeline fetches at most one page every two seconds, and slows down further when the site is busy.
 - Deck guides, and the decks themselves, belong to their authors. The assistant reads them live
   and links back to them.
 

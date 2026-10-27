@@ -10,6 +10,6 @@
     { "id": 40959, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Revised Core plus starter-pack Stella for beginners: an .18 Derringer and Old Keyring that fail safely, Rabbit's Foot and Grit Your Teeth, and Mysterious Raven and Granny Orne." },
     { "id": 57607, "role": "fighter", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Chainsaw Stella who misses on purpose under two Quick Learners, then retries with Live and Learn for up to 15 damage; built from the Revised Core and starter packs." },
     { "id": 25030, "role": "flex", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "The first upload of Stella's official starter deck straight from the pack, with A Chance Encounter standing in for A Test of Will." },
-    { "id": 29725, "role": "flex", "secondaryRole": "support", "archetypes": ["fail forward", "discard recursion"], "summary": "Three-or-four-player flex Stella built to recur A Watchful Peace and freeze the encounter deck, with Meat Cleaver, Old Keyring and Flashlight doing the work in between." }
+    { "id": 29852, "role": "fighter", "secondaryRole": null, "archetypes": ["fail forward"], "summary": "Starter fail-forward Stella who fights with Fire Axe, Baseball Bat and .18 Derringer, turns failed tests into extra actions and draws with Live and Learn and Take Heart, and cancels treacheries with A Test of Will." }
   ]
 }
