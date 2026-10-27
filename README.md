@@ -23,6 +23,7 @@ deck, that the players can build from their own collection.
 | *What could replace Archive of Conduits with something cheaper?* | `replaceCard` tool: legal, owned substitutes, with how often each is played |
 | *Suggest a mystic cluever deck.* | `recommendDecks` tool: searches an index of 660 of the most-liked published decks by class, role, archetype, XP, investigator or key card |
 | *I have 5 XP for my deck. What should I buy?* | `upgrades` tool: every owned, legal upgrade, customization box and new card the XP buys, priced by the Rules Reference and the taboo setting, ranked by how often liked decks play them |
+| *How should we prepare for The Path to Carcosa?* | `campaignPrep` tool: what the campaign's encounter cards ask of you, as counts only (skills tested, horror against damage, enemy toughness, keywords, frost), overall and by scenario pack, so it spoils nothing. Only when asked. |
 | *What should I play with my partner's deck?* | `recommendDecks` with `pairWith`: decks whose role covers what the partner's deck lacks, never the same investigator |
 
 Every card an answer names is a link. Tapping one opens the card in the app, laid out like the
@@ -53,14 +54,14 @@ A few rules hold everywhere, enforced in code rather than left to the model:
 flowchart LR
   ui["Chat UI<br/>(assistant-ui)"] -- "POST /api/chat" --> loop["Agent loop<br/>lib/agent.ts"]
   loop <--> llm["LLM<br/>(OpenAI or Anthropic)"]
-  loop --> tools["Tools<br/>cards · deck<br/>recommendDecks · replaceCard"]
+  loop --> tools["Tools<br/>cards · deck · findDeck<br/>recommendDecks · replaceCard<br/>upgrades · campaignPrep"]
   tools --> adb[("ArkhamDB<br/>cards, taboos, decks")]
   tools --> index[("Deck index<br/>lib/index/")]
   pipeline["Offline pipeline<br/>pipeline/"] -. builds .-> index
 ```
 
 The app is a Next.js chat page and a single API route. Each question runs an agent loop
-(the [AI SDK](https://ai-sdk.dev)'s `streamText`) with six tools. The system prompt holds the
+(the [AI SDK](https://ai-sdk.dev)'s `streamText`) with seven tools. The system prompt holds the
 whole Rules Reference (about 39,500 words) and never changes between requests, so the provider
 can cache it. Anything that changes from turn to turn, such as the date and the players'
 settings, is added to the newest message instead. Steps, tool calls and wall time are capped in

@@ -71,6 +71,12 @@
 }
 
 :root {
+  --class-guardian: #0284c7;
+  --class-seeker: #f59e0b;
+  --class-rogue: #059669;
+  --class-mystic: #7c3aed;
+  --class-survivor: #dc2626;
+  --class-neutral: #71717a;
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -106,6 +112,11 @@
 }
 
 .dark {
+  --class-guardian: #0ea5e9;
+  --class-seeker: #fbbf24;
+  --class-mystic: #8b5cf6;
+  --class-survivor: #ef4444;
+  --class-neutral: #a1a1aa;
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);

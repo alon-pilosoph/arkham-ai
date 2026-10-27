@@ -23,6 +23,7 @@ export default defineConfig({
     env: {
       ARKHAM_MODEL: "mock:local",
       ARKHAM_CARDS_FILE: "tests/fixtures/cards.json.gz",
+      ARKHAM_DECKS_DIR: "tests/fixtures",
       ARKHAM_TABOOS_FILE: "tests/fixtures/taboos.json",
       NEXT_PUBLIC_ASSISTANT_BASE_URL: "",
     },
