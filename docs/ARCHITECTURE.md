@@ -81,7 +81,7 @@ original card is therefore computed by the same function in the app and in the p
    `lib/agent.ts`). It never goes into the system
    prompt, whose bytes are identical on every request.
 
-5. **The agent loop** is one `streamText` call with five tools. The players' settings reach each
+5. **The agent loop** is one `streamText` call with six tools. The players' settings reach each
    tool through the AI SDK's per-tool context (`toolsContext`), not through the prompt. Before
    each step, `prepareStep` checks the budgets and moves the cache breakpoint (see below).
 
@@ -139,9 +139,10 @@ still running when time is up is aborted and reports `ERROR`.
 | `deck` | The deck, from ArkhamDB | The decoded list (customizable upgrades included), XP, cards not in the collection, the investigator's sides and deckbuilding choices, and the author's guide, paged with an offset |
 | `findDeck` | The deck index | The indexed decks closest to the way a player named one ("Boom Chakra Lacka", "my bless Mary deck"), ranked by title and investigator, then role and archetypes, then summary. The model reads one only when it clearly fits; otherwise it asks which, or for the deck's link. |
 | `recommendDecks` | The deck index | A shortlist, most liked first, one deck per investigator unless an investigator was asked for. With `pairWith`, decks in the roles that complement the given deck. |
+| `upgrades` | The deck, the card store, the legality check, play rates, and the taboo list when it is on | What an XP budget buys for the deck, each owned and legal: higher levels of cards it runs (the difference in level, at least 1, for every copy), unmarked customization boxes (1 XP each, at most 10 a sheet), new cards of level 1 and up, and the level 0 cards this investigator's liked decks play most. Prices follow the Rules Reference: exceptional doubles, myriad pays once, the taboo surcharge only when the list is on; cards bought only at deck creation are left out. The model picks the set and names what each new card replaces. |
 | `replaceCard` | The deck, the card store, the legality check, play rates | Legal, owned candidates to replace one card in one deck, for a goal: cheaper, the same job, a different job, or an owned stand-in for an unowned card |
 
-All five tools follow the same contracts:
+All six tools follow the same contracts:
 
 - **An error is never shown as absence.** ArkhamDB calls return a `Fetched<T>`
   (`lib/arkhamdb.ts`): the data, `not_found` or `error`. The model sees `ERROR: ...` or
@@ -157,7 +158,7 @@ All five tools follow the same contracts:
 - **Rulings travel with the card.** A deck list marks every card that has official rulings with
   `[FAQ]`, so the model reads them before explaining the card, and `replaceCard` includes the
   replaced card's rulings, since a ruling can change what a card does.
-- **Decks are opened one way.** `deck` and `replaceCard` both read a deck through `openDeck`
+- **Decks are opened one way.** `deck`, `replaceCard` and `upgrades` all read a deck through `openDeck`
   (`lib/decks.ts`), so they fail the same way, with a `Failure` (`lib/format.ts`) that renders as
   `NOT FOUND` or `ERROR`.
 
@@ -347,6 +348,7 @@ answer.
 | `mock-model.test.ts` | The mock model only calls tools that exist |
 | `card-detail.test.ts` | The card dialog's data: owned printings named once, every version (a parallel investigator by its pack), reprints opened as the original, the taboo change only with the switch on; the route's 200, 400 and 404; which links are card links; card markup rendered without passing other HTML through |
 | `find-deck.test.ts` | `findDeck` finds a deck by title, with or without its investigator, and by what it does; a name that fits many returns several candidates; an unknown name returns none and says to ask for the link; deck names are wrapped as untrusted; `GET /api/deck` reads a pasted link and refuses one that isn't |
+| `upgrades.test.ts` | XP spending: an upgrade pays the difference for every copy, nothing costs more than the budget or is unowned, a new card's price (level, at least 1, exceptional doubled, the taboo surcharge only when on), level 0 cards listed apart, deck-creation cards never offered, customization boxes within the sheet's 10, a card the deck runs is an upgrade and never a purchase |
 | `symbols.test.ts` | Game symbols in an answer become keycaps; links and other brackets are left alone |
 | `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
 | `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, a deck slot refusing what isn't a link, the taboo switch surviving a reload |

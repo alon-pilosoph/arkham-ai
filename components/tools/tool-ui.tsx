@@ -6,6 +6,7 @@ import { DeckUI } from "./deck-ui";
 import { FindDeckUI } from "./find-deck-ui";
 import { RecommendUI } from "./recommend-decks-ui";
 import { ReplaceUI } from "./replace-card-ui";
+import { UpgradesUI } from "./upgrades-ui";
 
 const arkhamToolkit = defineToolkit({
   cards: { type: "backend", render: CardsUI },
@@ -13,6 +14,7 @@ const arkhamToolkit = defineToolkit({
   findDeck: { type: "backend", render: FindDeckUI },
   recommendDecks: { type: "backend", render: RecommendUI },
   replaceCard: { type: "backend", render: ReplaceUI },
+  upgrades: { type: "backend", render: UpgradesUI },
 });
 
 export function useArkhamTools() {
