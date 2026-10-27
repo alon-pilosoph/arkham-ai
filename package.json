@@ -17,7 +17,7 @@
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "lint": "biome check .",
     "format": "biome check --write .",
     "check": "npm run typecheck && npm run lint && npm test",

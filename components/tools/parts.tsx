@@ -6,6 +6,7 @@ import { Children, Component, type FC, Fragment, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ToolFallback } from "@/components/assistant-ui/elements/tool-fallback.aui";
+import { useCardClick } from "@/components/cards/card-link";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge, badgeVariants } from "@/components/ui/badge";
 import { ItemDescription } from "@/components/ui/item";
@@ -47,6 +48,7 @@ export const Link: FC<{ href: string; children: ReactNode; className?: string }>
     href={href}
     target="_blank"
     rel="noopener noreferrer"
+    onClick={useCardClick(href)}
     className={cn("underline decoration-dotted underline-offset-2 hover:decoration-solid", className)}
   >
     {children}

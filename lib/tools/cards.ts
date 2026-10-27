@@ -50,7 +50,7 @@ export type CardsResult =
 const FULL_GROUPS = 3;
 const LISTED_GROUPS = 15;
 
-function cardView(store: CardStore, c: RawCard, taboo?: TabooList): CardView {
+export function cardView(store: CardStore, c: RawCard, taboo?: TabooList): CardView {
   const stats = cardStats(c);
   const rulings = store.rulings(c.code);
   return {
