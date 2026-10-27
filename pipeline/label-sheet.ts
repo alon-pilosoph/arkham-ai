@@ -5,8 +5,9 @@ import { investigatorStats, statsText } from "@/lib/card-text";
 import { type CardStore, cleanText, getCards, label, type RawCard } from "@/lib/cards";
 import { deckCards, deckMeta, guideText, investigatorSides, type RawDeck, xpInList } from "@/lib/decks";
 import { getTaboos } from "@/lib/taboo";
-import { loadCachedDeck, readCensus } from "./cache";
+import { loadCachedDeck, readWalk } from "./cache";
 import { labelFileName, readLabels } from "./labels";
+import { walkedRows } from "./run";
 import { type InvestigatorSelection, type Selected, selectIndex } from "./selection";
 
 const GUIDE_WORDS = 150;
@@ -95,7 +96,7 @@ async function main(): Promise<number> {
   const pageAt = flags.indexOf("--page");
   const page = pageAt >= 0 ? Number(flags[pageAt + 1]) : undefined;
   const [store, taboos] = await Promise.all([getCards(), getTaboos()]);
-  const selection = await selectIndex(store, taboos, readCensus().rows, loadCachedDeck);
+  const selection = await selectIndex(store, taboos, walkedRows(readWalk()), loadCachedDeck);
   const labels = readLabels();
   const unlabeled = (inv: InvestigatorSelection) => inv.decks.filter((s) => labels.get(s.deck.id)?.filedUnder !== inv.code);
 
