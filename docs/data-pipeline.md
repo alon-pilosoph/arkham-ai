@@ -9,8 +9,9 @@ offline, by hand; the app never runs any of it. The reasons it is built this way
 
 | Command | Reads | Writes |
 |---|---|---|
-| `npm run data:crawl` | ArkhamDB's decklist search and decklists | `data/cache/`: the census, the decklists and a crawl report |
-| `npm run data:crawl -- --reuse-census` | The last census; ArkhamDB decklists | `data/cache/decklists/` |
+| `npm run data:crawl` | ArkhamDB's decklist search and decklists | `data/cache/`: the walk, the decklists and a crawl report; `data/crawl-manifest.json` |
+| `npm run data:crawl -- --dry-run` | The last manifest; one search page | Nothing; prints an estimate |
+| `npm run data:crawl -- --reuse` | The last walk; ArkhamDB decklists | `data/cache/decklists/` |
 | `npm run data:sheet -- <mode>` | `data/cache/`, `data/deck-labels/` | Nothing; prints label sheets |
 | `npm run data:index` | `data/cache/`, `data/deck-labels/` | `lib/index/decks.json`, `lib/index/card-usage.json`, `tests/fixtures/` |
 | `npm run data:rules` | ArkhamDB's `/rules` page | `data/rules.md` |
@@ -19,15 +20,19 @@ offline, by hand; the app never runs any of it. The reasons it is built this way
 
 `data/cache/` is ignored by git. Every other output in the table is committed.
 
-The scripts wait their turn between requests, one every two seconds, back off further when ArkhamDB answers slowly (ten times as long as a slow answer took, up to two minutes), and identify themselves with their
-own user agent (`pipeline/http.ts`). A 429, a 5xx or a network failure is retried four times, after 3,
-10, 30 and 60 seconds, since a crawl runs for hours; a 404 is reported as `not_found` and never retried. ArkhamDB is run by
-volunteers, and a full crawl takes three to four hours of its time, best run overnight.
+The scripts wait their turn between requests, one every two seconds, back off further when
+ArkhamDB answers slowly (ten times as long as a slow answer took, up to two minutes), and identify
+themselves with their own user agent (`pipeline/http.ts`). A 429, a 5xx or a network failure is
+retried four times, after 3, 10, 30 and 60 seconds, or after as long as a `Retry-After` header
+asks, up to ten minutes; a request asked to wait longer fails instead. A 404 is reported as
+`not_found` and never retried. A crawl stops at its request budget, 4,000 by default
+(`--budget`), with its walk saved for the next run to resume.
 
 ## Refreshing the deck index
 
 ```sh
-npm run data:crawl            # census, cross-checks, fetch decklists (3-4 h; resumes if stopped)
+npm run data:crawl -- --dry-run  # what the run will cost, from the last one; one request
+npm run data:crawl            # walk, check, fetch decklists (about 10 min on a warm cache; resumes if stopped)
 npm run data:sheet -- status  # how many selected decks still need labels
 npm run data:sheet -- next    # label sheets for the next investigator
 npm run data:index            # build; fails, listing them, if any lack labels
@@ -37,37 +42,50 @@ npm run check                 # the tests now read the new snapshots
 Repeat the `data:sheet -- next` step, writing labels into `data/deck-labels/` (step 4 below),
 until `status` reports every selected deck labeled.
 
-### 1. The census (`pipeline/search.ts`, `pipeline/crawl.ts`)
+### 1. The walk (`pipeline/walk.ts`, `pipeline/run.ts`)
 
-The census is the complete list of published decklists. The crawl builds it by walking
-ArkhamDB's decklist search in date order, 30 decks a page, once for each investigator code in the
-card set (reprints, parallels and Chapter 2 included, since a deck is filed under the code its
-author picked), until a page comes back short. A code with no decks costs one empty page. Each
-row records the deck's id, name, likes, favorites, comments, author, date, investigator and
-ArkhamDB tags, and a deck found under two codes is counted once.
+The crawl reads ArkhamDB's decklist search in likes order, 30 decks a page, one investigator at
+a time. Investigators are grouped by their original printing's code, and every code in the card
+set is walked (reprints, parallels and Chapter 2 included), since a deck is filed under the code
+its author picked; a code with no decks costs one empty page. Each row records the deck's id,
+name, likes, favorites, comments, author, date, investigator and ArkhamDB tags.
 
-ArkhamDB serves no search page past 99, filtered or not, so a single walk of every deck (about
-1,300 pages) is no longer possible. The busiest investigator, Roland Banks, fills under 80 pages.
-An investigator that ever needs more than 99 stops the crawl with an error naming it, rather than
-leaving the census short.
+An investigator is walked only as deep as it needs: down to 10 likes, for the usage counts, and
+for an owned investigator further, until the selection (step 2) has its ten decks. A busy
+investigator's ten decks are on its first page; the whole walk is about 200 pages.
 
-The census is saved after each investigator (`data/cache/census-partial.json`). A crawl that
-stops, on a network outage for instance, resumes from there the next time it runs, unless the
-saved walk is more than two days old or `--fresh` is given.
+The likes order has a catch. ArkhamDB orders decks with the same like count differently on every
+request, even for the same page, so when such a tie group runs across a page break, paging can
+show one of its decks twice and another never. The walk detects this rather than hoping it away.
+Where the group sits does not move: the decks with more likes come before it in every ordering.
+So the number of places the group fills on the pages, as first fetched, is its true size, and
+the group is settled once that many distinct decks have been seen with its like count. An
+unsettled group's pages are fetched again, up to three times, each fetch adding what it shows. A
+round that shows nothing new means the order has stopped moving, and a group that will not
+settle is replaced by a walk of the investigator in date order: stable, but it reads every deck
+the investigator has. Once settled, every deck with at least the walk's lowest complete like
+count (its frontier) has been seen, whatever order the requests came back in.
 
-A search page is parsed one table row at a time. Every field except the deck name is required,
-and a page whose rows do not account for every deck link on it is an error, never a shorter list,
-so a row with unexpected markup cannot silently drop out of the census.
+ArkhamDB serves no search page past 99, so a walk that would need more stops the crawl with an
+error naming the investigator. A page whose like counts rise, or whose rows do not account for
+every deck link on it, is an error too; every row field except the deck name is required.
 
-The crawl then cross-checks the census twice. It walks the likes order down to 10 likes (about 66
-pages), and it reads the 10 newest pages across every investigator. If a deck found by either is
-missing from the census, the run fails and names the deck and its investigator code; the newest
-pages catch a code the census did not walk. Below 10 likes the likes order has too many ties to
-page through reliably, which is why the census exists.
+The walk is saved after each investigator (`data/cache/walk-partial.json`). A crawl that stops,
+on a network outage or at its request budget for instance, resumes from there the next time it
+runs, unless the saved walk is more than two days old or `--fresh` is given.
+
+Last, the crawl reads the ten most liked pages across every investigator, and fails, naming the
+deck, if any deck there with 10 or more likes is missing from its investigator's walk: a check
+that no investigator code was left out.
+
+Replaying the census of all 39,462 published decklists (October 2026) through the walk, with
+ties reshuffled on every request, selected the same 660 decks and the same usage counts in 170 to
+210 search pages. Even if ArkhamDB stopped reshuffling ties, forcing date walks, it took 580. The
+census it replaced took about 1,400.
 
 ### 2. The selection (`pipeline/selection.ts`)
 
-For each investigator the players own, the census rows are sorted by likes, then favorites, then
+For each investigator the players own, the walked rows are sorted by likes, then favorites, then
 age (older first), and read in that order until ten decks are kept:
 
 | Rule | Where it is set |
@@ -85,11 +103,19 @@ deck for the original investigator.
 
 The crawl runs the selection with a deck loader that fetches and caches decklists as it goes. The
 index build and the label sheets run the same function with a loader that reads only the cache,
-so the three can never disagree about which decks were selected.
+so the three can never disagree about which decks were selected. A published decklist never
+changes, so a cached one is never fetched again.
+
+The crawl prints a progress line every minute and a summary at the end. When every check passes
+(no deck missing from the walks, every decklist fetched), it writes `data/crawl-manifest.json`,
+committed with the index it produced: when the run started and finished, its requests (search
+pages, refetched pages, decklists, retries), how often ArkhamDB was slow or asked it to wait, how
+many tie groups it settled and date walks it needed, and the selection's counts. `--dry-run`
+estimates the next run from it.
 
 ### 3. Card usage (`pipeline/usage.ts`)
 
-Every census deck with 10 or more likes is fetched, whether the collection can build it or not.
+Every walked deck with 10 or more likes is fetched, whether the collection can build it or not.
 Its distinct cards (excluding weaknesses and investigator cards, with reprints folded into their
 originals) are counted per investigator and per class, along with how many of those decks hold at
 least 0, 1, 2, 3, 4 and 5 XP in their list (`xpAtLeast`, the XP counted as the index counts it).
@@ -163,7 +189,7 @@ The build reruns the selection and the usage counts from the cache, joins the la
 
 The build exits with an error, writing nothing, when a selected deck has no label or its label is
 in another investigator's file; it lists those decks. When a decklist it needs is not in the
-cache, it prints how many are missing and to run `npm run data:crawl -- --reuse-census`, writes
+cache, it prints how many are missing and to run `npm run data:crawl -- --reuse`, writes
 its outputs, and exits with an error. It also lists labels whose decks are no longer selected, so
 they can be removed.
 

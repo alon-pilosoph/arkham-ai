@@ -97,20 +97,29 @@ every investigator with lists that other players have endorsed.
 **Revisit when** a new investigator is added to the collection. Rerun the build; it lists the
 decks that still need labels.
 
-### The census, not the likes order, is the source of truth
+### The likes order, walked so a skipped deck cannot go unnoticed
 
-**Decision.** The crawl first takes a census: it lists every published decklist by walking
-ArkhamDB's decklist search in date order, one investigator at a time. It then walks the search in
-likes order down to 10 likes, reads the newest decks across all investigators, and fails if any
-deck found there is missing from the census.
+**Decision.** The crawl walks ArkhamDB's decklist search in likes order, one investigator at a
+time, only as deep as the index and the usage counts need: down to 10 likes, and further for an
+owned investigator until its ten decks are chosen. Where a group of decks with equal likes runs
+across a page break, it counts the places the group fills and refetches its pages until that
+many distinct decks have been seen; a group that will not settle is replaced by a date-order walk
+of that investigator. The ten most liked pages across all investigators are then checked against
+the walks.
 
-**Why.** The likes order has many ties, and ArkhamDB orders tied decks differently from one
-request to the next, so paging through them can skip or repeat decks. The date order is stable.
-The census found 38,984 published decklists, and all 1,981 with 10 or more likes were in it.
+**Why.** ArkhamDB orders tied decks differently on every request, even for the same page, so
+paging can show a deck twice and skip another. The places a tie group fills do not move, so its
+size is known, and a skipped deck shows up as a count that comes up short. The walk therefore
+knows when it is complete instead of assuming it. It reads only what the index uses: replaying
+the October 2026 census through it chose the same 660 decks and the same usage counts in about
+200 search pages, against the census's 1,400, so a refresh takes minutes of ArkhamDB's time
+rather than hours.
 
-**Rejected.** *Walking the likes order alone* (the previous version's crawl). It cannot tell a
-complete walk from one that skipped a page. *One date walk of every deck*, the census until
-October 2026: ArkhamDB stopped serving search pages past 99, and that walk needs about 1,300.
+**Rejected.** *A census of every published decklist* (39,462 in October 2026), walked by date,
+the source of truth until October 2026: complete, but it read decks the index never uses, for
+three to four hours, and the index only needs the top of the likes order. *Walking the likes
+order without counting ties* (the first version's crawl). It cannot tell a complete walk from one
+that skipped a page. *One walk of every deck*: ArkhamDB serves no search page past 99.
 *ArkhamDB's decklists-by-date API*: one request a day since 2016, but it has no likes, and the
 index is chosen by likes.
 

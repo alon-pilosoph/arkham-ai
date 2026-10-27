@@ -240,3 +240,19 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   cards looked rarer than they are. Each deck's list XP is now recorded with the counts, and a
   card's share is taken among the decks holding at least its level in XP. Until the index is
   rebuilt, the old counts fall back to every deck.
+
+## A crawl that reads only what the index uses (October 27)
+
+- **Why.** The October 26 refresh walked all 39,462 published decklists over hours to change 4
+  of 660 indexed decks. The census was there because ArkhamDB reshuffles decks with equal likes
+  on every request, so the likes order could not be paged through safely.
+- **What changed.** A tie group's size is fixed by where it sits, so the walk counts the places
+  it fills and refetches until that many distinct decks are seen, falling back to one
+  investigator's date walk when it will not settle. Each investigator is walked only as deep
+  as the index and the usage counts need.
+- **Measured.** Replaying the October 26 census through the new walk, with ties reshuffled on
+  every request, chose the same 660 decks and byte-identical usage counts in 170 to 210 search
+  pages; with ties frozen in place, the worst case, it took 580. Two live requests confirmed
+  ArkhamDB reshuffles ties even for the same page.
+- **Also.** A request budget, Retry-After, a dry run, a progress line, and a committed manifest
+  of each run.
