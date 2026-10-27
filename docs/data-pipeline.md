@@ -86,7 +86,9 @@ ties reshuffled on every request, selected the same 660 decks and the same usage
 census it replaced took about 1,400. The first live run (October 27) passed every check and chose
 the same 660 decks, but took 953 pages in 32 minutes: it walked each parallel investigator's
 code as a full copy of its original, and its busiest investigators fell back to date walks
-more often than the replay predicted. The alias check and longer settling followed.
+more often than the replay predicted. With the alias check and longer settling, the second run
+took 420 pages in 14 minutes, five of its investigators still falling back to date walks over a
+tie group one deck short of settling.
 
 ### 2. The selection (`pipeline/selection.ts`)
 

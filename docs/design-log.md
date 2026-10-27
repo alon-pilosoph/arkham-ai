@@ -261,4 +261,5 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   decks, which the replay had not modeled, so each parallel was walked as a full copy; and ties
   settled less often than under random reshuffling, so busy investigators fell back to date
   walks. Codes that alias another now stop after one page, settling gets five rounds, and each
-  fallback is recorded with its reason.
+  fallback is recorded with its reason. The second run took 420 pages in 14 minutes; five busy
+  investigators still fell back to date walks, each over a tie group one deck short.
