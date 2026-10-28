@@ -44,6 +44,9 @@ A chat assistant for two Arkham Horror LCG players. Read [README.md](README.md) 
 - **Every route checks the session.** `proxy.ts` only redirects on a missing cookie; a route
   that reads or spends anything calls `currentUser` (`lib/session.ts`) and answers 401 without
   one. Accounts are invite-only: nothing but `mayJoin` (`lib/access.ts`) admits a new address.
+- **Campaign changes go through `change()`** (`lib/campaign/store.ts`): it claims the next
+  version, so a stale page can't overwrite, and records the change so it can be reverted. Ledger
+  entries and deck versions are never edited or deleted; a revert adds to them.
 
 ## Commands
 

@@ -1,7 +1,9 @@
 // Who may have an account. The app is invite-only: the owner of the deployment (OWNER_EMAIL) can
-// always sign up; anyone else needs an invite, which campaigns will add.
+// always sign up; anyone else needs a live invite link (lib/campaign/invites.ts), either in the
+// request's cookie or recorded for their address when they asked for a sign-in link.
 
 import { eq } from "drizzle-orm";
+import { findInvite, inviteToken, wasInvited } from "./campaign/invites";
 import { getDb } from "./db";
 import { user } from "./db/schema";
 
@@ -10,8 +12,10 @@ export function isOwner(email: string): boolean {
   return !!owner && email.trim().toLowerCase() === owner;
 }
 
-export async function mayJoin(email: string): Promise<boolean> {
-  return isOwner(email);
+export async function mayJoin(email: string, headers?: Headers): Promise<boolean> {
+  if (isOwner(email)) return true;
+  if (await findInvite(inviteToken(headers))) return true;
+  return wasInvited(email);
 }
 
 export async function hasAccount(email: string): Promise<boolean> {

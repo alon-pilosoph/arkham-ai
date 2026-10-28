@@ -14,14 +14,16 @@ export function linkFor(email: string): string | undefined {
   return mails.at(-1)?.text.match(/https?:\/\/\S+/)?.[0];
 }
 
-/** Signs in through the sign-in page and the emailed link, in a fresh session of its own. */
-export async function signIn(page: Page, email: string): Promise<void> {
+/** Signs in through the sign-in page (the current one if already there) and the emailed link,
+ *  in a fresh session of its own; it lands on the chat unless `landsOn` names a button. */
+export async function signIn(page: Page, email: string, opts: { landsOn?: string } = {}): Promise<void> {
   const before = linkFor(email);
-  await page.goto("/sign-in");
+  if (!page.url().includes("/sign-in")) await page.goto("/sign-in");
   await page.getByLabel("Email").fill(email);
   await page.getByRole("button", { name: "Email me a sign-in link" }).click();
   await expect(page.getByRole("status")).toContainText("a link is on its way");
   await expect.poll(() => linkFor(email)).not.toBe(before);
   await page.goto(linkFor(email) ?? "");
-  await expect(page.getByRole("heading", { name: "What are you playing tonight?" })).toBeVisible();
+  if (opts.landsOn) await expect(page.getByRole("button", { name: opts.landsOn })).toBeVisible();
+  else await expect(page.getByRole("heading", { name: "What are you playing tonight?" })).toBeVisible();
 }

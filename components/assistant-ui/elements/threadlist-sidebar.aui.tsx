@@ -1,4 +1,5 @@
-import { ExternalLinkIcon, MessagesSquare } from "lucide-react";
+import { ExternalLinkIcon, MessagesSquare, SwordsIcon } from "lucide-react";
+import Link from "next/link";
 import type * as React from "react";
 import { AccountMenu } from "@/components/account/account-menu";
 import { ThreadList } from "@/components/assistant-ui/elements/thread-list.aui";
@@ -38,6 +39,12 @@ export function ThreadListSidebar({ ...props }: React.ComponentProps<typeof Side
       {props.collapsible !== "none" && <SidebarRail />}
       <SidebarFooter className="aui-sidebar-footer border-t">
         <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton render={<Link href="/campaigns" />}>
+              <SwordsIcon />
+              <span>Campaigns</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
               render={<a href="https://arkhamdb.com" target="_blank" rel="noopener noreferrer" />}

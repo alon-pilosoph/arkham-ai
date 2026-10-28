@@ -6,7 +6,8 @@ async function ask(page: Page, question: string) {
   const box = page.getByRole("textbox", { name: "Message input" });
   await box.fill(question);
   await box.press("Enter");
-  await expect(page.getByText(ANSWERED)).toBeVisible();
+  // an answer is streamed and then stored; under a full parallel run that can pass 5 s
+  await expect(page.getByText(ANSWERED)).toBeVisible({ timeout: 15_000 });
 }
 
 test.beforeEach(async ({ page }) => {
