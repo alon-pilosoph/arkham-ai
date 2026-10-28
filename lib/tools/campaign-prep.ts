@@ -3,7 +3,7 @@ import { z } from "zod";
 import { CAMPAIGNS, type Campaign, encounterCards, findCampaign, type Profile, profile, scenarios } from "../campaigns";
 import { getCards } from "../cards";
 import { type Failure, failureText, notFound, safely, toolText } from "../format";
-import { SettingsSchema } from "../settings";
+import { ToolContextSchema } from "../tool-context";
 
 export type CampaignPrepResult =
   | {
@@ -106,7 +106,7 @@ export const campaignPrepTool = tool({
     "many its enemies are, keywords, frost and other tokens), overall and by scenario, plus a note on what it asks of a deck. " +
     "Names no encounter card. Use it only when the players ask how to prepare for a campaign or scenario.",
   inputSchema,
-  contextSchema: SettingsSchema,
+  contextSchema: ToolContextSchema,
   execute: ({ campaign }): Promise<CampaignPrepResult> => safely(() => campaignPrep(campaign)),
   toModelOutput: ({ output }) => toolText(campaignPrepText(output)),
 });

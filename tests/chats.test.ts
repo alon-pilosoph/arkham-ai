@@ -106,3 +106,37 @@ describe("titleFrom", () => {
     expect(titleFrom([] as never)).toBe("New chat");
   });
 });
+
+describe("campaign chats", () => {
+  test("are shared by the campaign's members and no one else; personal chats stay personal", async () => {
+    const { createCampaign } = await import("@/lib/campaign/store");
+    const { join, currentInvite } = await import("@/lib/campaign/invites");
+    const campaign = await createCampaign(ALICE.id, { name: "Ours", code: "ptc", difficulty: "standard", taboo: false });
+    if (!campaign.ok) throw new Error(campaign.error);
+    const db = await getDb();
+    await db.insert(user).values({ id: "carol", email: "carol@example.com", name: "Carol" });
+    await join(await currentInvite(campaign.value, ALICE.id), BOB.id);
+
+    as(ALICE);
+    const made = await list.POST(
+      new Request("http://localhost/api/chats", { method: "POST", body: JSON.stringify({ campaignId: campaign.value }) }),
+    );
+    const { id } = (await made.json()) as { id: string };
+    await message.PUT(req("PUT", userMessage("Curtain Call done")), params({ id, messageId: "m1" }));
+    const personal = await newChat();
+
+    as(BOB);
+    const shared = await list.GET(new Request(`http://localhost/api/chats?campaign=${campaign.value}`));
+    expect(((await shared.json()) as { id: string }[]).map((c) => c.id)).toEqual([id]);
+    expect((await messages.GET(req(), params({ id }))).status).toBe(200);
+    expect((await messages.GET(req(), params({ id: personal }))).status).toBe(404);
+
+    as({ id: "carol", email: "carol@example.com", name: "Carol" });
+    expect((await list.GET(new Request(`http://localhost/api/chats?campaign=${campaign.value}`))).status).toBe(404);
+    expect((await messages.GET(req(), params({ id }))).status).toBe(404);
+    const sneaky = await list.POST(
+      new Request("http://localhost/api/chats", { method: "POST", body: JSON.stringify({ campaignId: campaign.value }) }),
+    );
+    expect(sneaky.status).toBe(404);
+  });
+});

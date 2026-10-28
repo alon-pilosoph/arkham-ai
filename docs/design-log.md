@@ -379,3 +379,13 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   Next loaded pages and API routes as separate copies of the database module, each with its own
   in-memory database, so a page could not see a session an API call had made; the database
   handle now lives on `globalThis`. PGlite also had to be loaded unbundled to find its files.
+
+## Campaign chats (October 28)
+
+- **Built.** A campaign's chats are shared by its members, and every message carries the
+  campaign's state: seats, decks, unspent XP, trauma and the next scenario. Deck tools read a
+  seat's deck as `seat:<name>`. `proposeChange` turns what the players say ("we finished Curtain
+  Call, 3 XP each", "swap Shrivelling for its level 3") into a priced, checked proposal that a
+  player applies from its card; nothing is written by the model.
+- **One price list.** XP pricing moved out of the XP advisor into `lib/xp.ts`, which campaign
+  deck changes use too, so the advisor and the ledger can't disagree about what a card costs.

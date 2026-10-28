@@ -61,7 +61,39 @@ const Welcome = () => (
   </div>
 );
 
-const Header = ({ taboo, onTaboo }: { taboo: boolean; onTaboo: (on: boolean) => void }) => {
+type CampaignRef = { id: string; name: string };
+
+/** Which chats the page shows: personal ones, or a campaign's. Switching reloads the page there. */
+const CampaignSwitcher = ({ campaign, campaigns }: { campaign: CampaignRef | null; campaigns: CampaignRef[] }) => {
+  if (!campaigns.length) return null;
+  return (
+    <select
+      aria-label="Campaign"
+      value={campaign?.id ?? ""}
+      onChange={(e) => window.location.assign(e.target.value ? `/?campaign=${encodeURIComponent(e.target.value)}` : "/")}
+      className="border-input bg-background h-9 max-w-44 truncate rounded-md border px-2 text-sm"
+    >
+      <option value="">Personal chats</option>
+      {campaigns.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.name}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+const Header = ({
+  taboo,
+  onTaboo,
+  campaign,
+  campaigns,
+}: {
+  taboo: boolean;
+  onTaboo: (on: boolean) => void;
+  campaign: CampaignRef | null;
+  campaigns: CampaignRef[];
+}) => {
   const { state, isMobile } = useSidebar();
   const sidebarHidden = isMobile || state === "collapsed";
   const name = useChatName() || (sidebarHidden ? "Arkham assistant" : "");
@@ -80,27 +112,37 @@ const Header = ({ taboo, onTaboo }: { taboo: boolean; onTaboo: (on: boolean) => 
       ) : null}
       <span className="min-w-0 truncate font-medium">{name}</span>
       <div className="ms-auto flex shrink-0 items-center gap-2">
-        <DeckSlots />
-        <TabooSwitch on={taboo} onChange={onTaboo} />
+        <CampaignSwitcher campaign={campaign} campaigns={campaigns} />
+        {campaign ? (
+          // a campaign keeps its own decks and taboo setting, on its page
+          <a href={`/campaigns/${campaign.id}`} className="text-muted-foreground hover:text-foreground text-sm max-md:hidden">
+            Campaign page
+          </a>
+        ) : (
+          <>
+            <DeckSlots />
+            <TabooSwitch on={taboo} onChange={onTaboo} />
+          </>
+        )}
       </div>
     </header>
   );
 };
 
-export const Assistant = () => {
+export const Assistant = ({ campaign, campaigns }: { campaign: CampaignRef | null; campaigns: CampaignRef[] }) => {
   const { settings, update } = useSettings();
   const [transport] = useState(
     () =>
       new AssistantChatTransport({
         api: "/api/chat",
-        body: () => ({ settings: readSettings() }),
+        body: () => ({ settings: readSettings(), ...(campaign ? { campaignId: campaign.id } : {}) }),
         // the server trims too; this keeps old tool results off the wire
         prepareSendMessagesRequest: ({ id, messages, body, trigger, messageId, requestMetadata }) => ({
           body: { ...body, id, messages: trimHistory(messages), trigger, messageId, metadata: requestMetadata },
         }),
       }),
   );
-  const runtime = useStoredChatRuntime(transport, ADAPTERS);
+  const runtime = useStoredChatRuntime(transport, ADAPTERS, campaign?.id ?? null);
   const aui = useArkhamTools();
   const autoFocus = useDesktopPointer();
 
@@ -111,7 +153,7 @@ export const Assistant = () => {
           <div className="flex h-dvh w-full md:pr-0.5">
             <ThreadListSidebar />
             <SidebarInset>
-              <Header taboo={settings.taboo} onTaboo={(taboo) => update({ taboo })} />
+              <Header taboo={settings.taboo} onTaboo={(taboo) => update({ taboo })} campaign={campaign} campaigns={campaigns} />
               <div className="flex-1 overflow-hidden">
                 <Thread welcome={<Welcome />} autoFocus={autoFocus} />
               </div>

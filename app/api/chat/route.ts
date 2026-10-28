@@ -7,13 +7,15 @@ import {
   type UIMessage,
 } from "ai";
 import { z } from "zod";
-import { OUT_OF_TIME_ANSWER, runAgent, toModelMessages } from "@/lib/agent";
+import { campaignNote, OUT_OF_TIME_ANSWER, runAgent, toModelMessages } from "@/lib/agent";
+import { loadCampaign } from "@/lib/campaign/store";
 import { getCards } from "@/lib/cards";
 import { errorMessage } from "@/lib/format";
 import { languageModel } from "@/lib/model";
 import { takeQuestion } from "@/lib/question-cap";
 import { currentUser, SIGNED_OUT } from "@/lib/session";
 import { DEFAULT_SETTINGS, SettingsSchema } from "@/lib/settings";
+import type { CampaignContext, ToolContext } from "@/lib/tool-context";
 
 // Vercel Hobby's max. Segment config must be a literal, so tests/route.test.ts keeps it above BUDGET.deadlineMs.
 export const maxDuration = 300;
@@ -40,6 +42,8 @@ const RequestSchema = z.object({
     .max(LIMITS.messages),
   // partial, so a tab opened before a setting was added still gets answers
   settings: SettingsSchema.partial().optional(),
+  /** The campaign the chat is in; loaded here, for a member only. */
+  campaignId: z.string().max(100).optional(),
 });
 
 // Provider messages (billing, keys, quotas) stay in the server log, never the chat.
@@ -72,7 +76,19 @@ export async function POST(req: Request) {
     const where = issue?.path.length ? ` (at ${issue.path.join(".")})` : "";
     return new Response(`Bad request: ${issue?.message ?? "invalid body"}${where}`, { status: 400 });
   }
-  const settings = { ...DEFAULT_SETTINGS, ...parsed.data.settings };
+  // a campaign's own taboo switch wins over the page's
+  let campaign: CampaignContext | null = null;
+  if (parsed.data.campaignId) {
+    const view = await loadCampaign(user.id, parsed.data.campaignId);
+    if (!view) return new Response("You aren't in that campaign.", { status: 404 });
+    campaign = { ...view, askerId: user.id };
+  }
+  const settings: ToolContext = {
+    ...DEFAULT_SETTINGS,
+    ...parsed.data.settings,
+    ...(campaign ? { taboo: campaign.taboo } : {}),
+    campaign,
+  };
   if (!(await takeQuestion(user.id)))
     return new Response("That's today's questions used up for this account. Ask again tomorrow.", { status: 429 });
 
@@ -85,7 +101,9 @@ export async function POST(req: Request) {
 
   let messages: ModelMessage[];
   try {
-    messages = await toModelMessages(parsed.data.messages as unknown as UIMessage[], settings);
+    const store = campaign ? await getCards() : null;
+    const note = campaign && store ? campaignNote(campaign, (code) => store.get(code)?.name) : undefined;
+    messages = await toModelMessages(parsed.data.messages as unknown as UIMessage[], settings, undefined, note);
   } catch (e) {
     return new Response(`Bad request: ${errorMessage(e)}`, { status: 400 });
   }

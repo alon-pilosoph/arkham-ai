@@ -1,11 +1,17 @@
-// Chats and their messages, always read and written for one account: every query is scoped by
-// the asking user's id, so a chat that isn't theirs is simply not found.
+// Chats and their messages, always read and written for one account: a personal chat is its
+// author's alone, a campaign's chat is every member's, and anything else is simply not found.
 
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull, or } from "drizzle-orm";
 import { getDb } from "./db";
-import { chat, chatMessage } from "./db/schema";
+import { campaignMember, chat, chatMessage } from "./db/schema";
 
-export type ChatSummary = { id: string; title: string | null; archived: boolean; updatedAt: string };
+export type ChatSummary = {
+  id: string;
+  title: string | null;
+  archived: boolean;
+  updatedAt: string;
+  campaignId: string | null;
+};
 export type StoredMessage = { id: string; parentId: string | null; format: string; content: unknown };
 
 /** Long enough for any answer with its tool results; anything bigger is refused, not truncated. */
@@ -17,17 +23,47 @@ const summary = (c: typeof chat.$inferSelect): ChatSummary => ({
   title: c.title,
   archived: c.archived,
   updatedAt: c.updatedAt.toISOString(),
+  campaignId: c.campaignId,
 });
 
-export async function listChats(userId: string): Promise<ChatSummary[]> {
+async function memberOf(userId: string, campaignId: string): Promise<boolean> {
   const db = await getDb();
-  const rows = await db.select().from(chat).where(eq(chat.userId, userId)).orderBy(desc(chat.updatedAt));
+  const rows = await db
+    .select({ id: campaignMember.campaignId })
+    .from(campaignMember)
+    .where(and(eq(campaignMember.userId, userId), eq(campaignMember.campaignId, campaignId)))
+    .limit(1);
+  return rows.length > 0;
+}
+
+/** The chats an account may open: its own personal ones and its campaigns'. */
+function visibleTo(userId: string) {
+  const campaigns = getDb().then((db) =>
+    db.select({ id: campaignMember.campaignId }).from(campaignMember).where(eq(campaignMember.userId, userId)),
+  );
+  return campaigns.then((rows) => {
+    const ids = rows.map((r) => r.id);
+    const personal = and(eq(chat.userId, userId), isNull(chat.campaignId));
+    return ids.length ? or(personal, inArray(chat.campaignId, ids)) : personal;
+  });
+}
+
+/** Personal chats, or a campaign's when given one the account is in (null when it isn't). */
+export async function listChats(userId: string, campaignId?: string): Promise<ChatSummary[] | null> {
+  if (campaignId && !(await memberOf(userId, campaignId))) return null;
+  const db = await getDb();
+  const scope = campaignId ? eq(chat.campaignId, campaignId) : and(eq(chat.userId, userId), isNull(chat.campaignId));
+  const rows = await db.select().from(chat).where(scope).orderBy(desc(chat.updatedAt));
   return rows.map(summary);
 }
 
-export async function createChat(userId: string): Promise<ChatSummary> {
+export async function createChat(userId: string, campaignId?: string): Promise<ChatSummary | null> {
+  if (campaignId && !(await memberOf(userId, campaignId))) return null;
   const db = await getDb();
-  const [row] = await db.insert(chat).values({ id: crypto.randomUUID(), userId }).returning();
+  const [row] = await db
+    .insert(chat)
+    .values({ id: crypto.randomUUID(), userId, campaignId: campaignId ?? null })
+    .returning();
   return summary(row);
 }
 
@@ -36,7 +72,7 @@ async function owned(userId: string, chatId: string) {
   const [row] = await db
     .select()
     .from(chat)
-    .where(and(eq(chat.id, chatId), eq(chat.userId, userId)))
+    .where(and(eq(chat.id, chatId), await visibleTo(userId)))
     .limit(1);
   return row ?? null;
 }
@@ -56,22 +92,17 @@ export async function updateChat(
     ...(changes.title !== undefined ? { title: changes.title.trim().slice(0, MAX_TITLE) } : {}),
     ...(changes.archived !== undefined ? { archived: changes.archived } : {}),
   };
-  if (!Object.keys(set).length) return !!(await owned(userId, chatId));
-  const done = await db
-    .update(chat)
-    .set(set)
-    .where(and(eq(chat.id, chatId), eq(chat.userId, userId)))
-    .returning({ id: chat.id });
-  return done.length > 0;
+  if (!(await owned(userId, chatId))) return false;
+  if (!Object.keys(set).length) return true;
+  await db.update(chat).set(set).where(eq(chat.id, chatId));
+  return true;
 }
 
 export async function deleteChat(userId: string, chatId: string): Promise<boolean> {
+  if (!(await owned(userId, chatId))) return false;
   const db = await getDb();
-  const done = await db
-    .delete(chat)
-    .where(and(eq(chat.id, chatId), eq(chat.userId, userId)))
-    .returning({ id: chat.id });
-  return done.length > 0;
+  await db.delete(chat).where(eq(chat.id, chatId));
+  return true;
 }
 
 export async function listMessages(userId: string, chatId: string): Promise<StoredMessage[] | null> {

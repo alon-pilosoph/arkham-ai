@@ -6,8 +6,9 @@ import { fetchDeck, notADeck, parseRef } from "../decks";
 import { type Failure, failureText, fromFetched, notFound, safely, toolText, untrusted } from "../format";
 import { COMPLEMENT, DECK_INDEX } from "../index/decks";
 import { CLASSES, type IndexRow, ROLES, type Role, roleText } from "../index/schema";
-import { DEFAULT_SETTINGS, type Settings, SettingsSchema } from "../settings";
+import { DEFAULT_SETTINGS, type Settings } from "../settings";
 import { tabooInForce } from "../taboo";
+import { ToolContextSchema } from "../tool-context";
 import { deckUrl } from "../urls";
 
 const DECK_TAGS = ["multiplayer", "solo", "beginner", "theme"] as const;
@@ -275,7 +276,7 @@ export const recommendDecksTool = tool({
     "for a deck outside the index, read it first and pass role once you have judged its gap. " +
     "The shortlist is a starting point: read a deck with the deck tool before recommending it.",
   inputSchema,
-  contextSchema: SettingsSchema,
+  contextSchema: ToolContextSchema,
   execute: (input, { context }): Promise<RecommendResult> => safely(() => recommend(input, context)),
   toModelOutput: ({ output }) => toolText(recommendText(output)),
 });

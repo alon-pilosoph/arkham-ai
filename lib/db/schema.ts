@@ -1,7 +1,18 @@
 // The database: Better Auth's four tables, as its drizzle adapter expects them, and the app's own.
 // A change here needs a migration: npm run db:generate, then commit drizzle/.
 
-import { boolean, date, index, integer, jsonb, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  type AnyPgColumn,
+  boolean,
+  date,
+  index,
+  integer,
+  jsonb,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 const now = () => new Date();
 
@@ -82,7 +93,7 @@ export const messageCount = pgTable(
 
 export const authSchema = { user, session, account, verification };
 
-/** A conversation. Personal for now: campaigns will share theirs with their members. */
+/** A conversation: its author's, or its campaign's. */
 export const chat = pgTable(
   "chat",
   {
@@ -91,6 +102,8 @@ export const chat = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     title: text("title"),
+    /** A campaign's chats are shared by its members; without one, a chat is its author's alone. */
+    campaignId: text("campaign_id").references((): AnyPgColumn => campaign.id, { onDelete: "cascade" }),
     archived: boolean("archived").notNull().default(false),
     createdAt: timestamp("created_at").notNull().$defaultFn(now),
     updatedAt: timestamp("updated_at").notNull().$defaultFn(now),

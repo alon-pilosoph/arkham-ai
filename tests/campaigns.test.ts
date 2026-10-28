@@ -5,10 +5,12 @@ import { mayJoin } from "@/lib/access";
 import { currentInvite, findInvite, join, rememberInvitedEmail, replaceInvite } from "@/lib/campaign/invites";
 import {
   addSeat,
+  changeDeck,
   createCampaign,
   type DeckListJson,
   loadCampaign,
   lockDeck,
+  proposalChange,
   record,
   revert,
   STALE,
@@ -16,6 +18,7 @@ import {
 } from "@/lib/campaign/store";
 import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
+import { propose } from "@/lib/tools/propose-change";
 
 const OWNER = { id: "owner", email: "owner@example.com", name: "Alon" };
 const FRIEND = { id: "friend", email: "friend@example.com", name: "Dana" };
@@ -176,5 +179,104 @@ describe("invites", () => {
     expect(await mayJoin("phone@example.com")).toBe(true);
     await replaceInvite(id, OWNER.id);
     expect(await mayJoin("phone@example.com")).toBe(false);
+  });
+});
+
+describe("deck changes", () => {
+  const SHRIVELLING_0 = "01060";
+  const SHRIVELLING_3 = "02154";
+  const list: DeckListJson = { investigator_code: "01004", slots: { [SHRIVELLING_0]: 2, "01061": 2 } }; // Agnes
+
+  async function withDeck(xp: number) {
+    const { id, v, seatId } = await setUp();
+    value(await lockDeck(OWNER.id, id, await v(), { seatId, name: "Agnes", list, investigatorCode: "01004", source: null }));
+    if (xp) value(await record(OWNER.id, id, await v(), { entries: [{ seatId, kind: "xp", amount: xp }] }));
+    return { id, v, seatId };
+  }
+
+  test("an upgrade makes a new deck version and spends its XP; reverting refunds it", async () => {
+    const { id, v, seatId } = await withDeck(7);
+    const swap = { seatId, add: { [SHRIVELLING_3]: 2 }, remove: { [SHRIVELLING_0]: 2 }, proposalId: "p1" };
+    value(await changeDeck(OWNER.id, id, await v(), swap));
+    let view = await loadCampaign(OWNER.id, id);
+    expect(view?.seats[0].deck?.list.slots).toEqual({ [SHRIVELLING_3]: 2, "01061": 2 });
+    expect(view?.seats[0].deck?.number).toBe(2);
+    expect(view?.seats[0].xp).toEqual({ earned: 7, spent: 6, unspent: 1 });
+    expect(view?.changes[0].summary).toBe("Roland: out 2× Shrivelling; in 2× Shrivelling (6 XP)");
+    expect(await proposalChange(OWNER.id, id, "p1")).toBe(view?.changes[0].id);
+    value(await revert(OWNER.id, id, await v(), view?.changes[0].id ?? ""));
+    view = await loadCampaign(OWNER.id, id);
+    expect(view?.seats[0].deck?.list.slots).toEqual(list.slots);
+    expect(view?.seats[0].xp.unspent).toBe(7);
+  });
+
+  test("refuses a change the seat can't afford, a card not in the deck, and an illegal deck", async () => {
+    const { id, v, seatId } = await withDeck(3);
+    expect(
+      await changeDeck(OWNER.id, id, await v(), { seatId, add: { [SHRIVELLING_3]: 2 }, remove: { [SHRIVELLING_0]: 2 } }),
+    ).toEqual({
+      ok: false,
+      error: "That costs 6 XP, and Roland has 3 unspent.",
+    });
+    expect((await changeDeck(OWNER.id, id, await v(), { seatId, add: {}, remove: { "01020": 1 } })).ok).toBe(false);
+    const guardian = await changeDeck(OWNER.id, id, await v(), { seatId, add: { "01020": 1 }, remove: { "01061": 1 } });
+    expect(guardian.ok).toBe(false);
+    if (!guardian.ok) expect(guardian.error).toMatch(/deckbuilding rule/);
+  });
+
+  test("a card the campaign adds costs nothing and skips the deck's rules", async () => {
+    const { id, v, seatId } = await withDeck(0);
+    value(await changeDeck(OWNER.id, id, await v(), { seatId, add: {}, remove: {}, campaignAdd: { "01020": 1 } }));
+    const seatView = (await loadCampaign(OWNER.id, id))?.seats[0];
+    expect(seatView?.deck?.campaignCards).toEqual({ "01020": 1 });
+    expect(seatView?.xp.spent).toBe(0);
+  });
+});
+
+describe("proposeChange", () => {
+  async function context() {
+    const { id, v, seatId } = await setUp();
+    const list: DeckListJson = { investigator_code: "01004", slots: { "01060": 2, "01061": 2 } };
+    value(await lockDeck(OWNER.id, id, await v(), { seatId, name: "Agnes", list, investigatorCode: "01004", source: null }));
+    value(await record(OWNER.id, id, await v(), { entries: [{ seatId, kind: "xp", amount: 4 }] }));
+    const view = await loadCampaign(OWNER.id, id);
+    if (!view) throw new Error("no campaign");
+    return { id, v, ctx: { ...view, askerId: OWNER.id } };
+  }
+
+  test("proposes what a scenario did, by seat name, and writes nothing", async () => {
+    const { id, v, ctx } = await context();
+    const before = await v();
+    const p = await propose(
+      { kind: "scenario", seats: [{ seat: "roland", xpEarned: 2, mentalTrauma: 1 }], nextScenario: "The Last King" },
+      ctx,
+    );
+    expect(p).toMatchObject({ ok: true, campaignId: id, version: before });
+    if (p.ok) expect(p.summary).toEqual(["Roland: +2 XP, +1 mental trauma", "Next scenario: The Last King"]);
+    expect(await v()).toBe(before);
+  });
+
+  test("prices a deck change, and refuses one the seat can't afford", async () => {
+    const { ctx } = await context();
+    const one = await propose(
+      { kind: "deck", seat: "Roland", add: [{ code: "02154", qty: 1 }], remove: [{ code: "01060", qty: 1 }] },
+      ctx,
+    );
+    expect(one.ok).toBe(true);
+    if (one.ok) expect(one.summary).toEqual(["Roland: 3 XP of 4 unspent", "1× Shrivelling (3), upgraded from Shrivelling: 3 XP"]);
+    const two = await propose(
+      { kind: "deck", seat: "Roland", add: [{ code: "02154", qty: 2 }], remove: [{ code: "01060", qty: 2 }] },
+      ctx,
+    );
+    expect(two).toMatchObject({ ok: false, message: "That costs 6 XP, and Roland has 4 unspent." });
+  });
+
+  test("names the seats when one isn't found, and needs a campaign", async () => {
+    const { ctx } = await context();
+    expect(await propose({ kind: "scenario", seats: [{ seat: "Zoey", xpEarned: 1 }] }, ctx)).toMatchObject({
+      ok: false,
+      message: 'No seat named "Zoey". The seats: Roland.',
+    });
+    expect((await propose({ kind: "scenario", seats: [] }, null)).ok).toBe(false);
   });
 });

@@ -8,6 +8,20 @@ const usage = {
 };
 
 export function route(q: string): { toolName: string; input: Record<string, unknown> } {
+  // campaign chats: "Lily earned 3 XP" proposes a change; "seat:Lily" is a seat's deck
+  const earned = q.match(/^(\w+) earned (\d+) xp/i);
+  if (earned)
+    return { toolName: "proposeChange", input: { kind: "scenario", seats: [{ seat: earned[1], xpEarned: Number(earned[2]) }] } };
+  const swap = q.match(/^swap (\w+) for (\w+) in seat:(\w+)/i);
+  if (swap)
+    return {
+      toolName: "proposeChange",
+      input: { kind: "deck", seat: swap[3], remove: [{ code: swap[1], qty: 1 }], add: [{ code: swap[2], qty: 1 }] },
+    };
+  const seat = q.match(/seat:\w+/i)?.[0];
+  const seatXp = q.match(/(\d+)\s*xp/i)?.[1];
+  if (seat && seatXp) return { toolName: "upgrades", input: { deck: seat, xp: Number(seatXp) } };
+  if (seat) return { toolName: "deck", input: { ref: seat } };
   const deck = q.match(/(?:decklist\/view\/|deck\/view\/|deck\s+)(\d+)/i)?.[1] ?? q.match(/\b(\d{4,6})\b/)?.[1];
   if (deck && /partner|play with|pair|complement/i.test(q)) return { toolName: "recommendDecks", input: { pairWith: deck } };
   const replace = q.match(/replace\s+(.+?)(?:\s+with|\?|$)/i)?.[1];

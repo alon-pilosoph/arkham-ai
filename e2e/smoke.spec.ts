@@ -124,7 +124,11 @@ test("a deleted chat is gone after a reload", async ({ page }, info) => {
   const item = page.locator("[data-slot=aui_thread-list-item]").filter({ hasText: question });
   await item.hover();
   await item.getByRole("button", { name: "More options" }).click();
+  // the delete is sent in the background: let it land before reloading
+  const deleted = page.waitForResponse((r) => r.request().method() === "DELETE" && r.url().includes("/api/chats/"));
   await page.getByRole("menuitem", { name: "Delete" }).click();
+  await expect(page.getByRole("button", { name: question })).toHaveCount(0);
+  await deleted;
   await page.reload();
   await sidebar(page);
   await expect(page.getByRole("button", { name: question })).toHaveCount(0);

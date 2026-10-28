@@ -57,12 +57,14 @@ export function titleFrom(messages: readonly ThreadMessage[]): string {
   return `${cut.slice(0, cut.lastIndexOf(" ") > 20 ? cut.lastIndexOf(" ") : TITLE_CHARS)}…`;
 }
 
-const threadListAdapter: RemoteThreadListAdapter = {
+/** The sidebar's chats: personal ones, or one campaign's. */
+const threadListAdapter = (campaignId: string | null): RemoteThreadListAdapter => ({
   async list() {
-    return { threads: (await call<ChatSummary[]>("/api/chats")).map(metadata) };
+    const query = campaignId ? `?campaign=${encodeURIComponent(campaignId)}` : "";
+    return { threads: (await call<ChatSummary[]>(`/api/chats${query}`)).map(metadata) };
   },
   async initialize() {
-    const created = await call<ChatSummary>("/api/chats", { method: "POST" });
+    const created = await call<ChatSummary>("/api/chats", { method: "POST", body: JSON.stringify({ campaignId }) });
     return { remoteId: created.id };
   },
   async fetch(remoteId) {
@@ -85,7 +87,7 @@ const threadListAdapter: RemoteThreadListAdapter = {
     await call(`/api/chats/${remoteId}`, { method: "PATCH", body: JSON.stringify({ title }) });
     return createAssistantStream((c) => c.appendText(title));
   },
-};
+});
 
 type ThreadListItem = {
   getState(): { remoteId?: string | undefined };
@@ -154,8 +156,8 @@ function chatHook(transport: Transport, adapters: Record<string, unknown>) {
   };
 }
 
-export function useStoredChatRuntime(transport: Transport, adapters: Record<string, unknown>) {
-  const [adapter] = useState(() => threadListAdapter);
+export function useStoredChatRuntime(transport: Transport, adapters: Record<string, unknown>, campaignId: string | null) {
+  const [adapter] = useState(() => threadListAdapter(campaignId));
   const [runtimeHook] = useState(() => chatHook(transport, adapters));
   return useRemoteThreadListRuntime({ runtimeHook, adapter, allowNesting: true });
 }

@@ -81,7 +81,7 @@ original card is therefore computed by the same function in the app and in the p
    `lib/agent.ts`). It never goes into the system
    prompt, whose bytes are identical on every request.
 
-5. **The agent loop** is one `streamText` call with seven tools. The players' settings reach each
+5. **The agent loop** is one `streamText` call with eight tools. The players' settings reach each
    tool through the AI SDK's per-tool context (`toolsContext`), not through the prompt. Before
    each step, `prepareStep` checks the budgets and moves the cache breakpoint (see below).
 
@@ -146,6 +146,17 @@ the earlier settings), refused with a reason when a later change depends on what
 XP since spent, a deck since replaced, a setting since changed. Totals leave out reverted changes
 and their reverts.
 
+A campaign's chats (`/?campaign=<id>`, from the switcher in the chat header) are shared by its
+members. The chat route loads the campaign for a member only, never from the client, and the
+newest message carries its state (`campaignNote`, `lib/agent.ts`): each seat's investigator,
+deck, unspent XP, trauma and status, and the next scenario, with the names players wrote wrapped
+as untrusted. The campaign's own taboo switch applies, not the page's. Tools receive it in their
+context (`lib/tool-context.ts`). `proposeChange` checks and prices a change against it and
+returns a proposal; its card applies it through `POST /api/campaigns/<id>/apply`, which checks it
+all again against the campaign as it is then (a proposal made before another change is refused
+as stale), and a proposal applies once: the change records its id, which every member's card
+reads back to show it applied.
+
 Members see and change everything; the campaign's page shows its invite link. Opening the link
 puts its token in a cookie (`proxy.ts`), which is what lets someone without an account sign up:
 Google sign-in carries it through its callback, and asking for an email link while holding it
@@ -202,10 +213,11 @@ still running when time is up is aborted and reports `ERROR`.
 | `findDeck` | The deck index | The indexed decks closest to the way a player named one ("Boom Chakra Lacka", "my bless Mary deck"), ranked by title and investigator, then role and archetypes, then summary. The model reads one only when it clearly fits; otherwise it asks which, or for the deck's link. |
 | `recommendDecks` | The deck index | A shortlist, most liked first, one deck per investigator unless an investigator was asked for. With `pairWith`, decks in the roles that complement the given deck. |
 | `upgrades` | The deck, the card store, the legality check, play rates, and the taboo list when it is on | What an XP budget buys for the deck, each owned and legal: higher levels of cards it runs (the difference in level, at least 1, for every copy), unmarked customization boxes (1 XP each, at most 10 a sheet), new cards of level 1 and up, and the level 0 cards this investigator's liked decks play most. Prices follow the Rules Reference: exceptional doubles, myriad pays once, the taboo surcharge only when the list is on; cards bought only at deck creation are left out. The model picks the set and names what each new card replaces. |
-| `campaignPrep` | The card store's encounter cards, and the campaign table in `lib/campaigns.ts` | What a Chapter 1 campaign or standalone scenario asks of the investigators, computed from its encounter cards as counts and averages: the skills its treacheries test, how often they deal horror, damage or doom, its enemies' fight, evade, health, attacks and keywords, its locations' shroud, and frost, bless or curse tokens. For the older cycles also by pack, in play order. No card is named, so it spoils nothing; a note per campaign says what its mechanics ask of a deck, which the counts can't show. Used only when the players ask. |
+| `campaignPrep` | The card store's encounter cards, and the campaign table in `lib/campaigns.ts` | What a Chapter 1 campaign or standalone scenario asks of the investigators, computed from its encounter cards as counts and averages: the skills its treacheries test, how often they deal horror, damage or doom, its enemies' fight, evade, health, attacks and keywords, its locations' shroud, and frost, bless or curse tokens. Also by scenario, in play order, with the sets several scenarios share counted apart. No card is named, so it spoils nothing; a note per campaign says what its mechanics ask of a deck, which the counts can't show. Used only when the players ask. |
 | `replaceCard` | The deck, the card store, the legality check, play rates | Legal, owned candidates to replace one card in one deck, for a goal: cheaper, the same job, a different job, or an owned stand-in for an unowned card |
+| `proposeChange` | The campaign the chat is in, the card store, the legality check, XP pricing (`lib/xp.ts`) | In a campaign's chat only: a change for the players to apply, either what a scenario did (XP, trauma, killed or insane, the next scenario) or cards in and out of one seat's deck, priced and checked against the deck's rules and the seat's unspent XP. It writes nothing; its card has Apply and Discard. |
 
-All seven tools follow the same contracts:
+All eight tools follow the same contracts:
 
 - **An error is never shown as absence.** ArkhamDB calls return a `Fetched<T>`
   (`lib/arkhamdb.ts`): the data, `not_found` or `error`. The model sees `ERROR: ...` or
@@ -222,7 +234,8 @@ All seven tools follow the same contracts:
   `[FAQ]`, so the model reads them before explaining the card, and `replaceCard` includes the
   replaced card's rulings, since a ruling can change what a card does.
 - **Decks are opened one way.** `deck`, `replaceCard` and `upgrades` all read a deck through `openDeck`
-  (`lib/decks.ts`), so they fail the same way, with a `Failure` (`lib/format.ts`) that renders as
+  (`lib/decks.ts`), from ArkhamDB or, as `seat:<name>` in a campaign's chat, from the seat's
+  current deck version, so they fail the same way, with a `Failure` (`lib/format.ts`) that renders as
   `NOT FOUND` or `ERROR`.
 
 ### Finding a partner deck
@@ -407,7 +420,8 @@ answer.
 | `link-repair.test.ts` | A correct link is left alone, a level pins a name to one version, an ambiguous or unknown name becomes plain text |
 | `accounts.test.ts` | Accounts against PGlite: the owner's sign-in link signs them in; a stranger gets no email, and no account even holding a link; a link works once; a forged cookie is nobody; the daily question cap and its reset |
 | `proxy.test.ts` | Signed-out pages go to the sign-in page (keeping where they were going and why a sign-in was refused), signed-out API calls get a 401, public paths pass |
-| `campaigns.test.ts` | Campaigns on PGlite: scenarios listed and only members let in; a change from a stale page refused; XP and trauma totals, XP never below 0; reverts of XP, decks, settings, seats and statuses, each refused when a later change depends on it; invite links letting a new account in by cookie or by a recorded address, joining, and a replaced link ending both |
+| `xp.test.ts` | XP prices with known answers: a card's level at least 1, exceptional doubled, upgrades paying the difference copy by copy, removals free, myriad paid once |
+| `campaigns.test.ts` | Campaigns on PGlite: deck changes priced, applied as new versions and refunded on revert, refused when unaffordable, not in the deck or illegal; `proposeChange` proposals by seat name, priced, refused with reasons, writing nothing; scenarios listed and only members let in; a change from a stale page refused; XP and trauma totals, XP never below 0; reverts of XP, decks, settings, seats and statuses, each refused when a later change depends on it; invite links letting a new account in by cookie or by a recorded address, joining, and a replaced link ending both |
 | `chats.test.ts` | Chats through their routes on PGlite: messages stored, rewritten in place and listed with their parents; another account's chat not found for reading, writing, renaming or deleting; archive and delete; malformed, oversized and signed-out requests refused; titles cut at a word |
 | `route.test.ts` | The chat route: a 401 when signed out, a 429 past the daily cap, 400s for bad bodies, a 413 for an oversized one, partial settings, provider errors shown in plain words, a cut-off answer that says so |
 | `taboo-unavailable.test.ts` | With the taboo switch on and the taboo lists unavailable, every tool reports an error instead of an answer without the taboo list applied |
@@ -419,7 +433,7 @@ answer.
 | `campaign-prep.test.ts` | Campaigns found by name or code (a Return to box only when asked for), every campaign's packs present in the card set, Carcosa's treacheries dealing more horror than damage, Edge of the Earth's frost, every campaign's scenarios in play order with the shared sets counted apart, copies counted once, and no encounter card named in the output |
 | `symbols.test.ts` | Game symbols in an answer become keycaps; links and other brackets are left alone |
 | `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
-| `e2e/campaigns.spec.ts` | Playwright: a campaign started, a seat added, a deck locked in from a link, a scenario recorded and reverted; an invite link letting someone new sign up by email and join |
+| `e2e/campaigns.spec.ts` | Playwright: a campaign started, a seat added, a deck locked in from a link, a scenario recorded and reverted; an invite link letting someone new sign up by email and join; in the campaign's chat, a proposed change applied from its card and a seat's deck read |
 | `e2e/accounts.spec.ts` | Playwright: a visitor sent to sign in, the privacy page, a stranger told a link is coming and kept out, the invite-only message, signing out. `e2e/sign-in.setup.ts` signs the owner in through an emailed link once, and the other tests reuse that session |
 | `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: a chat kept across a reload and listed under its first question, a deleted chat gone, the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, a deck slot refusing what isn't a link, campaign prep, the taboo switch surviving a reload |
 

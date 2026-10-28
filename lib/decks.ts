@@ -6,6 +6,7 @@ import { type CardStore, cardFace, cleanText, DECK_CARD_TYPES, getCards, type Ra
 import { type Failure, fromFetched, notFound, toolError } from "./format";
 import type { Settings } from "./settings";
 import { type TabooEntry, type TabooList, tabooEntry, tabooInForce } from "./taboo";
+import type { CampaignContext } from "./tool-context";
 import type { DeckKind } from "./urls";
 
 export type RawDeck = {
@@ -232,11 +233,14 @@ export function notADeck(ref: string): Failure {
   return notFound(`"${ref}" is not a deck id or an arkhamdb.com deck link.`);
 }
 
-type OpenDeck = {
+export type OpenDeck = {
   ok: true;
   store: CardStore;
   deck: RawDeck;
-  kind: DeckKind;
+  /** "seat": a campaign seat's deck, which lives in the app, not on ArkhamDB. */
+  kind: DeckKind | "seat";
+  /** For a seat's deck: the campaign page, where it is kept. */
+  campaignUrl?: string;
   meta: Record<string, string>;
   sides: ReturnType<typeof investigatorSides> & { inv: RawCard; options: RawCard };
   taboo?: TabooList;
@@ -244,12 +248,49 @@ type OpenDeck = {
   cards: DeckCard[];
 };
 
-export async function openDeck(ref: string, settings: Settings): Promise<OpenDeck | Failure> {
+/** A campaign seat's deck, by the seat's name (or id): "seat:Alon". */
+const SEAT_REF = /^seat:\s*(.+)$/i;
+
+async function openSeatDeck(name: string, ctx: Settings & { campaign?: CampaignContext | null }): Promise<OpenDeck | Failure> {
+  const c = ctx.campaign;
+  if (!c) return notFound(`"seat:${name}" names a campaign seat, and this chat is not in a campaign.`);
+  const seat = c.seats.find((s) => s.id === name || s.name.toLowerCase() === name.trim().toLowerCase());
+  if (!seat) return notFound(`No seat named "${name}" in this campaign. Its seats: ${c.seats.map((s) => s.name).join(", ")}.`);
+  if (!seat.deck) return notFound(`${seat.name}'s seat has no deck locked in yet.`);
+  const list = seat.deck.list;
+  const deck: RawDeck = {
+    id: 0,
+    name: seat.deck.name,
+    investigator_code: list.investigator_code,
+    slots: list.slots,
+    sideSlots: list.sideSlots,
+    ignoreDeckLimitSlots: list.ignoreDeckLimitSlots,
+    meta: list.meta,
+    taboo_id: list.taboo_id ?? null,
+  };
+  return opened(deck, "seat", ctx, `/campaigns/${c.id}`);
+}
+
+export async function openDeck(
+  ref: string,
+  settings: Settings & { campaign?: CampaignContext | null },
+): Promise<OpenDeck | Failure> {
+  const seatRef = ref.match(SEAT_REF);
+  if (seatRef) return openSeatDeck(seatRef[1], settings);
   const parsed = parseRef(ref);
   if (!parsed) return notADeck(ref);
-  const [store, fetched] = await Promise.all([getCards(), fetchDeck(parsed)]);
+  const fetched = await fetchDeck(parsed);
   if (!fetched.ok) return fromFetched(fetched);
-  const { deck, kind } = fetched.data;
+  return opened(fetched.data.deck, fetched.data.kind, settings);
+}
+
+async function opened(
+  deck: RawDeck,
+  kind: OpenDeck["kind"],
+  settings: Pick<Settings, "taboo">,
+  campaignUrl?: string,
+): Promise<OpenDeck | Failure> {
+  const store = await getCards();
   const sides = investigatorSides(store, deck);
   const { inv, options } = sides;
   if (!inv || !options)
@@ -261,6 +302,7 @@ export async function openDeck(ref: string, settings: Settings): Promise<OpenDec
     store,
     deck,
     kind,
+    ...(campaignUrl ? { campaignUrl } : {}),
     meta,
     sides: { ...sides, inv, options },
     ...(taboo ? { taboo } : {}),
