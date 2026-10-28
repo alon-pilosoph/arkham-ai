@@ -146,6 +146,14 @@ the earlier settings), refused with a reason when a later change depends on what
 XP since spent, a deck since replaced, a setting since changed. Totals leave out reverted changes
 and their reverts.
 
+Any earlier version of a seat's deck can be restored (`restoreDeck`): the difference between the
+deck now and that version becomes an ordinary swap, priced and checked like one, applied as a new
+version. Cards it brings back are bought again and cards it takes out refund nothing, as between
+scenarios; to take a purchase back, revert it instead. A version for another investigator isn't
+restored. Any version downloads as a text file ArkhamDB imports (`lib/campaign/export.ts`, My
+decks → Import Deck → File): the investigator's name, then `2x Name: Subtitle [level]` per card,
+the campaign's cards included, since ArkhamDB matches each line by name, subtitle and level.
+
 A campaign's chats (`/?campaign=<id>`, from the switcher in the chat header) are shared by its
 members. The chat route loads the campaign for a member only, never from the client, and the
 newest message carries its state (`campaignNote`, `lib/agent.ts`): each seat's investigator,

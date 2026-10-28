@@ -44,8 +44,19 @@ export type SeatView = {
     campaignCards: Record<string, number>;
     source: string | null;
   } | null;
+  /** Every version of the seat's deck, newest first, the current one included. */
+  versions: DeckVersionView[];
   xp: { earned: number; spent: number; unspent: number };
   trauma: { physical: number; mental: number };
+};
+
+export type DeckVersionView = {
+  id: string;
+  number: number;
+  name: string;
+  at: string;
+  list: DeckListJson;
+  campaignCards: Record<string, number>;
 };
 
 export type ChangeView = {
@@ -145,8 +156,9 @@ export async function loadCampaign(userId: string, campaignId: string): Promise<
         .innerJoin(campaignChange, eq(campaignChange.id, seatEntry.changeId))
         .where(and(inArray(seatEntry.seatId, seatIds), isNull(campaignChange.revertedBy), isNull(campaignChange.revertOf)))
     : [];
-  const deckIds = seats.map((s) => s.deckId).filter((d): d is string => !!d);
-  const decks = deckIds.length ? await db.select().from(deckVersion).where(inArray(deckVersion.id, deckIds)) : [];
+  const decks = seatIds.length
+    ? await db.select().from(deckVersion).where(inArray(deckVersion.seatId, seatIds)).orderBy(desc(deckVersion.number))
+    : [];
   const changes = await db
     .select({
       id: campaignChange.id,
@@ -196,6 +208,16 @@ export async function loadCampaign(userId: string, campaignId: string): Promise<
               source: d.source,
             }
           : null,
+        versions: decks
+          .filter((x) => x.seatId === s.id)
+          .map((x) => ({
+            id: x.id,
+            number: x.number,
+            name: x.name,
+            at: x.createdAt.toISOString(),
+            list: x.list as DeckListJson,
+            campaignCards: x.campaignCards as Record<string, number>,
+          })),
         xp: { earned: sum("xp", 1), spent: Math.abs(sum("xp", -1)), unspent: sum("xp") },
         trauma: { physical: sum("physical"), mental: sum("mental") },
       };
@@ -611,7 +633,7 @@ export async function priceSwap(
 }
 
 /** A swap in words; `swap` holds card names here, not codes. */
-function swapSummary(name: string, swap: DeckSwap, cost: number): string {
+function swapSummary(name: string, swap: DeckSwap, cost: number, restored?: number): string {
   const list = (m: Record<string, number> = {}) =>
     Object.entries(m)
       .map(([card, qty]) => `${qty > 1 ? `${qty}× ` : ""}${card}`)
@@ -622,12 +644,20 @@ function swapSummary(name: string, swap: DeckSwap, cost: number): string {
     Object.keys(swap.campaignAdd ?? {}).length ? `campaign added ${list(swap.campaignAdd)}` : "",
     Object.keys(swap.campaignRemove ?? {}).length ? `campaign removed ${list(swap.campaignRemove)}` : "",
   ].filter(Boolean);
-  return `${name}: ${parts.join("; ")}${cost ? ` (${cost} XP)` : ""}`;
+  const what = [restored ? `back to version ${restored}` : "", parts.join("; ")].filter(Boolean).join(", ");
+  return `${name}: ${what}${cost ? ` (${cost} XP)` : ""}`;
 }
 
 /** Applies a swap: a new deck version and the XP it cost, checked again against the campaign as
  *  it is now. */
-export async function changeDeck(userId: string, campaignId: string, version: number, swap: DeckSwap, chatId?: string) {
+export async function changeDeck(
+  userId: string,
+  campaignId: string,
+  version: number,
+  swap: DeckSwap,
+  chatId?: string,
+  restored?: number,
+) {
   const view = await loadCampaign(userId, campaignId);
   if (!view) return fail("You aren't in this campaign.");
   if (view.version !== version) return fail(STALE);
@@ -682,6 +712,7 @@ export async function changeDeck(userId: string, campaignId: string, version: nu
           campaignRemove: named(swap.campaignRemove),
         },
         priced.value.cost,
+        restored,
       );
       return ok(
         "deck",
@@ -699,6 +730,50 @@ export async function changeDeck(userId: string, campaignId: string, version: nu
     },
     { chatId },
   );
+}
+
+/** The swap that turns `from` into `to`: what each list has that the other hasn't. */
+export function swapBetween(
+  seatId: string,
+  from: Pick<DeckVersionView, "list" | "campaignCards">,
+  to: Pick<DeckVersionView, "list" | "campaignCards">,
+): DeckSwap {
+  const more = (a: Record<string, number>, b: Record<string, number>) =>
+    Object.fromEntries(
+      Object.entries(a)
+        .map(([code, qty]) => [code, qty - (b[code] ?? 0)] as const)
+        .filter(([, qty]) => qty > 0),
+    );
+  return {
+    seatId,
+    add: more(to.list.slots, from.list.slots),
+    remove: more(from.list.slots, to.list.slots),
+    campaignAdd: more(to.campaignCards, from.campaignCards),
+    campaignRemove: more(from.campaignCards, to.campaignCards),
+  };
+}
+
+/** Why a seat's deck can't go back to one of its versions, or the swap that takes it there. */
+export function restoreSwap(s: SeatView, versionId: string): Result<{ swap: DeckSwap; number: number }> {
+  const to = s.versions.find((v) => v.id === versionId);
+  if (!to) return fail("No such deck version.");
+  if (!s.deck) return fail(`${s.name} has no deck locked in.`);
+  if (to.id === s.deck.id) return fail(`That is ${s.name}'s deck now.`);
+  if (to.list.investigator_code !== s.deck.list.investigator_code)
+    return fail("That version is for another investigator; lock it in again instead.");
+  return { ok: true, value: { swap: swapBetween(s.id, s.deck, to), number: to.number } };
+}
+
+/** Puts a seat's deck back to an earlier version, as a new version: cards it brings back are
+ *  paid for again, like any other swap, and cards it takes out refund nothing. */
+export async function restoreDeck(userId: string, campaignId: string, version: number, seatId: string, versionId: string) {
+  const view = await loadCampaign(userId, campaignId);
+  if (!view) return fail("You aren't in this campaign.");
+  const s = view.seats.find((x) => x.id === seatId);
+  if (!s) return fail("No such seat.");
+  const r = restoreSwap(s, versionId);
+  if (!r.ok) return r;
+  return changeDeck(userId, campaignId, version, r.value.swap, undefined, r.value.number);
 }
 
 /** Whether a chat proposal was applied, and by which change. */

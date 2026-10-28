@@ -3,12 +3,20 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { currentInvite } from "@/lib/campaign/invites";
-import { DIFFICULTIES, loadCampaign, type SeatView, STATUSES } from "@/lib/campaign/store";
+import { DIFFICULTIES, loadCampaign, priceSwap, restoreSwap, type SeatView, STATUSES } from "@/lib/campaign/store";
 import { type CardStore, getCards } from "@/lib/cards";
 import { deckCards, deckMeta, xpInList } from "@/lib/decks";
 import { currentUser } from "@/lib/session";
 import { type DeckKind, deckUrl } from "@/lib/urls";
-import { addSeatAction, lockDeckAction, recordAction, replaceInviteAction, revertAction, settingsAction } from "../actions";
+import {
+  addSeatAction,
+  lockDeckAction,
+  recordAction,
+  replaceInviteAction,
+  restoreDeckAction,
+  revertAction,
+  settingsAction,
+} from "../actions";
 import { ErrorNote, field, Section, smallField } from "../ui";
 
 export const metadata: Metadata = { title: "Campaign · Arkham assistant" };
@@ -20,11 +28,31 @@ function deckLink(source: string | null): string | null {
   return m ? deckUrl(Number(m[2]), m[1] as DeckKind) : null;
 }
 
-function SeatCard({ s, store, campaignId, version }: { s: SeatView; store: CardStore; campaignId: string; version: number }) {
+/** What putting a seat's deck back to a version would cost, or why it can't. */
+type RestorePrice = { cost: number } | { error: string };
+
+const IMPORT_HINT = "On ArkhamDB: My decks → Import Deck → File";
+
+const when = (at: string) => new Date(at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
+
+function SeatCard({
+  s,
+  store,
+  campaignId,
+  version,
+  restorePrices,
+}: {
+  s: SeatView;
+  store: CardStore;
+  campaignId: string;
+  version: number;
+  restorePrices: Record<string, RestorePrice>;
+}) {
   const investigator = s.investigatorCode ? store.get(s.investigatorCode)?.name : undefined;
   const list = s.deck?.list;
   const cards = list ? deckCards(store, list.slots, deckMeta(list)) : [];
   const link = deckLink(s.deck?.source ?? null);
+  const exportUrl = (n?: number) => `/api/campaigns/${campaignId}/seats/${s.id}/export${n ? `?version=${n}` : ""}`;
   return (
     <div className="flex flex-col gap-3 rounded-xl border p-4">
       <div className="flex items-baseline justify-between gap-2">
@@ -65,10 +93,52 @@ function SeatCard({ s, store, campaignId, version }: { s: SeatView; store: CardS
             {" "}
             · version {s.deck.number} · {cards.reduce((n, c) => n + c.qty, 0)} cards · {xpInList(cards)} XP in the list
           </span>
+          {" · "}
+          <a href={exportUrl()} download title={IMPORT_HINT} className="underline underline-offset-2">
+            Download for ArkhamDB
+          </a>
         </p>
       ) : (
         <p className="text-muted-foreground text-sm">No deck locked in yet.</p>
       )}
+      {s.versions.length > 1 ? (
+        <details className="text-sm">
+          <summary className="cursor-pointer">Earlier versions ({s.versions.length - 1})</summary>
+          <ul className="mt-2 flex flex-col gap-2">
+            {s.versions
+              .filter((v) => v.id !== s.deck?.id)
+              .map((v) => {
+                const price = restorePrices[v.id];
+                return (
+                  <li key={v.id} className="flex flex-wrap items-center justify-between gap-2 border-t pt-2">
+                    <span>
+                      Version {v.number} · {v.name}
+                      <span className="text-muted-foreground"> · {when(v.at)}</span>
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <a href={exportUrl(v.number)} download title={IMPORT_HINT} className="underline underline-offset-2">
+                        Download
+                      </a>
+                      {price && "error" in price ? (
+                        <span className="text-muted-foreground">{price.error}</span>
+                      ) : (
+                        <form action={restoreDeckAction}>
+                          <input type="hidden" name="campaignId" value={campaignId} />
+                          <input type="hidden" name="version" value={version} />
+                          <input type="hidden" name="seatId" value={s.id} />
+                          <input type="hidden" name="deckVersionId" value={v.id} />
+                          <Button type="submit" variant="outline" size="sm">
+                            Restore{price?.cost ? ` (${price.cost} XP)` : ""}
+                          </Button>
+                        </form>
+                      )}
+                    </span>
+                  </li>
+                );
+              })}
+          </ul>
+        </details>
+      ) : null}
       <form action={lockDeckAction} className="flex gap-2">
         <input type="hidden" name="campaignId" value={campaignId} />
         <input type="hidden" name="version" value={version} />
@@ -96,6 +166,14 @@ export default async function CampaignPage(props: PageProps<"/campaigns/[id]">) 
   const [c, params, store] = await Promise.all([loadCampaign(user.id, id), props.searchParams, getCards()]);
   if (!c) notFound();
   const invite = await currentInvite(c.id, user.id);
+  const restorePrices: Record<string, RestorePrice> = {};
+  for (const s of c.seats)
+    for (const v of s.versions) {
+      if (v.id === s.deck?.id) continue;
+      const r = restoreSwap(s, v.id);
+      const priced = r.ok ? await priceSwap(c, r.value.swap) : r;
+      restorePrices[v.id] = priced.ok ? { cost: priced.value.cost } : { error: priced.error };
+    }
   const origin = `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
   const next = c.scenarios[c.nextScenario];
   const hidden = (
@@ -133,7 +211,7 @@ export default async function CampaignPage(props: PageProps<"/campaigns/[id]">) 
 
       <Section title="Seats">
         {c.seats.map((s) => (
-          <SeatCard key={s.id} s={s} store={store} campaignId={c.id} version={c.version} />
+          <SeatCard key={s.id} s={s} store={store} campaignId={c.id} version={c.version} restorePrices={restorePrices} />
         ))}
         <form action={addSeatAction} className="flex flex-wrap items-end gap-2">
           {hidden}
@@ -277,7 +355,7 @@ export default async function CampaignPage(props: PageProps<"/campaigns/[id]">) 
                 <div className={x.revertedBy ? "text-muted-foreground line-through" : ""}>
                   {x.summary}
                   <div className="text-muted-foreground text-xs">
-                    {x.by ?? "Someone"} · {new Date(x.at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" })}
+                    {x.by ?? "Someone"} · {when(x.at)}
                   </div>
                 </div>
                 {x.kind !== "revert" && !x.revertedBy ? (
