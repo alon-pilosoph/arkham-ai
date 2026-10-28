@@ -16,6 +16,7 @@ import {
   lockDeck,
   type RecordInput,
   record,
+  restoreDeck,
   revert,
   type SeatStatus,
   STATUSES,
@@ -142,6 +143,12 @@ export async function revertAction(form: FormData) {
   const user = await signedIn();
   const id = text(form, "campaignId");
   back(id, await revert(user.id, id, whole(form, "version"), text(form, "changeId")));
+}
+
+export async function restoreDeckAction(form: FormData) {
+  const user = await signedIn();
+  const id = text(form, "campaignId");
+  back(id, await restoreDeck(user.id, id, whole(form, "version"), text(form, "seatId"), text(form, "deckVersionId")));
 }
 
 export async function replaceInviteAction(form: FormData) {

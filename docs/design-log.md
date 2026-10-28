@@ -389,3 +389,14 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   player applies from its card; nothing is written by the model.
 - **One price list.** XP pricing moved out of the XP advisor into `lib/xp.ts`, which campaign
   deck changes use too, so the advisor and the ledger can't disagree about what a card costs.
+
+## Deck versions: export and restore (October 28)
+
+- **Built.** Every version of a seat's deck is listed on its card, downloads as a file ArkhamDB
+  imports, and can be restored. A restore is the swap from the deck now to that version, priced
+  like any other: going back to before an upgrade buys the lower level again and refunds nothing,
+  which is what the rules say happens between scenarios. Taking a purchase back is a revert.
+- **The format ArkhamDB reads.** Its file import matches each line by name, subtitle and level,
+  so every line carries the level, `[0]` included; its paste box matches by name only and can
+  pick the wrong level, so the page points at the file import. The investigator's line is a bare
+  name: a subtitle there keeps it from matching.

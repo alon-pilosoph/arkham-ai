@@ -1,6 +1,6 @@
 # Plan: campaigns with accounts
 
-Status: **approved.** Steps 1 to 5 are done; step 6 (export, and restoring a deck version) is left.
+Status: **done.** All six steps are built.
 
 ## 1. The goal
 

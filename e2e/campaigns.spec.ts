@@ -29,6 +29,19 @@ test("a campaign: a seat, a deck locked in, a scenario recorded and reverted", a
   await expect(page.getByText("0 physical, 0 mental")).toBeVisible();
   await expect(page.getByText("next: Curtain Call")).toBeVisible();
   await expect(page.getByText("Reverted: Lily: +3 XP")).toBeVisible();
+
+  const download = page.waitForEvent("download");
+  await page.getByRole("link", { name: "Download for ArkhamDB" }).click();
+  expect((await download).suggestedFilename()).toMatch(/ v1\.txt$/);
+
+  // the same deck again is version 2; version 1 comes back as version 3, at no cost
+  await page.getByLabel("ArkhamDB deck link for Lily").fill("https://arkhamdb.com/decklist/view/33170");
+  await page.getByRole("button", { name: "Lock in a new version" }).click();
+  await expect(page.getByText("version 2")).toBeVisible();
+  await page.getByText("Earlier versions (1)").click();
+  await page.getByRole("button", { name: "Restore", exact: true }).click();
+  await expect(page.getByText("version 3")).toBeVisible();
+  await expect(page.getByText("Lily: back to version 1")).toBeVisible();
 });
 
 test("an invite link lets someone new sign up and join", async ({ page, browser }, info) => {
