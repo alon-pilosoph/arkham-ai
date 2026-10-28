@@ -365,3 +365,17 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   thread-list and history adapters, so the chat interface did not change. Titles are the first
   question, cut at a word, instead of a model-written title: free, and plain about what the chat
   was. Assistant Cloud is gone, and with it the chats kept there, which were test chats.
+
+## Campaigns (October 28)
+
+- **Built.** Campaigns with invite links, seats, decks locked in from ArkhamDB, and XP and trauma
+  ledgers, on a page of their own. Every change claims the campaign's next version, so a stale
+  page can't overwrite another member's change, and is recorded so any change can be reverted:
+  the revert is a change of its own, refused with a reason when a later change depends on it.
+- **Only what deckbuilding needs.** No scenario results, campaign log or chaos bag: the players
+  keep those in their own tracker.
+- **Found on the way.** Reverting an XP award and then the purchase it paid for first showed 6
+  earned and 6 spent: totals now leave out reverted changes and their reverts. In local runs,
+  Next loaded pages and API routes as separate copies of the database module, each with its own
+  in-memory database, so a page could not see a session an API call had made; the database
+  handle now lives on `globalThis`. PGlite also had to be loaded unbundled to find its files.

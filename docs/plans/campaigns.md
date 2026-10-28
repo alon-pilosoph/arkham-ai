@@ -1,6 +1,6 @@
 # Plan: campaigns with accounts
 
-Status: **approved.** Steps 1 to 3 (scenario lists, accounts, chats in the database) are done; step 4 (campaigns) is next.
+Status: **approved.** Steps 1 to 4 (scenario lists, accounts, chats in the database, campaigns) are done; step 5 (chat integration) is next.
 
 ## 1. The goal
 

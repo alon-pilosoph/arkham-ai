@@ -32,7 +32,17 @@ const GoogleMark = () => (
   </svg>
 );
 
-export function SignInForm({ google, error, next }: { google: boolean; error?: string; next: string }) {
+export function SignInForm({
+  google,
+  error,
+  next,
+  invitedTo,
+}: {
+  google: boolean;
+  error?: string;
+  next: string;
+  invitedTo?: string;
+}) {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "sending" | "sent" | "failed">("idle");
 
@@ -51,7 +61,9 @@ export function SignInForm({ google, error, next }: { google: boolean; error?: s
     <div className="flex w-full max-w-sm flex-col gap-6">
       <div className="flex flex-col gap-1 text-center">
         <h1 className="text-2xl font-medium tracking-tight">Arkham assistant</h1>
-        <p className="text-muted-foreground text-sm">Sign in to ask about rules, cards and decks.</p>
+        <p className="text-muted-foreground text-sm">
+          {invitedTo ? `${invitedTo} Sign in to join.` : "Sign in to ask about rules, cards and decks."}
+        </p>
       </div>
       {error ? (
         <p role="alert" className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">

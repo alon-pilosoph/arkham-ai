@@ -1,18 +1,24 @@
 // Accounts and sessions, with Better Auth: sign in with Google or with a one-time email link.
 // Invite-only: Better Auth asks validateUserInfo before it creates any account, by any method,
-// and mayJoin decides. A sign-in link is never emailed to an address that could not sign in.
+// and mayJoin decides, from the address and any invite link the browser holds. A sign-in link is
+// never emailed to an address that could not sign in.
 
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
 import { magicLink } from "better-auth/plugins";
 import { hasAccount, mayJoin } from "./access";
+import { findInvite, inviteToken, rememberInvitedEmail } from "./campaign/invites";
 import { type Db, getDb } from "./db";
 import { authSchema } from "./db/schema";
 import { sendEmail, signInEmail } from "./email";
 import { SIGN_IN_LINK_MINUTES } from "./sign-in";
 
 export const INVITE_ONLY = "invite_only";
+
+function requestHeaders(ctx: { headers?: Headers; request?: Request } | undefined): Headers | undefined {
+  return ctx?.headers ?? ctx?.request?.headers;
+}
 
 /** Production uses its own domain; a preview, its branch URL; local runs, the request's. */
 function baseURL(): string | undefined {
@@ -32,10 +38,13 @@ function createAuth(db: Db) {
     database: drizzleAdapter(db, { provider: "pg", schema: authSchema }),
     socialProviders: google,
     session: { expiresIn: 60 * 24 * 3600, updateAge: 24 * 3600 },
+    // every end-to-end sign-in comes from one address; the limit (5 sign-in links a minute per
+    // address) stays on everywhere else
+    ...(process.env.ARKHAM_E2E === "1" ? { rateLimit: { enabled: false } } : {}),
     user: {
-      validateUserInfo: async ({ user, source }) => {
+      validateUserInfo: async ({ user, source }, ctx) => {
         if (source.action !== "create-user") return;
-        if (typeof user.email === "string" && (await mayJoin(user.email))) return;
+        if (typeof user.email === "string" && (await mayJoin(user.email, requestHeaders(ctx)))) return;
         return { error: INVITE_ONLY, errorDescription: "This app is invite-only: ask someone you play with for an invite." };
       },
     },
@@ -43,7 +52,10 @@ function createAuth(db: Db) {
     plugins: [
       magicLink({
         expiresIn: SIGN_IN_LINK_MINUTES * 60,
-        sendMagicLink: async ({ email, url }) => {
+        sendMagicLink: async ({ email, url }, ctx) => {
+          // holding an invite: the link may be opened in another browser, without the cookie
+          const token = inviteToken(requestHeaders(ctx));
+          if (await findInvite(token)) await rememberInvitedEmail(email, token as string);
           // a stranger's address gets nothing, and the page says the same either way
           if ((await hasAccount(email)) || (await mayJoin(email))) await sendEmail(signInEmail(email, url));
         },

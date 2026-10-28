@@ -40,6 +40,7 @@ export default defineConfig({
       ARKHAM_DECKS_DIR: "tests/fixtures",
       ARKHAM_TABOOS_FILE: "tests/fixtures/taboos.json",
       ARKHAM_DB_DIR: "memory://",
+      ARKHAM_E2E: "1",
       ARKHAM_OUTBOX: OUTBOX,
       OWNER_EMAIL: OWNER,
       BETTER_AUTH_URL: `http://localhost:${PORT}`,

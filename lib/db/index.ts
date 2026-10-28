@@ -14,7 +14,10 @@ export type Db = ReturnType<typeof pgliteDrizzle<typeof schema>>;
 
 export const MIGRATIONS = path.join(process.cwd(), "drizzle");
 
-let opened: Promise<Db> | null = null;
+// On globalThis, not in a module variable: Next loads server pages and route handlers as
+// separate copies of this module, and with PGlite in memory each copy would open a database of
+// its own.
+const shared = globalThis as { arkhamDb?: Promise<Db> | null };
 
 async function open(): Promise<Db> {
   const url = process.env.DATABASE_URL;
@@ -27,14 +30,14 @@ async function open(): Promise<Db> {
 }
 
 export function getDb(): Promise<Db> {
-  opened ??= open().catch((e) => {
-    opened = null;
+  shared.arkhamDb ??= open().catch((e) => {
+    shared.arkhamDb = null;
     throw e;
   });
-  return opened;
+  return shared.arkhamDb;
 }
 
 /** A fresh in-memory database: for tests. */
 export function resetDb(): void {
-  opened = null;
+  shared.arkhamDb = null;
 }

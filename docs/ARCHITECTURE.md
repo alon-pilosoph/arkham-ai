@@ -127,6 +127,31 @@ their branches. A chat is created when its first message is stored, and titled w
 question, cut at a word (no model call). Every query is scoped to the asking account, so another
 account's chat is simply not found; a stored message is capped at 512 KB.
 
+## Campaigns
+
+A campaign (`lib/campaign/store.ts`, `/campaigns`) keeps only what deckbuilding needs
+([plans/campaigns.md](plans/campaigns.md)): which Chapter 1 campaign, the difficulty, the taboo
+switch, the next scenario (from `scenarios()` in `lib/campaigns.ts`), and its seats. A seat is a
+player's place, not an account: a name, optionally the account playing it, the investigator,
+whether they were killed or driven insane, and its deck. A deck is locked in from an ArkhamDB
+link; every lock-in is a new version, and versions are never changed. XP (earned positive,
+spent negative) and trauma are ledgers of entries, so every total is a sum and every entry names
+the change that made it.
+
+Every change goes through one function, `change()`: in a transaction it first claims the
+campaign's next `version`, so a change made from a page loaded before someone else's change is
+refused rather than applied over it, then applies the change, then records it with what it did.
+A revert is a change of its own that undoes another (negated ledger entries, the previous deck,
+the earlier settings), refused with a reason when a later change depends on what it would undo:
+XP since spent, a deck since replaced, a setting since changed. Totals leave out reverted changes
+and their reverts.
+
+Members see and change everything; the campaign's page shows its invite link. Opening the link
+puts its token in a cookie (`proxy.ts`), which is what lets someone without an account sign up:
+Google sign-in carries it through its callback, and asking for an email link while holding it
+records the address (`invited_email`), so the emailed link works in any browser. Replacing the
+link revokes the old token, and with it every pending sign-up it allowed.
+
 ## The system prompt and caching
 
 The system prompt (`lib/prompt.ts`) is the guidance, which covers what the assistant is for, how
@@ -382,6 +407,7 @@ answer.
 | `link-repair.test.ts` | A correct link is left alone, a level pins a name to one version, an ambiguous or unknown name becomes plain text |
 | `accounts.test.ts` | Accounts against PGlite: the owner's sign-in link signs them in; a stranger gets no email, and no account even holding a link; a link works once; a forged cookie is nobody; the daily question cap and its reset |
 | `proxy.test.ts` | Signed-out pages go to the sign-in page (keeping where they were going and why a sign-in was refused), signed-out API calls get a 401, public paths pass |
+| `campaigns.test.ts` | Campaigns on PGlite: scenarios listed and only members let in; a change from a stale page refused; XP and trauma totals, XP never below 0; reverts of XP, decks, settings, seats and statuses, each refused when a later change depends on it; invite links letting a new account in by cookie or by a recorded address, joining, and a replaced link ending both |
 | `chats.test.ts` | Chats through their routes on PGlite: messages stored, rewritten in place and listed with their parents; another account's chat not found for reading, writing, renaming or deleting; archive and delete; malformed, oversized and signed-out requests refused; titles cut at a word |
 | `route.test.ts` | The chat route: a 401 when signed out, a 429 past the daily cap, 400s for bad bodies, a 413 for an oversized one, partial settings, provider errors shown in plain words, a cut-off answer that says so |
 | `taboo-unavailable.test.ts` | With the taboo switch on and the taboo lists unavailable, every tool reports an error instead of an answer without the taboo list applied |
@@ -393,6 +419,7 @@ answer.
 | `campaign-prep.test.ts` | Campaigns found by name or code (a Return to box only when asked for), every campaign's packs present in the card set, Carcosa's treacheries dealing more horror than damage, Edge of the Earth's frost, every campaign's scenarios in play order with the shared sets counted apart, copies counted once, and no encounter card named in the output |
 | `symbols.test.ts` | Game symbols in an answer become keycaps; links and other brackets are left alone |
 | `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
+| `e2e/campaigns.spec.ts` | Playwright: a campaign started, a seat added, a deck locked in from a link, a scenario recorded and reverted; an invite link letting someone new sign up by email and join |
 | `e2e/accounts.spec.ts` | Playwright: a visitor sent to sign in, the privacy page, a stranger told a link is coming and kept out, the invite-only message, signing out. `e2e/sign-in.setup.ts` signs the owner in through an emailed link once, and the other tests reuse that session |
 | `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: a chat kept across a reload and listed under its first question, a deleted chat gone, the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, a deck slot refusing what isn't a link, campaign prep, the taboo switch surviving a reload |
 

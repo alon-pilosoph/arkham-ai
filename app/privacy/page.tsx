@@ -20,6 +20,10 @@ export default function PrivacyPage() {
         <li>Your sessions: when you signed in, and the IP address and browser of each session, to keep you signed in.</li>
         <li>How many questions you asked each day, for a daily limit.</li>
         <li>Your chats, so you can come back to them.</li>
+        <li>
+          Campaigns you start or join: their decks, XP and trauma, and who changed what. The other members of a campaign see your
+          name and email address.
+        </li>
       </ul>
       <h2 className="mt-2 text-base font-medium">Where it goes</h2>
       <ul className="list-disc ps-5">
