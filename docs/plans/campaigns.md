@@ -1,6 +1,6 @@
 # Plan: campaigns with accounts
 
-Status: **approved.** Steps 1 to 4 (scenario lists, accounts, chats in the database, campaigns) are done; step 5 (chat integration) is next.
+Status: **approved.** Steps 1 to 5 are done; step 6 (export, and restoring a deck version) is left.
 
 ## 1. The goal
 

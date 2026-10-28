@@ -125,6 +125,9 @@ export default async function CampaignPage(props: PageProps<"/campaigns/[id]">) 
         <p className="text-muted-foreground text-sm">
           {c.campaignName} · {cap(c.difficulty)} · taboo list {c.taboo ? "on" : "off"} · {next ? `next: ${next}` : "finished"}
         </p>
+        <a href={`/?campaign=${c.id}`} className="text-sm font-medium underline underline-offset-2">
+          Open the campaign's chats
+        </a>
       </header>
       <ErrorNote error={params.error} />
 

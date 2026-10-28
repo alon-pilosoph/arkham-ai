@@ -9,6 +9,9 @@ import { CAMPAIGNS, scenarios } from "../campaigns";
 import { getCards } from "../cards";
 import { getDb } from "../db";
 import { campaign, campaignChange, campaignMember, deckVersion, seat, seatEntry, user } from "../db/schema";
+import { deckViolation } from "../legality";
+import { tabooInForce } from "../taboo";
+import { swapCost } from "../xp";
 
 export const DIFFICULTIES = ["easy", "standard", "hard", "expert"] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
@@ -348,6 +351,8 @@ export type RecordInput = {
   entries: { seatId: string; kind: Ledger; amount: number; note?: string }[];
   statuses?: { seatId: string; status: SeatStatus }[];
   nextScenario?: number;
+  /** The chat proposal this applies, so its card can tell it was applied. */
+  proposalId?: string;
 };
 
 /** What a scenario (or a correction) did to the seats: XP earned or spent, trauma, a seat's
@@ -392,6 +397,7 @@ export async function record(userId: string, campaignId: string, version: number
         entries,
         statuses: statuses.map((x) => ({ seatId: x.seatId, before: byId.get(x.seatId)?.status, after: x.status })),
         next,
+        proposalId: input.proposalId,
       };
       return ok("record", recordSummary(byId, payload), payload);
     },
@@ -433,6 +439,37 @@ async function ledgerTotals(tx: Tx, seatIds: string[]): Promise<Map<string, numb
   return out;
 }
 
+/** Cancels a change's ledger entries with entries of the revert's own; refused when that would
+ *  take a total below 0 (XP spent since, trauma removed since). */
+async function negateEntries(tx: Tx, changeId: string, revertId: string): Promise<Result> {
+  const entries = await tx.select().from(seatEntry).where(eq(seatEntry.changeId, changeId));
+  if (!entries.length) return { ok: true, value: undefined };
+  const seatIds = [...new Set(entries.map((e) => e.seatId))];
+  const totals = await ledgerTotals(tx, seatIds);
+  const names = new Map((await tx.select().from(seat).where(inArray(seat.id, seatIds))).map((s) => [s.id, s.name]));
+  for (const e of entries) {
+    const key = `${e.seatId}:${e.kind}`;
+    totals.set(key, (totals.get(key) ?? 0) - e.amount);
+    if ((totals.get(key) ?? 0) < 0)
+      return fail(
+        e.kind === "xp"
+          ? `${names.get(e.seatId) ?? "That seat"} has already spent this XP; revert the purchase first.`
+          : "A later change already removed this trauma.",
+      );
+  }
+  await tx.insert(seatEntry).values(
+    entries.map((e) => ({
+      id: crypto.randomUUID(),
+      seatId: e.seatId,
+      kind: e.kind,
+      amount: -e.amount,
+      note: "revert",
+      changeId: revertId,
+    })),
+  );
+  return { ok: true, value: undefined };
+}
+
 /** Undoes a change with a change of its own, or says why it can't. */
 export async function revert(userId: string, campaignId: string, version: number, changeId: string) {
   return change(
@@ -471,6 +508,8 @@ export async function revert(userId: string, campaignId: string, version: number
           const d = p as { seatId: string; before: string | null; after: string; investigatorBefore: string | null };
           const [s] = await tx.select().from(seat).where(eq(seat.id, d.seatId));
           if (!s || s.deckId !== d.after) return fail("A later change replaced this deck; revert it first.");
+          const refunded = await negateEntries(tx, changeId, revertId);
+          if (!refunded.ok) return refunded;
           await tx.update(seat).set({ deckId: d.before, investigatorCode: d.investigatorBefore }).where(eq(seat.id, d.seatId));
           return ok("revert", undone, { of: changeId });
         }
@@ -480,21 +519,6 @@ export async function revert(userId: string, campaignId: string, version: number
             statuses: { seatId: string; before: SeatStatus; after: SeatStatus }[];
             next?: { before: number; after: number };
           };
-          const seatIds = [...new Set(r.entries.map((e) => e.seatId))];
-          const totals = await ledgerTotals(tx, seatIds);
-          const names = new Map(
-            (seatIds.length ? await tx.select().from(seat).where(inArray(seat.id, seatIds)) : []).map((s) => [s.id, s.name]),
-          );
-          for (const e of r.entries) {
-            const key = `${e.seatId}:${e.kind}`;
-            totals.set(key, (totals.get(key) ?? 0) - e.amount);
-            if ((totals.get(key) ?? 0) < 0)
-              return fail(
-                e.kind === "xp"
-                  ? `${names.get(e.seatId) ?? "That seat"} has already spent this XP; revert the purchase first.`
-                  : "A later change already removed this trauma.",
-              );
-          }
           for (const x of r.statuses) {
             const [s] = await tx.select().from(seat).where(eq(seat.id, x.seatId));
             if (s && s.status !== x.after) return fail("A later change replaced this status; revert it first.");
@@ -504,17 +528,8 @@ export async function revert(userId: string, campaignId: string, version: number
             if (c.nextScenario !== r.next.after) return fail("A later change moved the next scenario; revert it first.");
             await tx.update(campaign).set({ nextScenario: r.next.before }).where(eq(campaign.id, campaignId));
           }
-          if (r.entries.length)
-            await tx.insert(seatEntry).values(
-              r.entries.map((e) => ({
-                id: crypto.randomUUID(),
-                seatId: e.seatId,
-                kind: e.kind,
-                amount: -e.amount,
-                note: "revert",
-                changeId: revertId,
-              })),
-            );
+          const negated = await negateEntries(tx, changeId, revertId);
+          if (!negated.ok) return negated;
           for (const x of r.statuses) await tx.update(seat).set({ status: x.before }).where(eq(seat.id, x.seatId));
           return ok("revert", undone, { of: changeId });
         }
@@ -530,4 +545,170 @@ export async function revert(userId: string, campaignId: string, version: number
 export async function scenarioNames(code: string): Promise<string[]> {
   const def = CAMPAIGNS.find((c) => c.code === code);
   return def ? scenarios(await getCards(), def).map((s) => s.name) : [];
+}
+
+export type DeckSwap = {
+  seatId: string;
+  /** Cards bought or upgraded into, and cards taken out, by code. */
+  add: Record<string, number>;
+  remove: Record<string, number>;
+  /** Cards the campaign put in or took out (story assets, weaknesses): no XP, no deck rules. */
+  campaignAdd?: Record<string, number>;
+  campaignRemove?: Record<string, number>;
+  /** The chat proposal this applies, so its card can tell it was applied. */
+  proposalId?: string;
+};
+
+/** What a swap would do to a seat's deck: the new list, its cost, and why it can't be, if it can't.
+ *  Shared by the chat's proposals and their applying, so both see the same answer. */
+export async function priceSwap(
+  view: Pick<CampaignView, "taboo" | "seats">,
+  swap: DeckSwap,
+): Promise<
+  Result<{
+    slots: Record<string, number>;
+    campaignCards: Record<string, number>;
+    cost: number;
+    lines: { code: string; qty: number; xp: number; upgradedFrom?: string }[];
+  }>
+> {
+  const s = view.seats.find((x) => x.id === swap.seatId);
+  if (!s) return fail("No such seat.");
+  if (!s.deck) return fail(`${s.name} has no deck locked in yet.`);
+  const store = await getCards();
+  const { list: taboo, error } = await tabooInForce({ taboo: view.taboo });
+  if (error) return fail(`The taboo list could not be loaded (${error}), so the change can't be priced.`);
+  const take = (from: Record<string, number>, out: Record<string, number> = {}) => {
+    const next = { ...from };
+    for (const [code, qty] of Object.entries(out)) {
+      if ((next[code] ?? 0) < qty)
+        return { error: `${store.get(code)?.name ?? code} isn't in the deck ${qty > 1 ? `${qty} times` : ""}`.trim() };
+      next[code] -= qty;
+      if (!next[code]) delete next[code];
+    }
+    return { next };
+  };
+  const put = (into: Record<string, number>, add: Record<string, number> = {}) => {
+    const next = { ...into };
+    for (const [code, qty] of Object.entries(add)) if (qty > 0) next[code] = (next[code] ?? 0) + qty;
+    return next;
+  };
+  for (const code of [...Object.keys(swap.add), ...Object.keys(swap.campaignAdd ?? {})])
+    if (!store.get(code)) return fail(`No card has code ${code}.`);
+  for (const code of Object.keys(swap.add))
+    if (!store.inCollection(code)) return fail(`${store.get(code)?.name} isn't in the collection.`);
+  const removed = take(s.deck.list.slots, swap.remove);
+  if (removed.error) return fail(`${removed.error}.`);
+  const slots = put(removed.next ?? {}, swap.add);
+  const campaignTaken = take(s.deck.campaignCards, swap.campaignRemove);
+  if (campaignTaken.error) return fail(`${campaignTaken.error} among the campaign's cards.`);
+  const campaignCards = put(campaignTaken.next ?? {}, swap.campaignAdd);
+  const violation = deckViolation(store, { id: 0, ...s.deck.list, slots }, taboo);
+  if (violation) return fail(`That deck would break a deckbuilding rule: ${violation.card}, ${violation.reason}.`);
+  const { total, lines } = swapCost(store, swap.add, swap.remove, taboo);
+  if (total > s.xp.unspent) return fail(`That costs ${total} XP, and ${s.name} has ${s.xp.unspent} unspent.`);
+  return { ok: true, value: { slots, campaignCards, cost: total, lines } };
+}
+
+/** A swap in words; `swap` holds card names here, not codes. */
+function swapSummary(name: string, swap: DeckSwap, cost: number): string {
+  const list = (m: Record<string, number> = {}) =>
+    Object.entries(m)
+      .map(([card, qty]) => `${qty > 1 ? `${qty}× ` : ""}${card}`)
+      .join(", ");
+  const parts = [
+    Object.keys(swap.remove).length ? `out ${list(swap.remove)}` : "",
+    Object.keys(swap.add).length ? `in ${list(swap.add)}` : "",
+    Object.keys(swap.campaignAdd ?? {}).length ? `campaign added ${list(swap.campaignAdd)}` : "",
+    Object.keys(swap.campaignRemove ?? {}).length ? `campaign removed ${list(swap.campaignRemove)}` : "",
+  ].filter(Boolean);
+  return `${name}: ${parts.join("; ")}${cost ? ` (${cost} XP)` : ""}`;
+}
+
+/** Applies a swap: a new deck version and the XP it cost, checked again against the campaign as
+ *  it is now. */
+export async function changeDeck(userId: string, campaignId: string, version: number, swap: DeckSwap, chatId?: string) {
+  const view = await loadCampaign(userId, campaignId);
+  if (!view) return fail("You aren't in this campaign.");
+  if (view.version !== version) return fail(STALE);
+  const priced = await priceSwap(view, swap);
+  if (!priced.ok) return priced;
+  const store = await getCards();
+  const named = (m: Record<string, number> = {}) =>
+    Object.fromEntries(Object.entries(m).map(([code, qty]) => [store.get(code)?.name ?? code, qty]));
+  return change<string>(
+    userId,
+    campaignId,
+    version,
+    async (tx, changeId) => {
+      const [s] = await tx
+        .select()
+        .from(seat)
+        .where(and(eq(seat.id, swap.seatId), eq(seat.campaignId, campaignId)));
+      const [current] = s?.deckId ? await tx.select().from(deckVersion).where(eq(deckVersion.id, s.deckId)) : [];
+      if (!s || !current) return fail("That seat has no deck.");
+      const [{ n }] = await tx
+        .select({ n: sql<number>`coalesce(max(${deckVersion.number}), 0)::int` })
+        .from(deckVersion)
+        .where(eq(deckVersion.seatId, s.id));
+      const id = crypto.randomUUID();
+      await tx.insert(deckVersion).values({
+        id,
+        seatId: s.id,
+        number: n + 1,
+        name: current.name,
+        list: { ...(current.list as DeckListJson), slots: priced.value.slots },
+        campaignCards: priced.value.campaignCards,
+        source: current.source,
+        changeId,
+      });
+      await tx.update(seat).set({ deckId: id }).where(eq(seat.id, s.id));
+      if (priced.value.cost)
+        await tx.insert(seatEntry).values({
+          id: crypto.randomUUID(),
+          seatId: s.id,
+          kind: "xp",
+          amount: -priced.value.cost,
+          note: "deck change",
+          changeId,
+        });
+      const summary = swapSummary(
+        s.name,
+        {
+          ...swap,
+          add: named(swap.add),
+          remove: named(swap.remove),
+          campaignAdd: named(swap.campaignAdd),
+          campaignRemove: named(swap.campaignRemove),
+        },
+        priced.value.cost,
+      );
+      return ok(
+        "deck",
+        summary,
+        {
+          seatId: s.id,
+          before: s.deckId,
+          after: id,
+          investigatorBefore: s.investigatorCode,
+          investigatorAfter: s.investigatorCode,
+          proposalId: swap.proposalId,
+        },
+        id,
+      );
+    },
+    { chatId },
+  );
+}
+
+/** Whether a chat proposal was applied, and by which change. */
+export async function proposalChange(userId: string, campaignId: string, proposalId: string): Promise<string | null> {
+  if (!(await isMember(userId, campaignId))) return null;
+  const db = await getDb();
+  const [row] = await db
+    .select({ id: campaignChange.id })
+    .from(campaignChange)
+    .where(and(eq(campaignChange.campaignId, campaignId), sql`${campaignChange.payload}->>'proposalId' = ${proposalId}`))
+    .limit(1);
+  return row?.id ?? null;
 }

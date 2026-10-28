@@ -14,6 +14,7 @@ import { trimHistory } from "./history";
 import { repairLinks } from "./link-repair";
 import { SYSTEM_PROMPT } from "./prompt";
 import { DEFAULT_SETTINGS, type SavedDeck, type Settings } from "./settings";
+import { type CampaignContext, DEFAULT_CONTEXT, type ToolContext } from "./tool-context";
 import { type ToolName, tools } from "./tools";
 import { deckUrl } from "./urls";
 
@@ -40,12 +41,32 @@ function savedDeck(whose: string, d: SavedDeck): string {
   return `${whose} is ${untrusted("deck name", d.name || "(untitled)")}, ${d.investigator} (${deckUrl(d.id, d.kind)})`;
 }
 
-export function turnNote(today: string, settings: Settings): string {
-  const decks = [
-    settings.myDeck ? savedDeck("The asking player's own deck", settings.myDeck) : "",
-    settings.partnerDeck ? savedDeck("Their partner's deck", settings.partnerDeck) : "",
-  ].filter(Boolean);
-  return `(Today is ${today}. Taboo list: ${settings.taboo ? "on, the current list" : "off"}.${decks.map((d) => ` ${d}.`).join("")})`;
+/** The campaign a chat belongs to, as of this turn: what its decks are built from. Names the
+ *  players wrote are untrusted. */
+export function campaignNote(c: CampaignContext, investigatorName: (code: string) => string | undefined): string {
+  const next = c.scenarios[c.nextScenario];
+  const seats = c.seats.map((s) => {
+    const who = s.userId === c.askerId ? " (the asking player's)" : "";
+    const inv = s.investigatorCode ? investigatorName(s.investigatorCode) : undefined;
+    const deck = s.deck ? `deck ${untrusted("deck name", s.deck.name || "(untitled)")}, version ${s.deck.number}` : "no deck yet";
+    const status = s.status === "active" ? "" : `; ${s.status}`;
+    return `seat ${untrusted("seat name", s.name)}${who}: ${inv ?? "no investigator yet"}, ${deck}; ${s.xp.unspent} unspent XP (${s.xp.earned} earned, ${s.xp.spent} spent); trauma ${s.trauma.physical} physical, ${s.trauma.mental} mental${status}`;
+  });
+  return [
+    `This chat is in the campaign ${untrusted("campaign name", c.name)}: ${c.campaignName}, ${c.difficulty} difficulty, ${next ? `next scenario ${next} (${c.nextScenario + 1} of ${c.scenarios.length})` : "finished"}.`,
+    seats.length ? `Seats: ${seats.join("; ")}.` : "It has no seats yet.",
+    `A seat's deck is read with the deck ref "seat:<seat name>". Changes to XP, trauma, decks or the next scenario go through proposeChange, and a player applies them.`,
+  ].join(" ");
+}
+
+export function turnNote(today: string, settings: Settings, campaign?: string): string {
+  const decks = campaign
+    ? []
+    : [
+        settings.myDeck ? savedDeck("The asking player's own deck", settings.myDeck) : "",
+        settings.partnerDeck ? savedDeck("Their partner's deck", settings.partnerDeck) : "",
+      ].filter(Boolean);
+  return `(Today is ${today}. Taboo list: ${settings.taboo ? "on, the current list" : "off"}.${decks.map((d) => ` ${d}.`).join("")}${campaign ? ` ${campaign}` : ""})`;
 }
 
 export function anchorTurn(messages: ModelMessage[], note: string): ModelMessage[] {
@@ -67,8 +88,9 @@ export async function toModelMessages(
   ui: UIMessage[],
   settings: Settings = DEFAULT_SETTINGS,
   today = new Date().toISOString().slice(0, 10),
+  campaign?: string,
 ): Promise<ModelMessage[]> {
-  return anchorTurn(await convertToModelMessages(trimHistory(ui)), turnNote(today, settings));
+  return anchorTurn(await convertToModelMessages(trimHistory(ui)), turnNote(today, settings, campaign));
 }
 
 /** Wraps only execute: the tool definitions are cached prompt bytes and must stay unchanged. */
@@ -132,7 +154,7 @@ function linkRepairTransform(): StreamTextTransform<typeof tools> {
 export function runAgent(opts: {
   model: LanguageModel;
   messages: ModelMessage[];
-  settings?: Settings;
+  settings?: ToolContext;
   abortSignal?: AbortSignal;
   now?: () => number;
   /** Called if the answer is cut off at the deadline (not when the player leaves). */
@@ -140,8 +162,8 @@ export function runAgent(opts: {
   /** Called once per failure; without it the AI SDK logs the error itself. */
   onError?: (error: unknown) => void;
 }) {
-  const settings = opts.settings ?? DEFAULT_SETTINGS;
-  const toolsContext = Object.fromEntries(Object.keys(tools).map((name) => [name, settings])) as Record<ToolName, Settings>;
+  const settings = opts.settings ?? DEFAULT_CONTEXT;
+  const toolsContext = Object.fromEntries(Object.keys(tools).map((name) => [name, settings])) as Record<ToolName, ToolContext>;
   const now = opts.now ?? Date.now;
   const deadline = now() + BUDGET.deadlineMs;
   const remaining = () => deadline - now();

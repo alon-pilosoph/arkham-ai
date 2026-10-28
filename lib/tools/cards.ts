@@ -12,8 +12,8 @@ import {
 } from "../card-text";
 import { type CardStore, cardFace, cleanText, getCards, norm, PLAYER_TYPES, type RawCard, sortVersions } from "../cards";
 import { type Failure, failureText, notFound, safely, toolError, toolText } from "../format";
-import { SettingsSchema } from "../settings";
 import { type TabooList, tabooInForce } from "../taboo";
+import { ToolContextSchema } from "../tool-context";
 import { cardUrl } from "../urls";
 
 export type CardView = CardFace & {
@@ -199,7 +199,7 @@ export const cardsTool = tool({
     "official FAQ rulings and, when the players have the taboo list on, its changes attached, so check the level before you quote a card. " +
     "Use it before explaining what any card does.",
   inputSchema,
-  contextSchema: SettingsSchema,
+  contextSchema: ToolContextSchema,
   execute: (input, { context }): Promise<CardsResult> =>
     safely(async () => {
       const [store, taboo] = await Promise.all([getCards(), tabooInForce(context)]);

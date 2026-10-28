@@ -2,12 +2,13 @@ import { tool } from "ai";
 import { z } from "zod";
 import { type CardFace, cardHead, tabooChangeText } from "../card-text";
 import { type CardStore, cardFace, cleanText, isDeckCardType, norm, type RawCard } from "../cards";
-import { type DeckCard, ignoredCopies, isExceptional, isWeakness, openDeck, parseCustomization } from "../decks";
+import { type DeckCard, ignoredCopies, isWeakness, openDeck, parseCustomization } from "../decks";
 import { type Failure, failureText, safely, toolError, toolText } from "../format";
 import { playRate, type Share, shareText } from "../index/usage";
 import { rulesFor } from "../legality";
-import { DEFAULT_SETTINGS, type Settings, SettingsSchema } from "../settings";
-import { type TabooList, tabooEntry } from "../taboo";
+import { DEFAULT_SETTINGS, type Settings } from "../settings";
+import { ToolContextSchema } from "../tool-context";
+import { cardPrice } from "../xp";
 
 const DEFAULT_NEW = 12;
 const MAX_NEW = 25;
@@ -46,12 +47,6 @@ export type UpgradesResult =
     }
   | Failure;
 
-/** What one copy costs to buy: its level (doubled if exceptional) plus any taboo surcharge. */
-function price(store: CardStore, c: RawCard, taboo?: TabooList): number {
-  const t = tabooEntry(store, taboo, c.code);
-  return (c.xp ?? 0) * (isExceptional(c, t) ? 2 : 1) + (t?.xp ?? 0);
-}
-
 function buyable(store: CardStore, c: RawCard): boolean {
   if (c.encounter_code || store.isReprint(c.code) || !isDeckCardType(c.type_code)) return false;
   // signatures, advanced or not, and bonded cards are never bought
@@ -89,7 +84,7 @@ export async function upgrades(
     delete rest[c.code];
     for (const v of store.versions(c.code)) {
       if ((v.xp ?? 0) <= c.level || !buyable(store, v) || v.subname !== from.subname) continue;
-      const each = Math.max(1, price(store, v, taboo) - price(store, from, taboo));
+      const each = Math.max(1, cardPrice(store, v, taboo) - cardPrice(store, from, taboo));
       const all = v.myriad ? each : each * c.qty;
       if (each > xp || !rules.check(v, rest, c.qty).legal) continue;
       upgradesFound.push({
@@ -127,7 +122,7 @@ export async function upgrades(
   const bought: { c: RawCard; each: number; why: string; p: Played }[] = [];
   for (const c of store.byCode.values()) {
     if (!buyable(store, c) || names.has(norm(c.name))) continue;
-    const each = Math.max(1, price(store, c, taboo));
+    const each = Math.max(1, cardPrice(store, c, taboo));
     if (each > xp) continue;
     const v = rules.check(c, deck.slots, 1);
     if (!v.legal) continue;
@@ -201,7 +196,7 @@ export function upgradesText(r: UpgradesResult): string {
 }
 
 const inputSchema = z.object({
-  deck: z.string().describe("A deck id or arkhamdb.com deck link."),
+  deck: z.string().describe('A deck id, an arkhamdb.com deck link, or in a campaign chat a seat\'s deck ("seat:Alon").'),
   xp: z.number().int().min(1).max(60).describe("The experience the player has to spend now."),
   limit: z.number().int().min(1).max(MAX_NEW).optional().describe(`How many new cards to list, default ${DEFAULT_NEW}.`),
 });
@@ -215,7 +210,7 @@ export const upgradesTool = tool({
     "and new cards ranked by how often this investigator's liked decks play them, each with its exact XP price " +
     "under the taboo setting. Choose the purchases yourself, and say what each new card replaces.",
   inputSchema,
-  contextSchema: SettingsSchema,
+  contextSchema: ToolContextSchema,
   execute: (input, { context }): Promise<UpgradesResult> => safely(() => upgrades(input, context)),
   toModelOutput: ({ output }) => toolText(upgradesText(output)),
 });

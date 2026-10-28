@@ -4,7 +4,7 @@ import { norm } from "../cards";
 import { type Failure, failureText, safely, toolError, toolText, untrusted } from "../format";
 import { DECK_INDEX } from "../index/decks";
 import { type IndexRow, roleText } from "../index/schema";
-import { SettingsSchema } from "../settings";
+import { ToolContextSchema } from "../tool-context";
 import { deckUrl } from "../urls";
 
 const LIMIT = 5;
@@ -112,7 +112,7 @@ export const findDeckTool = tool({
     "its role or what it is built around. Returns the closest indexed decks for you to judge. A deck outside the index " +
     "can't be found by name: ask for its ArkhamDB link.",
   inputSchema,
-  contextSchema: SettingsSchema,
+  contextSchema: ToolContextSchema,
   execute: async ({ name }): Promise<FindDeckResult> => safely(async () => findDecks(name)),
   toModelOutput: ({ output }) => toolText(findDeckText(output)),
 });
