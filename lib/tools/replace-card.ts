@@ -6,7 +6,8 @@ import { type DeckCard, ignoredCopies, isWeakness, openDeck } from "../decks";
 import { type Failure, failureText, notFound, safely, toolError, toolText } from "../format";
 import { playRate, type Share, shareText } from "../index/usage";
 import { rulesFor } from "../legality";
-import { DEFAULT_SETTINGS, type Settings, SettingsSchema } from "../settings";
+import { DEFAULT_SETTINGS, type Settings } from "../settings";
+import { ToolContextSchema } from "../tool-context";
 
 export const GOALS = ["cheaper", "same_job", "different_job", "collection"] as const;
 export type Goal = (typeof GOALS)[number];
@@ -226,7 +227,7 @@ export function replaceText(r: ReplaceResult): string {
 }
 
 const inputSchema = z.object({
-  deck: z.string().describe("A deck id or arkhamdb.com deck link."),
+  deck: z.string().describe('A deck id, an arkhamdb.com deck link, or in a campaign chat a seat\'s deck ("seat:Alon").'),
   card: z.string().describe('The card to replace, by name ("Machete", "Shrivelling (3)") or code.'),
   goal: z.enum(GOALS),
   maxXp: z.number().int().min(0).max(5).optional().describe("Highest level allowed. Defaults to the replaced card's level."),
@@ -243,7 +244,7 @@ export const replaceCardTool = tool({
     "(a new effect this investigator's decks play), collection (an owned stand-in for a card not owned). " +
     "Candidates are ranked by likeness and popularity only; pick from their text.",
   inputSchema,
-  contextSchema: SettingsSchema,
+  contextSchema: ToolContextSchema,
   execute: (input, { context }): Promise<ReplaceResult> => safely(() => replaceCard(input, context)),
   toModelOutput: ({ output }) => toolText(replaceText(output)),
 });

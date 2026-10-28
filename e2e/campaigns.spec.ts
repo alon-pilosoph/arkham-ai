@@ -42,9 +42,44 @@ test("an invite link lets someone new sign up and join", async ({ page, browser 
   const theirs = await friend.newPage();
   await theirs.goto(link);
   await expect(theirs.getByText(`invited you to ${name}`)).toBeVisible();
-  await signIn(theirs, `friend-${info.project.name}@example.test`, { landsOn: "Join the campaign" });
+  // an address of its own: two runs signing one address up at once would race for its link
+  const email = `friend-${info.project.name}-${Date.now() % 1_000_000}@example.test`;
+  await signIn(theirs, email, { landsOn: "Join the campaign" });
   await theirs.getByRole("button", { name: "Join the campaign" }).click();
   await expect(theirs.getByRole("heading", { name })).toBeVisible();
-  await expect(theirs.getByRole("listitem").filter({ hasText: `friend-${info.project.name}@example.test` })).toBeVisible();
+  await expect(theirs.getByRole("listitem").filter({ hasText: email })).toBeVisible();
   await friend.close();
+});
+
+test("in a campaign's chat, a proposed change applies from its card", async ({ page }, info) => {
+  const name = `Chat ${info.project.name} ${Date.now() % 100000}`;
+  await page.goto("/campaigns");
+  await page.getByLabel("Name").fill(name);
+  await page.getByRole("button", { name: "Start campaign" }).click();
+  await page.getByLabel("New seat").fill("Lily");
+  await page.getByRole("button", { name: "Add seat" }).click();
+  await page.getByLabel("ArkhamDB deck link for Lily").fill("https://arkhamdb.com/decklist/view/33170");
+  await page.getByLabel("ArkhamDB deck link for Lily").press("Enter");
+  await expect(page.getByRole("heading", { name: "Lily · Lily Chen" })).toBeVisible();
+
+  // the page is server-rendered: typing before it is live loses the text; the sidebar's list of
+  // chats loads only once it is
+  const live = page.waitForResponse((r) => r.url().includes("/api/chats?campaign="));
+  await page.getByRole("link", { name: "Open the campaign's chats" }).click();
+  await live;
+  await expect(page.getByRole("combobox", { name: "Campaign" })).toHaveValue(/.+/);
+  const box = page.getByRole("textbox", { name: "Message input" });
+  await box.fill("Lily earned 3 XP");
+  await box.press("Enter");
+  await expect(page.getByText("Lily: +3 XP")).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("button", { name: "Apply" }).click();
+  await expect(page.getByText("Applied.")).toBeVisible();
+
+  await box.fill("What is in seat:Lily?");
+  await box.press("Enter");
+  await expect(page.getByText(/Boom Chakra Lacka/).first()).toBeVisible({ timeout: 15_000 });
+
+  await page.getByRole("link", { name: "See the campaign" }).click();
+  await expect(page.getByText("Lily: +3 XP")).toBeVisible();
+  await expect(page.locator("dd").filter({ hasText: /^3$/ })).toBeVisible();
 });

@@ -31,7 +31,7 @@
       "properties": {
         "ref": {
           "type": "string",
-          "description": "A deck id (\"33170\") or an arkhamdb.com deck link."
+          "description": "A deck id (\"33170\"), an arkhamdb.com deck link, or in a campaign chat a seat's deck (\"seat:Alon\")."
         },
         "guideOffset": {
           "description": "Continue a long guide, from the guideNextOffset of a previous call.",
@@ -172,7 +172,7 @@
       "properties": {
         "deck": {
           "type": "string",
-          "description": "A deck id or arkhamdb.com deck link."
+          "description": "A deck id, an arkhamdb.com deck link, or in a campaign chat a seat's deck (\"seat:Alon\")."
         },
         "card": {
           "type": "string",
@@ -216,7 +216,7 @@
       "properties": {
         "deck": {
           "type": "string",
-          "description": "A deck id or arkhamdb.com deck link."
+          "description": "A deck id, an arkhamdb.com deck link, or in a campaign chat a seat's deck (\"seat:Alon\")."
         },
         "xp": {
           "type": "integer",
@@ -251,6 +251,180 @@
       },
       "required": [
         "campaign"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "proposeChange": {
+    "description": "In a campaign's chat, propose a change to the campaign for the players to apply: what a scenario did (XP earned, trauma, an investigator killed or driven insane, the next scenario), or cards in and out of one seat's deck, priced in XP by the Rules Reference and checked against the deck's rules and the seat's unspent XP. Writes nothing: the players apply it from a card. Use it once the players have said what happened or agreed on a swap, with card codes from a tool, never from memory.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "scenario",
+            "deck"
+          ],
+          "description": "\"scenario\": what a scenario (or a correction) did to the seats; \"deck\": cards in or out of one seat's deck"
+        },
+        "seats": {
+          "description": "For \"scenario\"",
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "seat": {
+                "type": "string",
+                "description": "The seat's name, as the campaign note gives it"
+              },
+              "xpEarned": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 50
+              },
+              "xpSpent": {
+                "description": "XP spent outside a deck change, for a correction",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 50
+              },
+              "physicalTrauma": {
+                "description": "Trauma gained, or negative when healed",
+                "type": "integer",
+                "minimum": -5,
+                "maximum": 5
+              },
+              "mentalTrauma": {
+                "type": "integer",
+                "minimum": -5,
+                "maximum": 5
+              },
+              "status": {
+                "description": "killed or insane when the investigator was; active to bring a seat back",
+                "type": "string",
+                "enum": [
+                  "active",
+                  "killed",
+                  "insane"
+                ]
+              }
+            },
+            "required": [
+              "seat"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "nextScenario": {
+          "description": "For \"scenario\": the next scenario's name, or \"finished\"",
+          "type": "string"
+        },
+        "seat": {
+          "description": "For \"deck\": the seat's name",
+          "type": "string"
+        },
+        "add": {
+          "description": "For \"deck\": cards bought or upgraded into, paid for with XP",
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "A card code a tool returned"
+              },
+              "qty": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              }
+            },
+            "required": [
+              "code",
+              "qty"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "remove": {
+          "description": "For \"deck\": cards taken out, including the lower level of an upgrade",
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "A card code a tool returned"
+              },
+              "qty": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              }
+            },
+            "required": [
+              "code",
+              "qty"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "campaignAdd": {
+          "description": "For \"deck\": cards the campaign put in (story assets, weaknesses), free",
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "A card code a tool returned"
+              },
+              "qty": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              }
+            },
+            "required": [
+              "code",
+              "qty"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "campaignRemove": {
+          "description": "For \"deck\": cards the campaign took out",
+          "maxItems": 20,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "A card code a tool returned"
+              },
+              "qty": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              }
+            },
+            "required": [
+              "code",
+              "qty"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "kind"
       ],
       "additionalProperties": false
     }

@@ -13,8 +13,9 @@ import { cleanText } from "../cards";
 import { type DeckCard, deckMeta, guideText, openDeck, xpInList } from "../decks";
 import { type Failure, failureText, safely, toolText, untrusted } from "../format";
 import { deckChoices } from "../legality";
-import { DEFAULT_SETTINGS, type Settings, SettingsSchema } from "../settings";
+import { DEFAULT_SETTINGS, type Settings } from "../settings";
 import { tabooChange, tabooEntry } from "../taboo";
+import { ToolContextSchema } from "../tool-context";
 import { type DeckKind, deckUrl } from "../urls";
 
 const GUIDE_PAGE_CHARS = 24_000;
@@ -23,7 +24,8 @@ export type DeckResult =
   | {
       ok: true;
       id: number;
-      kind: DeckKind;
+      /** "seat": a campaign seat's deck, kept in the app; its url is the campaign page. */
+      kind: DeckKind | "seat";
       url: string;
       name: string;
       updated?: string;
@@ -56,7 +58,7 @@ export type DeckResult =
 export async function readDeck(ref: string, guideOffset = 0, settings: Settings = DEFAULT_SETTINGS): Promise<DeckResult> {
   const opened = await openDeck(ref, settings);
   if (!opened.ok) return opened;
-  const { store, deck, kind, taboo, tabooError, cards } = opened;
+  const { store, deck, kind, campaignUrl, taboo, tabooError, cards } = opened;
   const { inv, ability, options, parallelFront, parallelBack } = opened.sides;
   const invTaboo = tabooEntry(store, taboo, inv.code) ?? tabooEntry(store, taboo, options.code);
   const guide = guideText(deck.description_md);
@@ -66,7 +68,7 @@ export async function readDeck(ref: string, guideOffset = 0, settings: Settings 
     ok: true,
     id: deck.id,
     kind,
-    url: deckUrl(deck.id, kind),
+    url: kind === "seat" ? (campaignUrl ?? "/campaigns") : deckUrl(deck.id, kind),
     name: deck.name,
     updated: (deck.date_update ?? deck.date_creation)?.slice(0, 10),
     taboo: taboo ? { id: taboo.id, code: taboo.code, date: taboo.date } : null,
@@ -115,7 +117,7 @@ export function deckText(r: DeckResult): string {
   if (!r.ok) return failureText(r);
   const i = r.investigator;
   const out = [
-    `# Deck ${r.id} (${r.kind}) ${r.url}`,
+    r.kind === "seat" ? `# This campaign's deck, kept in the app (${r.url})` : `# Deck ${r.id} (${r.kind}) ${r.url}`,
     untrusted("deck name, written by its author", r.name),
     `updated ${r.updated ?? "?"}; XP in the list ${r.xp}; ${r.cardCount} cards plus weaknesses`,
     r.taboo
@@ -149,7 +151,7 @@ export function deckText(r: DeckResult): string {
 }
 
 const inputSchema = z.object({
-  ref: z.string().describe('A deck id ("33170") or an arkhamdb.com deck link.'),
+  ref: z.string().describe('A deck id ("33170"), an arkhamdb.com deck link, or in a campaign chat a seat\'s deck ("seat:Alon").'),
   guideOffset: z.number().int().min(0).optional().describe("Continue a long guide, from the guideNextOffset of a previous call."),
 });
 
@@ -162,7 +164,7 @@ export const deckTool = tool({
     "customizations, and the author's own guide. Use it to explain how a deck plays, and read it before " +
     "suggesting a swap or a partner for it.",
   inputSchema,
-  contextSchema: SettingsSchema,
+  contextSchema: ToolContextSchema,
   execute: ({ ref, guideOffset }, { context }): Promise<DeckResult> => safely(() => readDeck(ref, guideOffset, context)),
   toModelOutput: ({ output }) => toolText(deckText(output)),
 });

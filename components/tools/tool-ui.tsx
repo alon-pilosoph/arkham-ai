@@ -5,6 +5,7 @@ import { CampaignPrepUI } from "./campaign-prep-ui";
 import { CardsUI } from "./cards-ui";
 import { DeckUI } from "./deck-ui";
 import { FindDeckUI } from "./find-deck-ui";
+import { ProposeChangeUI } from "./propose-change-ui";
 import { RecommendUI } from "./recommend-decks-ui";
 import { ReplaceUI } from "./replace-card-ui";
 import { UpgradesUI } from "./upgrades-ui";
@@ -17,6 +18,7 @@ const arkhamToolkit = defineToolkit({
   replaceCard: { type: "backend", render: ReplaceUI },
   upgrades: { type: "backend", render: UpgradesUI },
   campaignPrep: { type: "backend", render: CampaignPrepUI },
+  proposeChange: { type: "backend", render: ProposeChangeUI },
 });
 
 export function useArkhamTools() {
