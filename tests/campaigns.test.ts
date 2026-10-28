@@ -2,6 +2,7 @@
 
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { mayJoin } from "@/lib/access";
+import { arkhamDbText, exportFileName } from "@/lib/campaign/export";
 import { currentInvite, findInvite, join, rememberInvitedEmail, replaceInvite } from "@/lib/campaign/invites";
 import {
   addSeat,
@@ -12,12 +13,15 @@ import {
   lockDeck,
   proposalChange,
   record,
+  restoreDeck,
   revert,
   STALE,
   updateSettings,
 } from "@/lib/campaign/store";
+import { getCards } from "@/lib/cards";
 import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
+import { currentUser } from "@/lib/session";
 import { propose } from "@/lib/tools/propose-change";
 
 const OWNER = { id: "owner", email: "owner@example.com", name: "Alon" };
@@ -230,6 +234,75 @@ describe("deck changes", () => {
     const seatView = (await loadCampaign(OWNER.id, id))?.seats[0];
     expect(seatView?.deck?.campaignCards).toEqual({ "01020": 1 });
     expect(seatView?.xp.spent).toBe(0);
+  });
+
+  test("restoring an earlier version is a new version, priced like any swap", async () => {
+    const { id, v, seatId } = await withDeck(8);
+    value(await changeDeck(OWNER.id, id, await v(), { seatId, add: { [SHRIVELLING_3]: 2 }, remove: { [SHRIVELLING_0]: 2 } }));
+    let view = await loadCampaign(OWNER.id, id);
+    const first = view?.seats[0].versions.find((x) => x.number === 1);
+    expect(view?.seats[0].versions.map((x) => x.number)).toEqual([2, 1]);
+    // going back to level 0 takes the upgrades out (no refund) and buys the level 0 copies again
+    value(await restoreDeck(OWNER.id, id, await v(), seatId, first?.id ?? ""));
+    view = await loadCampaign(OWNER.id, id);
+    expect(view?.seats[0].deck?.number).toBe(3);
+    expect(view?.seats[0].deck?.list.slots).toEqual(list.slots);
+    expect(view?.seats[0].xp).toEqual({ earned: 8, spent: 8, unspent: 0 });
+    expect(view?.changes[0].summary).toBe("Roland: back to version 1, out 2× Shrivelling; in 2× Shrivelling (2 XP)");
+    expect(await restoreDeck(OWNER.id, id, await v(), seatId, view?.seats[0].deck?.id ?? "")).toEqual({
+      ok: false,
+      error: "That is Roland's deck now.",
+    });
+  });
+
+  test("a version for another investigator isn't restored", async () => {
+    const { id, v, seatId } = await withDeck(0);
+    value(
+      await lockDeck(OWNER.id, id, await v(), { seatId, name: "Roland", list: LIST, investigatorCode: "01001", source: null }),
+    );
+    const agnes = (await loadCampaign(OWNER.id, id))?.seats[0].versions.find((x) => x.number === 1);
+    expect(await restoreDeck(OWNER.id, id, await v(), seatId, agnes?.id ?? "")).toEqual({
+      ok: false,
+      error: "That version is for another investigator; lock it in again instead.",
+    });
+  });
+});
+
+describe("export for ArkhamDB", () => {
+  test("names the investigator, then each card with its subtitle and level", async () => {
+    const store = await getCards();
+    const text = arkhamDbText(store, {
+      list: { investigator_code: "01004", slots: { "02154": 2, "01060": 1 } },
+      campaignCards: { "01020": 1 },
+    });
+    const lines = text.trim().split("\n");
+    expect(lines[0]).toBe("Agnes Baker");
+    expect(lines).toContain("2x Shrivelling [3]");
+    expect(lines).toContain("1x Shrivelling [0]");
+    expect(lines).toContain(`1x ${store.get("01020")?.name} [0]`);
+    expect(exportFileName('Agnes / "v2"')).toBe("Agnes  v2.txt");
+  });
+
+  test("the download is for members only, and serves a version by number", async () => {
+    const { GET } = await import("@/app/api/campaigns/[id]/seats/[seatId]/export/route");
+    const id = value(await createCampaign(OWNER.id, { name: "Export", code: "ptc", difficulty: "standard", taboo: false }));
+    const v = async () => (await loadCampaign(OWNER.id, id))?.version ?? -1;
+    const seatId = value(await addSeat(OWNER.id, id, await v(), { name: "Roland" })) as string;
+    value(
+      await lockDeck(OWNER.id, id, await v(), { seatId, name: "Roland", list: LIST, investigatorCode: "01001", source: null }),
+    );
+    const get = (who: typeof OWNER | null, query = "") => {
+      vi.mocked(currentUser).mockResolvedValueOnce(who);
+      return GET(new Request(`http://x/api/campaigns/${id}/seats/${seatId}/export${query}`), {
+        params: Promise.resolve({ id, seatId }),
+      });
+    };
+    expect((await get(null)).status).toBe(401);
+    expect((await get(STRANGER)).status).toBe(404);
+    expect((await get(OWNER, "?version=9")).status).toBe(404);
+    const res = await get(OWNER, "?version=1");
+    expect(res.headers.get("content-disposition")).toContain('filename="Roland v1.txt"');
+    expect((await res.text()).split("\n")[0]).toBe("Roland Banks");
   });
 });
 
