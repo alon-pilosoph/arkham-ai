@@ -400,3 +400,12 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   so every line carries the level, `[0]` included; its paste box matches by name only and can
   pick the wrong level, so the page points at the file import. The investigator's line is a bare
   name: a subtitle there keeps it from matching.
+
+## Deck guides in campaigns (November 6)
+
+- **Found.** Locking in a deck kept its list and dropped its guide, so a campaign's deck always
+  read as having none, and XP advice never saw an upgrade path. Outside campaigns the guide was
+  there, but only if the model happened to read the deck as well as call `upgrades`.
+- **Built.** Deck versions keep the guide. Spending XP now starts from it: read the deck, follow
+  the guide's path as far as the XP and the legal, owned cards allow, and offer alternatives.
+- **Direction.** The app becomes chat first: [plans/chat-first.md](plans/chat-first.md).

@@ -28,6 +28,8 @@ export type DeckListJson = {
   ignoreDeckLimitSlots?: Record<string, number>;
   meta?: string;
   taboo_id?: number | null;
+  /** The author's guide, kept with the list: it often lays out the deck's upgrade path. */
+  description_md?: string;
 };
 
 export type SeatView = {

@@ -100,6 +100,7 @@ export async function lockDeckAction(form: FormData) {
         ignoreDeckLimitSlots: map(deck.ignoreDeckLimitSlots),
         meta: typeof deck.meta === "string" ? deck.meta : deck.meta ? JSON.stringify(deck.meta) : undefined,
         taboo_id: deck.taboo_id ?? null,
+        description_md: deck.description_md,
       },
       investigatorCode: store.canonical(deck.investigator_code),
       source: `${kind}:${deck.id}`,

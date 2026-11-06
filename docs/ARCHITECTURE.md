@@ -134,7 +134,9 @@ A campaign (`lib/campaign/store.ts`, `/campaigns`) keeps only what deckbuilding 
 switch, the next scenario (from `scenarios()` in `lib/campaigns.ts`), and its seats. A seat is a
 player's place, not an account: a name, optionally the account playing it, the investigator,
 whether they were killed or driven insane, and its deck. A deck is locked in from an ArkhamDB
-link; every lock-in is a new version, and versions are never changed. XP (earned positive,
+link; every lock-in is a new version, and versions are never changed. A version keeps the deck's
+guide, since guides often lay out the upgrade path, and one locked in before guides were kept
+reads it from its ArkhamDB source. XP (earned positive,
 spent negative) and trauma are ledgers of entries, so every total is a sum and every entry names
 the change that made it.
 
