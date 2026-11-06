@@ -10,6 +10,7 @@ import {
   tabooChangeText,
 } from "../card-text";
 import { cleanText } from "../cards";
+import { type LinkedDeck, linkedVersions } from "../deck-links";
 import { type DeckCard, deckMeta, guideText, openDeck, xpInList } from "../decks";
 import { type Failure, failureText, safely, toolText, untrusted } from "../format";
 import { deckChoices } from "../legality";
@@ -52,6 +53,7 @@ export type DeckResult =
       guideChars: number;
       guideOffset: number;
       guideNextOffset?: number;
+      linked: LinkedDeck[];
     }
   | Failure;
 
@@ -94,6 +96,7 @@ export async function readDeck(ref: string, guideOffset = 0, settings: Settings 
     guideChars: guide.length,
     guideOffset: offset,
     ...(next < guide.length ? { guideNextOffset: next } : {}),
+    linked: offset ? [] : await linkedVersions(deck),
   };
 }
 
@@ -146,6 +149,11 @@ export function deckText(r: DeckResult): string {
     out.push(`\n# Author's guide, continued from character ${r.guideOffset}`);
     out.push(untrusted("deck guide, written by its author", r.guide));
   }
+  if (r.linked.length)
+    out.push(
+      `\n# Other versions of this deck, linked from its guide. A deck's guide often links the version to start from.`,
+      ...r.linked.map((v) => `- ${untrusted("deck name", v.name)}, ${v.xp} XP: ${v.url}`),
+    );
   if (r.guideNextOffset !== undefined) out.push(`\nThe guide continues: call deck again with guideOffset ${r.guideNextOffset}.`);
   return out.join("\n");
 }

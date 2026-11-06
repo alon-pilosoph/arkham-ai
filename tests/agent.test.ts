@@ -86,7 +86,8 @@ describe("runAgent budgets", () => {
     const outputs = (await result.steps)[0].toolResults.map((r) => JSON.stringify(r.output));
     expect(outputs.length).toBe(BUDGET.maxToolCalls + extra);
     expect(outputs.filter((r) => r.includes(TOOL_BUDGET_SPENT)).length).toBe(extra);
-    expect(fetched.length).toBe(BUDGET.maxToolCalls);
+    // each read also looks up the deck its guide links
+    expect(fetched.filter((url) => url.includes(DECK.lilyChen)).length).toBe(BUDGET.maxToolCalls);
     expect(JSON.stringify(model.doStreamCalls[1].prompt)).toContain(`ERROR: ${TOOL_BUDGET_SPENT}`);
     expect(model.doStreamCalls[1].toolChoice).toEqual({ type: "none" });
   });

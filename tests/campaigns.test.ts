@@ -21,6 +21,8 @@ import {
 import { getCards } from "@/lib/cards";
 import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
+import { linkedVersions, startingVersions } from "@/lib/deck-links";
+import { fetchDeck } from "@/lib/decks";
 import { currentUser } from "@/lib/session";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
 import { readDeck } from "@/lib/tools/deck";
@@ -267,6 +269,39 @@ describe("deck changes", () => {
       ok: false,
       error: "That version is for another investigator; lock it in again instead.",
     });
+  });
+});
+
+describe("starting and target decks", () => {
+  test("a guide's link to a lower-XP version of the deck is found; other decks aren't", async () => {
+    vi.stubEnv("ARKHAM_DECKS_DIR", "tests/fixtures");
+    const finished = await fetchDeck({ id: 900001 });
+    if (!finished.ok) throw new Error(finished.message);
+    const found = await startingVersions(finished.data.deck);
+    expect(found).toMatchObject([{ name: "Lily - Starter", source: "decklist:900002" }]);
+    expect(found[0].xp).toBe(0);
+    // a link to the higher version isn't somewhere to start from
+    const starter = { ...finished.data.deck, id: 1, slots: {}, description_md: "https://arkhamdb.com/decklist/view/900001" };
+    expect(await linkedVersions(starter)).toHaveLength(1);
+    expect(await startingVersions(starter)).toEqual([]);
+    // another investigator's deck is a partner, not a version
+    const other = { ...starter, investigator_code: "01001" };
+    expect(await linkedVersions(other)).toEqual([]);
+  });
+
+  test("a seat keeps its target through later lock-ins, and a revert puts the old one back", async () => {
+    const { id, v, seatId } = await setUp();
+    const lock = { seatId, name: "Roland", list: LIST, investigatorCode: "01001", source: null };
+    const target = { name: "Finished", source: "decklist:900001", xp: 12 };
+    value(await lockDeck(OWNER.id, id, await v(), { ...lock, target }));
+    value(await lockDeck(OWNER.id, id, await v(), lock));
+    let view = await loadCampaign(OWNER.id, id);
+    expect(view?.seats[0].target).toEqual(target);
+    expect(view?.changes[1].summary).toBe("Roland: locked in Roland, building toward Finished");
+    value(await revert(OWNER.id, id, await v(), view?.changes[0].id ?? ""));
+    view = await loadCampaign(OWNER.id, id);
+    value(await revert(OWNER.id, id, await v(), view?.changes[2].id ?? ""));
+    expect((await loadCampaign(OWNER.id, id))?.seats[0].target).toBeNull();
   });
 });
 

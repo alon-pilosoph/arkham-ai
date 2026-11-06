@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { currentInvite } from "@/lib/campaign/invites";
 import { DIFFICULTIES, loadCampaign, priceSwap, restoreSwap, type SeatView, STATUSES } from "@/lib/campaign/store";
 import { type CardStore, getCards } from "@/lib/cards";
-import { deckCards, deckMeta, xpInList } from "@/lib/decks";
+import { type LinkedDeck, startingVersions } from "@/lib/deck-links";
+import { deckCards, deckMeta, fetchDeck, parseRef, xpInList } from "@/lib/decks";
 import { currentUser } from "@/lib/session";
-import { type DeckKind, deckUrl } from "@/lib/urls";
+import { sourceUrl } from "@/lib/urls";
 import {
   addSeatAction,
   lockDeckAction,
@@ -23,15 +24,13 @@ export const metadata: Metadata = { title: "Campaign · Arkham assistant" };
 
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
-function deckLink(source: string | null): string | null {
-  const m = source?.match(/^(decklist|deck):(\d+)$/);
-  return m ? deckUrl(Number(m[2]), m[1] as DeckKind) : null;
-}
-
 /** What putting a seat's deck back to a version would cost, or why it can't. */
 type RestorePrice = { cost: number } | { error: string };
 
 const IMPORT_HINT = "On ArkhamDB: My decks → Import Deck → File";
+
+/** A deck being locked in that links versions to start from, waiting for the player to choose. */
+type DeckChoice = { link: string; name: string; versions: LinkedDeck[] };
 
 const when = (at: string) => new Date(at).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
 
@@ -41,17 +40,27 @@ function SeatCard({
   campaignId,
   version,
   restorePrices,
+  choice,
 }: {
   s: SeatView;
   store: CardStore;
   campaignId: string;
   version: number;
   restorePrices: Record<string, RestorePrice>;
+  choice?: DeckChoice;
 }) {
   const investigator = s.investigatorCode ? store.get(s.investigatorCode)?.name : undefined;
   const list = s.deck?.list;
   const cards = list ? deckCards(store, list.slots, deckMeta(list)) : [];
-  const link = deckLink(s.deck?.source ?? null);
+  const link = sourceUrl(s.deck?.source ?? null);
+  const lockFields = (
+    <>
+      <input type="hidden" name="campaignId" value={campaignId} />
+      <input type="hidden" name="version" value={version} />
+      <input type="hidden" name="seatId" value={s.id} />
+      <input type="hidden" name="decided" value="1" />
+    </>
+  );
   const exportUrl = (n?: number) => `/api/campaigns/${campaignId}/seats/${s.id}/export${n ? `?version=${n}` : ""}`;
   return (
     <div className="flex flex-col gap-3 rounded-xl border p-4">
@@ -101,6 +110,42 @@ function SeatCard({
       ) : (
         <p className="text-muted-foreground text-sm">No deck locked in yet.</p>
       )}
+      {s.target ? (
+        <p className="text-sm">
+          <span className="text-muted-foreground">Building toward </span>
+          <a
+            href={sourceUrl(s.target.source) ?? undefined}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2"
+          >
+            {s.target.name}
+          </a>
+          <span className="text-muted-foreground"> · {s.target.xp} XP</span>
+        </p>
+      ) : null}
+      {choice ? (
+        <div className="flex flex-col gap-2 rounded-md border p-3 text-sm">
+          <p>{choice.name} links a version with less XP. Which do you start from?</p>
+          {choice.versions.map((v) => (
+            <form key={v.source} action={lockDeckAction}>
+              {lockFields}
+              <input type="hidden" name="deck" value={v.url} />
+              <input type="hidden" name="target" value={choice.link} />
+              <Button type="submit" size="sm" className="h-auto whitespace-normal py-1.5 text-start">
+                Start from {v.name} ({v.xp} XP), and build toward this one
+              </Button>
+            </form>
+          ))}
+          <form action={lockDeckAction}>
+            {lockFields}
+            <input type="hidden" name="deck" value={choice.link} />
+            <Button type="submit" variant="outline" size="sm">
+              Play this one as it is
+            </Button>
+          </form>
+        </div>
+      ) : null}
       {s.versions.length > 1 ? (
         <details className="text-sm">
           <summary className="cursor-pointer">Earlier versions ({s.versions.length - 1})</summary>
@@ -158,6 +203,14 @@ function SeatCard({
   );
 }
 
+async function deckChoice(link: string | string[] | undefined): Promise<DeckChoice | undefined> {
+  const ref = typeof link === "string" ? parseRef(link) : null;
+  const fetched = ref ? await fetchDeck(ref) : null;
+  if (!fetched?.ok) return undefined;
+  const versions = await startingVersions(fetched.data.deck);
+  return versions.length ? { link: link as string, name: fetched.data.deck.name, versions } : undefined;
+}
+
 export default async function CampaignPage(props: PageProps<"/campaigns/[id]">) {
   const { id } = await props.params;
   const h = await headers();
@@ -166,6 +219,7 @@ export default async function CampaignPage(props: PageProps<"/campaigns/[id]">) 
   const [c, params, store] = await Promise.all([loadCampaign(user.id, id), props.searchParams, getCards()]);
   if (!c) notFound();
   const invite = await currentInvite(c.id, user.id);
+  const choice = await deckChoice(params.deck);
   const restorePrices: Record<string, RestorePrice> = {};
   for (const s of c.seats)
     for (const v of s.versions) {
@@ -209,9 +263,17 @@ export default async function CampaignPage(props: PageProps<"/campaigns/[id]">) 
       </header>
       <ErrorNote error={params.error} />
 
-      <Section title="Seats">
+      <Section title="Seats" id="seats">
         {c.seats.map((s) => (
-          <SeatCard key={s.id} s={s} store={store} campaignId={c.id} version={c.version} restorePrices={restorePrices} />
+          <SeatCard
+            key={s.id}
+            s={s}
+            store={store}
+            campaignId={c.id}
+            version={c.version}
+            restorePrices={restorePrices}
+            choice={params.choose === s.id ? choice : undefined}
+          />
         ))}
         <form action={addSeatAction} className="flex flex-wrap items-end gap-2">
           {hidden}

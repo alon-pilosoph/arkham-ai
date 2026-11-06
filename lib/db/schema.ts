@@ -205,6 +205,8 @@ export const seat = pgTable(
     status: text("status").notNull().default("active"),
     /** The deck now: the newest version, unless a revert went back to an earlier one. */
     deckId: text("deck_id"),
+    /** The finished deck this seat is building toward, on ArkhamDB: { name, source, xp }. */
+    target: jsonb("target"),
     position: integer("position").notNull().default(0),
     createdAt: timestamp("created_at").notNull().$defaultFn(now),
   },

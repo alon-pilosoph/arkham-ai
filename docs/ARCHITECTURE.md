@@ -136,7 +136,11 @@ player's place, not an account: a name, optionally the account playing it, the i
 whether they were killed or driven insane, and its deck. A deck is locked in from an ArkhamDB
 link; every lock-in is a new version, and versions are never changed. A version keeps the deck's
 guide, since guides often lay out the upgrade path, and one locked in before guides were kept
-reads it from its ArkhamDB source. XP (earned positive,
+reads it from its ArkhamDB source. A published deck is often the finished one, and its guide links
+the version to start from: `lib/deck-links.ts` finds linked decks for the same investigator with
+less XP, and the player chooses. Starting from one keeps the finished deck as the seat's `target`,
+a reference to ArkhamDB rather than a version, which the chat reads to set the direction of
+upgrades. XP (earned positive,
 spent negative) and trauma are ledgers of entries, so every total is a sum and every entry names
 the change that made it.
 

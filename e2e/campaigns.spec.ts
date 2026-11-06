@@ -44,6 +44,23 @@ test("a campaign: a seat, a deck locked in, a scenario recorded and reverted", a
   await expect(page.getByText("Lily: back to version 1")).toBeVisible();
 });
 
+test("a deck that links a starting version asks which to play, and keeps the finished one as a target", async ({
+  page,
+}, info) => {
+  await page.goto("/campaigns");
+  await page.getByLabel("Name").fill(`Target ${info.project.name} ${Date.now() % 100000}`);
+  await page.getByLabel("Campaign").selectOption({ label: "The Path to Carcosa" });
+  await page.getByRole("button", { name: "Start campaign" }).click();
+  await page.getByLabel("New seat").fill("Lily");
+  await page.getByRole("button", { name: "Add seat" }).click();
+  await page.getByLabel("ArkhamDB deck link for Lily").fill("https://arkhamdb.com/decklist/view/900001");
+  await page.getByRole("button", { name: "Lock in", exact: true }).click();
+  await page.getByRole("button", { name: /Start from Lily - Starter \(0 XP\)/ }).click();
+  await expect(page.getByText("Building toward", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Lily - Starter" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Lily - Finished" })).toBeVisible();
+});
+
 test("an invite link lets someone new sign up and join", async ({ page, browser }, info) => {
   const name = `Invite ${info.project.name} ${Date.now() % 100000}`;
   await page.goto("/campaigns");

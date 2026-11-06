@@ -16,7 +16,7 @@ import { SYSTEM_PROMPT } from "./prompt";
 import { DEFAULT_SETTINGS, type SavedDeck, type Settings } from "./settings";
 import { type CampaignContext, DEFAULT_CONTEXT, type ToolContext } from "./tool-context";
 import { type ToolName, tools } from "./tools";
-import { deckUrl } from "./urls";
+import { deckUrl, sourceUrl } from "./urls";
 
 export const BUDGET = {
   maxSteps: 10,
@@ -49,8 +49,11 @@ export function campaignNote(c: CampaignContext, investigatorName: (code: string
     const who = s.userId === c.askerId ? " (the asking player's)" : "";
     const inv = s.investigatorCode ? investigatorName(s.investigatorCode) : undefined;
     const deck = s.deck ? `deck ${untrusted("deck name", s.deck.name || "(untitled)")}, version ${s.deck.number}` : "no deck yet";
+    const target = s.target
+      ? `, building toward ${untrusted("deck name", s.target.name)} (${s.target.xp} XP, ${sourceUrl(s.target.source)})`
+      : "";
     const status = s.status === "active" ? "" : `; ${s.status}`;
-    return `seat ${untrusted("seat name", s.name)}${who}: ${inv ?? "no investigator yet"}, ${deck}; ${s.xp.unspent} unspent XP (${s.xp.earned} earned, ${s.xp.spent} spent); trauma ${s.trauma.physical} physical, ${s.trauma.mental} mental${status}`;
+    return `seat ${untrusted("seat name", s.name)}${who}: ${inv ?? "no investigator yet"}, ${deck}${target}; ${s.xp.unspent} unspent XP (${s.xp.earned} earned, ${s.xp.spent} spent); trauma ${s.trauma.physical} physical, ${s.trauma.mental} mental${status}`;
   });
   return [
     `This chat is in the campaign ${untrusted("campaign name", c.name)}: ${c.campaignName}, ${c.difficulty} difficulty, ${next ? `next scenario ${next} (${c.nextScenario + 1} of ${c.scenarios.length})` : "finished"}.`,
