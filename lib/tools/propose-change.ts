@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { type DeckSwap, priceSwap, type RecordInput, type SeatView, STATUSES } from "../campaign/store";
+import { type DeckSwap, MAX_DIRECTION, priceSwap, type RecordInput, type SeatView, STATUSES } from "../campaign/store";
 import { getCards } from "../cards";
 import { type Failure, failureText, notFound, safely, toolError, toolText } from "../format";
 import { type CampaignContext, ToolContextSchema } from "../tool-context";
@@ -13,7 +13,10 @@ export type Proposal = {
   campaignId: string;
   version: number;
   summary: string[];
-  change: { kind: "scenario"; record: RecordInput } | { kind: "deck"; swap: DeckSwap; cost: number };
+  change:
+    | { kind: "scenario"; record: RecordInput }
+    | { kind: "deck"; swap: DeckSwap; cost: number }
+    | { kind: "direction"; seatId: string; direction: string };
 };
 
 export type ProposeResult = Proposal | Failure;
@@ -24,8 +27,11 @@ const Cards = z
 
 const inputSchema = z.object({
   kind: z
-    .enum(["scenario", "deck"])
-    .describe('"scenario": what a scenario (or a correction) did to the seats; "deck": cards in or out of one seat\'s deck'),
+    .enum(["scenario", "deck", "direction"])
+    .describe(
+      '"scenario": what a scenario (or a correction) did to the seats; "deck": cards in or out of one seat\'s deck; ' +
+        '"direction": where the players want one seat\'s deck to go',
+    ),
   seats: z
     .array(
       z.object({
@@ -41,7 +47,12 @@ const inputSchema = z.object({
     .optional()
     .describe('For "scenario"'),
   nextScenario: z.string().optional().describe('For "scenario": the next scenario\'s name, or "finished"'),
-  seat: z.string().optional().describe('For "deck": the seat\'s name'),
+  seat: z.string().optional().describe('For "deck" and "direction": the seat\'s name'),
+  direction: z
+    .string()
+    .max(MAX_DIRECTION)
+    .optional()
+    .describe('For "direction": what they said, kept short, such as "a flex mystic, not a battle mage". Empty clears it.'),
   add: Cards.optional().describe('For "deck": cards bought or upgraded into, paid for with XP'),
   remove: Cards.optional().describe('For "deck": cards taken out, including the lower level of an upgrade'),
   campaignAdd: Cards.optional().describe('For "deck": cards the campaign put in (story assets, weaknesses), free'),
@@ -67,6 +78,17 @@ export async function propose(input: ProposeInput, campaign: CampaignContext | n
     );
   const store = await getCards();
   const base = { ok: true as const, proposalId: crypto.randomUUID(), campaignId: campaign.id, version: campaign.version };
+  if (input.kind === "direction") {
+    const s = input.seat ? findSeat(campaign, input.seat) : undefined;
+    if (!s) return notFound(`No seat named "${input.seat ?? ""}". The seats: ${campaign.seats.map((x) => x.name).join(", ")}.`);
+    const direction = (input.direction ?? "").trim();
+    if (direction === (s.direction ?? "")) return toolError(`That is already ${s.name}'s direction.`);
+    return {
+      ...base,
+      summary: [direction ? `${s.name}'s deck: ${direction}` : `${s.name}'s deck: clear the direction`],
+      change: { kind: "direction", seatId: s.id, direction },
+    };
+  }
   if (input.kind === "deck") {
     const s = input.seat ? findSeat(campaign, input.seat) : undefined;
     if (!s) return notFound(`No seat named "${input.seat ?? ""}". The seats: ${campaign.seats.map((x) => x.name).join(", ")}.`);
@@ -151,8 +173,9 @@ export function proposeText(r: ProposeResult): string {
 export const proposeChangeTool = tool({
   description:
     "In a campaign's chat, propose a change to the campaign for the players to apply: what a scenario did (XP earned, " +
-    "trauma, an investigator killed or driven insane, the next scenario), or cards in and out of one seat's deck, priced " +
-    "in XP by the Rules Reference and checked against the deck's rules and the seat's unspent XP. Writes nothing: the " +
+    "trauma, an investigator killed or driven insane, the next scenario), cards in and out of one seat's deck, priced " +
+    "in XP by the Rules Reference and checked against the deck's rules and the seat's unspent XP, or where the players " +
+    "want a seat's deck to go, which every later chat then sees. Writes nothing: the " +
     "players apply it from a card. Use it once the players have said what happened or agreed on a swap, with card codes " +
     "from a tool, never from memory.",
   inputSchema,

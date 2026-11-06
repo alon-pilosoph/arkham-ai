@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { changeDeck, proposalChange, record } from "@/lib/campaign/store";
+import { changeDeck, MAX_DIRECTION, proposalChange, record, setDirection } from "@/lib/campaign/store";
 import { currentUser, SIGNED_OUT } from "@/lib/session";
 
 const Counts = z.record(z.string().max(20), z.number().int().min(1).max(10));
@@ -33,6 +33,7 @@ const Apply = z.object({
         campaignRemove: Counts.optional(),
       }),
     }),
+    z.object({ kind: z.literal("direction"), seatId: z.string(), direction: z.string().max(MAX_DIRECTION) }),
   ]),
 });
 
@@ -49,6 +50,8 @@ export async function POST(req: Request, ctx: RouteContext<"/api/campaigns/[id]/
   const done =
     change.kind === "scenario"
       ? await record(user.id, id, version, { ...change.record, proposalId })
-      : await changeDeck(user.id, id, version, { ...change.swap, proposalId });
+      : change.kind === "deck"
+        ? await changeDeck(user.id, id, version, { ...change.swap, proposalId })
+        : await setDirection(user.id, id, version, { ...change, proposalId });
   return done.ok ? Response.json({ ok: true }) : Response.json({ ok: false, error: done.error }, { status: 409 });
 }

@@ -2,10 +2,12 @@
 
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { mayJoin } from "@/lib/access";
+import { campaignNote } from "@/lib/agent";
 import { arkhamDbText, exportFileName } from "@/lib/campaign/export";
 import { currentInvite, findInvite, join, rememberInvitedEmail, replaceInvite } from "@/lib/campaign/invites";
 import {
   addSeat,
+  type CampaignView,
   changeDeck,
   createCampaign,
   type DeckListJson,
@@ -16,6 +18,7 @@ import {
   restoreDeck,
   revert,
   STALE,
+  setDirection,
   updateSettings,
 } from "@/lib/campaign/store";
 import { getCards } from "@/lib/cards";
@@ -25,6 +28,7 @@ import { linkedVersions, startingVersions } from "@/lib/deck-links";
 import { fetchDeck } from "@/lib/decks";
 import { currentUser } from "@/lib/session";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
+import type { CampaignContext } from "@/lib/tool-context";
 import { readDeck } from "@/lib/tools/deck";
 import { propose } from "@/lib/tools/propose-change";
 
@@ -302,6 +306,49 @@ describe("starting and target decks", () => {
     view = await loadCampaign(OWNER.id, id);
     value(await revert(OWNER.id, id, await v(), view?.changes[2].id ?? ""));
     expect((await loadCampaign(OWNER.id, id))?.seats[0].target).toBeNull();
+  });
+});
+
+describe("what a campaign remembers about its decks", () => {
+  test("a direction is proposed, applied, reverted, and refused under a later one", async () => {
+    const { id, v, seatId } = await setUp();
+    const ctx = async () => ({ ...(await loadCampaign(OWNER.id, id)), askerId: OWNER.id }) as CampaignContext;
+    const proposal = await propose({ kind: "direction", seat: "roland", direction: " a flex guardian " }, await ctx());
+    expect(proposal).toMatchObject({
+      summary: ["Roland's deck: a flex guardian"],
+      change: { seatId, direction: "a flex guardian" },
+    });
+    expect((await ctx()).seats[0].direction).toBeNull();
+
+    value(await setDirection(OWNER.id, id, await v(), { seatId, direction: "a flex guardian", proposalId: "d1" }));
+    expect((await ctx()).seats[0].direction).toBe("a flex guardian");
+    expect(await propose({ kind: "direction", seat: "Roland", direction: "a flex guardian" }, await ctx())).toMatchObject({
+      ok: false,
+    });
+    const first = (await ctx()).changes[0].id;
+    expect(await proposalChange(OWNER.id, id, "d1")).toBe(first);
+
+    value(await setDirection(OWNER.id, id, await v(), { seatId, direction: "all in on fighting" }));
+    expect((await revert(OWNER.id, id, await v(), first)).ok).toBe(false);
+    value(await revert(OWNER.id, id, await v(), (await ctx()).changes[0].id));
+    expect((await ctx()).seats[0].direction).toBe("a flex guardian");
+  });
+
+  test("every turn carries a seat's direction and its deck changes, without reverted ones", async () => {
+    const { id, v, seatId } = await setUp();
+    const list: DeckListJson = { investigator_code: "01004", slots: { "01060": 2, "01061": 2 } };
+    value(await lockDeck(OWNER.id, id, await v(), { seatId, name: "Agnes", list, investigatorCode: "01004", source: null }));
+    value(await record(OWNER.id, id, await v(), { entries: [{ seatId, kind: "xp", amount: 9 }] }));
+    value(await changeDeck(OWNER.id, id, await v(), { seatId, add: { "02154": 1 }, remove: { "01060": 1 } }));
+    value(await changeDeck(OWNER.id, id, await v(), { seatId, add: {}, remove: { "01061": 1 } }));
+    value(await setDirection(OWNER.id, id, await v(), { seatId, direction: "a flex mystic" }));
+    let view = await loadCampaign(OWNER.id, id);
+    value(await revert(OWNER.id, id, await v(), view?.changes[1].id ?? ""));
+    view = await loadCampaign(OWNER.id, id);
+    const note = campaignNote({ ...(view as CampaignView), askerId: OWNER.id }, () => "Agnes Baker");
+    expect(note).toContain("a flex mystic");
+    expect(note).toMatch(/locked in Agnes; Roland: out Shrivelling; in Shrivelling \(3 XP\)/);
+    expect(note).not.toContain("out Scrying");
   });
 });
 

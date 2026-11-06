@@ -105,11 +105,18 @@ test("in a campaign's chat, a proposed change applies from its card", async ({ p
   await page.getByRole("button", { name: "Apply" }).click();
   await expect(page.getByText("Applied.")).toBeVisible();
 
+  await box.fill("take seat:Lily toward a flex mystic");
+  await box.press("Enter");
+  await expect(page.getByText("Lily's deck: a flex mystic")).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("button", { name: "Apply" }).last().click();
+  await expect(page.getByText("Applied.").last()).toBeVisible();
+
   await box.fill("What is in seat:Lily?");
   await box.press("Enter");
   await expect(page.getByText(/Boom Chakra Lacka/).first()).toBeVisible({ timeout: 15_000 });
 
-  await page.getByRole("link", { name: "See the campaign" }).click();
+  await page.getByRole("link", { name: "See the campaign" }).first().click();
   await expect(page.getByText("Lily: +3 XP")).toBeVisible();
   await expect(page.locator("dd").filter({ hasText: /^3$/ })).toBeVisible();
+  await expect(page.getByLabel("Where Lily's deck is going")).toHaveValue("a flex mystic");
 });

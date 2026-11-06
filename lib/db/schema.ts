@@ -207,6 +207,8 @@ export const seat = pgTable(
     deckId: text("deck_id"),
     /** The finished deck this seat is building toward, on ArkhamDB: { name, source, xp }. */
     target: jsonb("target"),
+    /** Where the players want this deck to go, in their words: "a flex mystic, not a battle mage". */
+    direction: text("direction"),
     position: integer("position").notNull().default(0),
     createdAt: timestamp("created_at").notNull().$defaultFn(now),
   },

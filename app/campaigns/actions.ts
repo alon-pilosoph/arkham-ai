@@ -20,6 +20,7 @@ import {
   revert,
   type SeatStatus,
   STATUSES,
+  setDirection,
   updateSettings,
 } from "@/lib/campaign/store";
 import { getCards } from "@/lib/cards";
@@ -152,6 +153,15 @@ export async function recordAction(form: FormData) {
       statuses,
       nextScenario: form.has("nextScenario") ? whole(form, "nextScenario") : undefined,
     }),
+  );
+}
+
+export async function directionAction(form: FormData) {
+  const user = await signedIn();
+  const id = text(form, "campaignId");
+  back(
+    id,
+    await setDirection(user.id, id, whole(form, "version"), { seatId: text(form, "seatId"), direction: text(form, "direction") }),
   );
 }
 
