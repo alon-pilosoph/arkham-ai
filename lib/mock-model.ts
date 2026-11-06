@@ -14,6 +14,8 @@ export function route(q: string): { toolName: string; input: Record<string, unkn
     return { toolName: "proposeChange", input: { kind: "scenario", seats: [{ seat: earned[1], xpEarned: Number(earned[2]) }] } };
   const direction = q.match(/^take seat:(\w+) toward (.+)/i);
   if (direction) return { toolName: "proposeChange", input: { kind: "direction", seat: direction[1], direction: direction[2] } };
+  const upgradesFor = q.match(/look at upgrades for (\w+)/i);
+  if (upgradesFor) return { toolName: "upgrades", input: { deck: `seat:${upgradesFor[1]}`, xp: 3 } };
   const swap = q.match(/^swap (\w+) for (\w+) in seat:(\w+)/i);
   if (swap)
     return {

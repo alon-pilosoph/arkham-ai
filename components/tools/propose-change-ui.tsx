@@ -1,6 +1,6 @@
 "use client";
 
-import type { ToolCallMessagePartComponent } from "@assistant-ui/react";
+import { type ToolCallMessagePartComponent, useAui } from "@assistant-ui/react";
 import { CheckIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,10 @@ const discardKey = (id: string) => `arkham:discarded:${id}`;
 /** A proposed campaign change: what it does, and Apply or Discard. Applied is read back from the
  *  campaign, so every member's chat shows it; Discard is this browser's alone. */
 export const ProposeChangeUI: ToolCallMessagePartComponent<Partial<ProposeInput>, ProposeResult> = ({ result, status }) => {
+  const aui = useAui();
   const [state, setState] = useState<State>("checking");
+  // only straight after applying: an old card read back as applied has nothing more to offer
+  const [offer, setOffer] = useState<string>();
   const proposal = result?.ok ? result : null;
 
   useEffect(() => {
@@ -39,6 +42,7 @@ export const ProposeChangeUI: ToolCallMessagePartComponent<Partial<ProposeInput>
     });
     const body = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
     setState(body.ok ? "applied" : { error: body.error ?? "Couldn't apply it. Try again." });
+    if (body.ok) setOffer(proposal.followUp);
   };
   const discard = () => {
     localStorage.setItem(discardKey(proposal.proposalId), "1");
@@ -61,12 +65,27 @@ export const ProposeChangeUI: ToolCallMessagePartComponent<Partial<ProposeInput>
             </p>
           ) : null}
           {state === "applied" ? (
-            <p className="text-muted-foreground inline-flex items-center gap-1">
-              <CheckIcon className="size-4" /> Applied.{" "}
-              <a href={`/campaigns/${proposal.campaignId}`} className="underline underline-offset-2">
-                See the campaign
-              </a>
-            </p>
+            <>
+              <p className="text-muted-foreground inline-flex items-center gap-1">
+                <CheckIcon className="size-4" /> Applied.{" "}
+                <a href={`/campaigns/${proposal.campaignId}`} className="underline underline-offset-2">
+                  See the campaign
+                </a>
+              </p>
+              {offer ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="self-start"
+                  onClick={() => {
+                    setOffer(undefined);
+                    aui.thread().append(offer);
+                  }}
+                >
+                  Look at upgrades
+                </Button>
+              ) : null}
+            </>
           ) : state === "open" || typeof state === "object" ? (
             <div className="flex gap-2">
               <Button size="sm" onClick={apply}>

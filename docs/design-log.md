@@ -427,3 +427,11 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   on the seat's card, and the chat doesn't suggest against it without saying so.
 - **Deliberately narrow.** It is one short sentence per seat, not a general memory of past chats:
   it stays visible, editable and revertable like everything else in a campaign.
+
+## A chat that asks (November 6)
+
+- **Built.** Told a scenario is finished, the chat asks for what it hasn't been told before
+  proposing anything, and never guesses a number. A proposal that gives XP offers to look at
+  upgrades, in words and with a button on the card once it is applied.
+- **The button is made by the tool, not the model.** It appears only when the applied change gave
+  someone XP, and only straight after applying, so an old card read back doesn't offer it again.

@@ -347,6 +347,7 @@ describe("what a campaign remembers about its decks", () => {
     view = await loadCampaign(OWNER.id, id);
     const note = campaignNote({ ...(view as CampaignView), askerId: OWNER.id }, () => "Agnes Baker");
     expect(note).toContain("a flex mystic");
+    expect(note).toContain("next scenario Curtain Call (1 of 8), then The Last King");
     expect(note).toMatch(/locked in Agnes; Roland: out Shrivelling; in Shrivelling \(3 XP\)/);
     expect(note).not.toContain("out Scrying");
   });
@@ -411,6 +412,16 @@ describe("proposeChange", () => {
     expect(p).toMatchObject({ ok: true, campaignId: id, version: before });
     if (p.ok) expect(p.summary).toEqual(["Roland: +2 XP, +1 mental trauma", "Next scenario: The Last King"]);
     expect(await v()).toBe(before);
+  });
+
+  test("a scenario that gives XP offers to look at upgrades; one that gives none doesn't", async () => {
+    const { ctx } = await context();
+    expect(await propose({ kind: "scenario", seats: [{ seat: "roland", xpEarned: 2 }] }, ctx)).toMatchObject({
+      followUp: "Let's look at upgrades for Roland.",
+    });
+    const trauma = await propose({ kind: "scenario", seats: [{ seat: "Roland", mentalTrauma: 1 }] }, ctx);
+    expect(trauma).toMatchObject({ ok: true });
+    expect(trauma).not.toHaveProperty("followUp");
   });
 
   test("prices a deck change, and refuses one the seat can't afford", async () => {

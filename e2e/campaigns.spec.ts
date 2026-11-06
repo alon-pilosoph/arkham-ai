@@ -105,6 +105,11 @@ test("in a campaign's chat, a proposed change applies from its card", async ({ p
   await page.getByRole("button", { name: "Apply" }).click();
   await expect(page.getByText("Applied.")).toBeVisible();
 
+  await page.getByRole("button", { name: "Look at upgrades" }).click();
+  await expect(page.getByText("Let's look at upgrades for Lily.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Look at upgrades" })).toBeHidden();
+  await expect(page.getByText(/Spending 3 XP on/)).toBeVisible({ timeout: 15_000 });
+
   await box.fill("take seat:Lily toward a flex mystic");
   await box.press("Enter");
   await expect(page.getByText("Lily's deck: a flex mystic")).toBeVisible({ timeout: 15_000 });
