@@ -61,7 +61,7 @@ flowchart LR
 ```
 
 The app is a Next.js chat page and a single API route. Each question runs an agent loop
-(the [AI SDK](https://ai-sdk.dev)'s `streamText`) with eight tools. The system prompt holds the
+(the [AI SDK](https://ai-sdk.dev)'s `streamText`) with eleven tools. The system prompt holds the
 whole Rules Reference (about 39,500 words) and never changes between requests, so the provider
 can cache it. Anything that changes from turn to turn, such as the date and the players'
 settings, is added to the newest message instead. Steps, tool calls and wall time are capped in
