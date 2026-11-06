@@ -88,6 +88,7 @@ export async function POST(req: Request) {
     ...parsed.data.settings,
     ...(campaign ? { taboo: campaign.taboo } : {}),
     campaign,
+    userId: user.id,
   };
   if (!(await takeQuestion(user.id)))
     return new Response("That's today's questions used up for this account. Ask again tomorrow.", { status: 429 });

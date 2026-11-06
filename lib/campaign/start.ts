@@ -5,11 +5,9 @@
 
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
-import { getCards } from "../cards";
 import { getDb } from "../db";
 import { campaign, campaignMember } from "../db/schema";
-import { fetchDeck, parseRef } from "../decks";
-import { lockable, targetOf } from "./lock";
+import { readLock } from "./lock";
 import {
   addSeat,
   createCampaign,
@@ -64,25 +62,16 @@ export async function campaignFromProposal(userId: string, proposalId: string): 
   return row?.id ?? null;
 }
 
-async function read(link: string) {
-  const ref = parseRef(link);
-  if (!ref) return { ok: false as const, message: `${link} isn't an ArkhamDB deck link.` };
-  return fetchDeck(ref);
-}
-
 export async function startCampaign(userId: string, input: StartInput): Promise<Result<string>> {
   // a card pressed twice, or in two tabs, creates one campaign
   const existing = await campaignFromProposal(userId, input.proposalId);
   if (existing) return { ok: true, value: existing };
 
-  const store = await getCards();
   const seats = [];
   for (const s of input.seats) {
-    const deck = s.deck ? await read(s.deck) : null;
-    if (deck && !deck.ok) return { ok: false, error: `Couldn't read ${s.name}'s deck: ${deck.message}` };
-    const target = s.target ? await read(s.target) : null;
-    if (target && !target.ok) return { ok: false, error: `Couldn't read ${s.name}'s target deck: ${target.message}` };
-    seats.push({ ...s, fetched: deck?.data, wanted: target?.data });
+    const lock = s.deck ? await readLock(s.deck, s.target) : null;
+    if (lock && !lock.ok) return { ok: false, error: `${s.name}: ${lock.error}` };
+    seats.push({ ...s, lock: lock?.value });
   }
 
   const made = await createCampaign(userId, input);
@@ -98,14 +87,7 @@ export async function startCampaign(userId: string, input: StartInput): Promise<
   const opening: RecordInput = { entries: [], statuses: [], nextScenario: input.nextScenario };
   for (const s of seats) {
     const seatId = (await step(await addSeat(userId, id, version, { name: s.name, userId: s.mine ? userId : null }))) as string;
-    if (s.fetched)
-      await step(
-        await lockDeck(userId, id, version, {
-          seatId,
-          ...lockable(store, s.fetched.deck, s.fetched.kind),
-          target: s.wanted ? targetOf(store, s.wanted.deck, s.wanted.kind) : undefined,
-        }),
-      );
+    if (s.lock) await step(await lockDeck(userId, id, version, { seatId, ...s.lock }));
     if (s.direction) await step(await setDirection(userId, id, version, { seatId, direction: s.direction }));
     const amounts: [(typeof LEDGERS)[number], number | undefined][] = [
       ["xp", s.unspentXp],

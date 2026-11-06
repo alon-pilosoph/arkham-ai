@@ -32,8 +32,9 @@ import { currentUser } from "@/lib/session";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
 import type { CampaignContext } from "@/lib/tool-context";
 import { readDeck } from "@/lib/tools/deck";
+import { openCampaign } from "@/lib/tools/open-campaign";
 import { type ProposeCampaignInput, proposeCampaign } from "@/lib/tools/propose-campaign";
-import { propose } from "@/lib/tools/propose-change";
+import { propose, proposeText } from "@/lib/tools/propose-change";
 
 const OWNER = { id: "owner", email: "owner@example.com", name: "Alon" };
 const FRIEND = { id: "friend", email: "friend@example.com", name: "Dana" };
@@ -351,7 +352,7 @@ describe("what a campaign remembers about its decks", () => {
     const note = campaignNote({ ...(view as CampaignView), askerId: OWNER.id }, () => "Agnes Baker");
     expect(note).toContain("a flex mystic");
     expect(note).toContain("next scenario Curtain Call (1 of 8), then The Last King");
-    expect(note).toMatch(/locked in Agnes; Roland: out Shrivelling; in Shrivelling \(3 XP\)/);
+    expect(note).toMatch(/locked in Agnes; .*Roland: out Shrivelling; in Shrivelling \(3 XP\)/);
     expect(note).not.toContain("out Scrying");
   });
 });
@@ -433,6 +434,65 @@ describe("starting a campaign from chat", () => {
     const gone = { ...p.start, seats: [{ name: "Lily", deck: "https://arkhamdb.com/decklist/view/99999999" }] };
     expect((await startCampaign(OWNER.id, gone)).ok).toBe(false);
     expect(await campaignFromProposal(OWNER.id, p.start.proposalId)).toBeNull();
+  });
+});
+
+describe("everything else, from chat", () => {
+  async function campaignCtx() {
+    const { id, v, seatId } = await setUp();
+    const ctx = async () => ({ ...(await loadCampaign(OWNER.id, id)), askerId: OWNER.id }) as CampaignContext;
+    return { id, v, seatId, ctx };
+  }
+  const apply = async (id: string, p: unknown, version: number) => {
+    const { POST } = await import("@/app/api/campaigns/[id]/apply/route");
+    const { proposalId, change } = p as { proposalId: string; change: unknown };
+    vi.mocked(currentUser).mockResolvedValueOnce(OWNER);
+    const req = new Request("http://x", { method: "POST", body: JSON.stringify({ proposalId, version, change }) });
+    return POST(req, { params: Promise.resolve({ id }) });
+  };
+
+  test("a seat, a locked deck, settings and an undo each apply from a proposal, once", async () => {
+    vi.stubEnv("ARKHAM_DECKS_DIR", "tests/fixtures");
+    const { id, v, ctx } = await campaignCtx();
+    const seat = await propose({ kind: "seat", seat: "Ari", mine: true }, await ctx());
+    expect(seat).toMatchObject({ summary: ["Add Ari's seat"], change: { userId: OWNER.id } });
+    expect(await propose({ kind: "seat", seat: "roland" }, await ctx())).toMatchObject({ ok: false });
+    expect(await (await apply(id, seat, await v())).json()).toMatchObject({ ok: true });
+    expect(await (await apply(id, seat, await v())).json()).toMatchObject({ already: true });
+    expect((await ctx()).seats.map((s) => s.name)).toEqual(["Roland", "Ari"]);
+
+    const lock = await propose({ kind: "lock", seat: "Ari", deck: "https://arkhamdb.com/decklist/view/900001" }, await ctx());
+    expect(lock).toMatchObject({ summary: ["Ari: lock in Lily - Finished (Lily Chen)"] });
+    expect(proposeText(lock)).toContain("NOTE: This deck links a version with less XP");
+    expect(await (await apply(id, lock, await v())).json()).toMatchObject({ ok: true });
+    expect((await ctx()).seats[1].deck?.name).toBe("Lily - Finished");
+
+    const hard = await propose({ kind: "settings", difficulty: "expert", nextScenario: "The Last King" }, await ctx());
+    expect(hard).toMatchObject({ summary: ["Difficulty: expert", "Next scenario: The Last King"] });
+    expect(await (await apply(id, hard, await v())).json()).toMatchObject({ ok: true });
+    expect(await ctx()).toMatchObject({ difficulty: "expert", nextScenario: 1 });
+    expect(await propose({ kind: "settings", difficulty: "expert" }, await ctx())).toMatchObject({ ok: false });
+
+    const undo = await propose({ kind: "undo" }, await ctx());
+    expect(undo).toMatchObject({ summary: [expect.stringMatching(/^Undo: Campaign: difficulty expert/)] });
+    expect(await (await apply(id, undo, await v())).json()).toMatchObject({ ok: true });
+    expect(await ctx()).toMatchObject({ difficulty: "standard", nextScenario: 0 });
+
+    const byWords = await propose({ kind: "undo", undo: "lily - finished" }, await ctx());
+    expect(byWords).toMatchObject({ summary: ["Undo: Ari: locked in Lily - Finished"] });
+    expect(await propose({ kind: "undo", undo: "nothing like this" }, await ctx())).toMatchObject({ ok: false });
+  });
+
+  test("the links card finds a member's campaigns, and the invite only for one", async () => {
+    const { id, ctx } = await campaignCtx();
+    const here = await openCampaign({}, { ...DEFAULT_SETTINGS, userId: OWNER.id, campaign: await ctx() });
+    expect(here).toMatchObject({ campaigns: [{ id, invite: expect.stringMatching(/^\/invite\//) }] });
+    const all = await openCampaign({}, { ...DEFAULT_SETTINGS, userId: OWNER.id });
+    if (!all.ok) throw new Error("no campaigns");
+    expect(all.campaigns.length).toBeGreaterThan(1);
+    expect(all.campaigns[0].invite).toBeUndefined();
+    expect(await openCampaign({ name: "nope" }, { ...DEFAULT_SETTINGS, userId: OWNER.id })).toMatchObject({ ok: false });
+    expect(await openCampaign({}, { ...DEFAULT_SETTINGS, userId: STRANGER.id })).toMatchObject({ ok: false });
   });
 });
 

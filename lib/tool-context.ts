@@ -9,6 +9,8 @@ import { DEFAULT_SETTINGS, SettingsSchema } from "./settings";
 export type CampaignContext = CampaignView & { askerId: string };
 
 export const ToolContextSchema = SettingsSchema.extend({
+  /** Who is asking, as the chat route knows them. */
+  userId: z.string().optional(),
   campaign: z
     .custom<CampaignContext>((v) => v === undefined || v === null || typeof v === "object")
     .nullable()

@@ -249,7 +249,7 @@ async function change<T>(
   campaignId: string,
   version: number,
   apply: (tx: Tx, changeId: string) => Promise<Result<{ kind: string; summary: string; payload: unknown; value?: T }>>,
-  extra: { revertOf?: string; chatId?: string } = {},
+  extra: { revertOf?: string; chatId?: string; proposalId?: string } = {},
 ): Promise<Result<T | undefined>> {
   if (!(await isMember(userId, campaignId))) return fail("You aren't in this campaign.");
   const db = await getDb();
@@ -271,7 +271,7 @@ async function change<T>(
         userId,
         kind: done.value.kind,
         summary: done.value.summary,
-        payload: done.value.payload,
+        payload: extra.proposalId ? { ...(done.value.payload as object), proposalId: extra.proposalId } : done.value.payload,
         revertOf: extra.revertOf ?? null,
         chatId: extra.chatId ?? null,
       });
@@ -290,22 +290,34 @@ const ok = <T>(kind: string, summary: string, payload: unknown, value?: T) =>
 
 type Settings = { name: string; difficulty: Difficulty; taboo: boolean; nextScenario: number };
 
-export async function updateSettings(userId: string, campaignId: string, version: number, next: Partial<Settings>) {
-  return change(userId, campaignId, version, async (tx) => {
-    const [c] = await tx.select().from(campaign).where(eq(campaign.id, campaignId));
-    const before: Partial<Settings> = {};
-    const after: Partial<Settings> = {};
-    for (const k of ["name", "difficulty", "taboo", "nextScenario"] as const) {
-      const v = next[k];
-      if (v === undefined || v === c[k]) continue;
-      (before as Record<string, unknown>)[k] = c[k];
-      (after as Record<string, unknown>)[k] = v;
-    }
-    if (!Object.keys(after).length) return fail("Nothing changed.");
-    if (after.name !== undefined && !after.name.trim()) return fail("Give the campaign a name.");
-    await tx.update(campaign).set(after).where(eq(campaign.id, campaignId));
-    return ok("settings", settingsSummary(after), { before, after });
-  });
+export async function updateSettings(
+  userId: string,
+  campaignId: string,
+  version: number,
+  next: Partial<Settings>,
+  proposalId?: string,
+) {
+  return change(
+    userId,
+    campaignId,
+    version,
+    async (tx) => {
+      const [c] = await tx.select().from(campaign).where(eq(campaign.id, campaignId));
+      const before: Partial<Settings> = {};
+      const after: Partial<Settings> = {};
+      for (const k of ["name", "difficulty", "taboo", "nextScenario"] as const) {
+        const v = next[k];
+        if (v === undefined || v === c[k]) continue;
+        (before as Record<string, unknown>)[k] = c[k];
+        (after as Record<string, unknown>)[k] = v;
+      }
+      if (!Object.keys(after).length) return fail("Nothing changed.");
+      if (after.name !== undefined && !after.name.trim()) return fail("Give the campaign a name.");
+      await tx.update(campaign).set(after).where(eq(campaign.id, campaignId));
+      return ok("settings", settingsSummary(after), { before, after });
+    },
+    { proposalId },
+  );
 }
 
 function settingsSummary(after: Partial<Settings>): string {
@@ -322,23 +334,29 @@ export async function addSeat(
   userId: string,
   campaignId: string,
   version: number,
-  input: { name: string; userId?: string | null },
+  input: { name: string; userId?: string | null; proposalId?: string },
 ) {
-  return change<string>(userId, campaignId, version, async (tx, changeId) => {
-    const name = input.name.trim().slice(0, 60);
-    if (!name) return fail("Give the seat a name.");
-    if (input.userId) {
-      const member = await tx
-        .select({ id: campaignMember.userId })
-        .from(campaignMember)
-        .where(and(eq(campaignMember.campaignId, campaignId), eq(campaignMember.userId, input.userId)));
-      if (!member.length) return fail("That account isn't in this campaign.");
-    }
-    const [{ n }] = await tx.select({ n: sql<number>`count(*)::int` }).from(seat).where(eq(seat.campaignId, campaignId));
-    const id = crypto.randomUUID();
-    await tx.insert(seat).values({ id, campaignId, name, userId: input.userId ?? null, position: n });
-    return ok("seat", `Added ${name}'s seat`, { seatId: id, changeId }, id);
-  });
+  return change<string>(
+    userId,
+    campaignId,
+    version,
+    async (tx, changeId) => {
+      const name = input.name.trim().slice(0, 60);
+      if (!name) return fail("Give the seat a name.");
+      if (input.userId) {
+        const member = await tx
+          .select({ id: campaignMember.userId })
+          .from(campaignMember)
+          .where(and(eq(campaignMember.campaignId, campaignId), eq(campaignMember.userId, input.userId)));
+        if (!member.length) return fail("That account isn't in this campaign.");
+      }
+      const [{ n }] = await tx.select({ n: sql<number>`count(*)::int` }).from(seat).where(eq(seat.campaignId, campaignId));
+      const id = crypto.randomUUID();
+      await tx.insert(seat).values({ id, campaignId, name, userId: input.userId ?? null, position: n });
+      return ok("seat", `Added ${name}'s seat`, { seatId: id, changeId }, id);
+    },
+    { proposalId: input.proposalId },
+  );
 }
 
 export const MAX_DIRECTION = 300;
@@ -381,46 +399,53 @@ export async function lockDeck(
     source: string | null;
     /** Left out, the seat keeps the target it has. */
     target?: SeatTarget;
+    proposalId?: string;
   },
 ) {
-  return change<string>(userId, campaignId, version, async (tx, changeId) => {
-    const [s] = await tx
-      .select()
-      .from(seat)
-      .where(and(eq(seat.id, input.seatId), eq(seat.campaignId, campaignId)));
-    if (!s) return fail("No such seat.");
-    const [{ n }] = await tx
-      .select({ n: sql<number>`coalesce(max(${deckVersion.number}), 0)::int` })
-      .from(deckVersion)
-      .where(eq(deckVersion.seatId, s.id));
-    const id = crypto.randomUUID();
-    await tx.insert(deckVersion).values({
-      id,
-      seatId: s.id,
-      number: n + 1,
-      name: input.name.slice(0, 200),
-      list: input.list,
-      source: input.source,
-      changeId,
-    });
-    await tx
-      .update(seat)
-      .set({ deckId: id, investigatorCode: input.investigatorCode, ...(input.target ? { target: input.target } : {}) })
-      .where(eq(seat.id, s.id));
-    return ok(
-      "deck",
-      `${s.name}: locked in ${input.name}${input.target ? `, building toward ${input.target.name}` : ""}`,
-      {
+  return change<string>(
+    userId,
+    campaignId,
+    version,
+    async (tx, changeId) => {
+      const [s] = await tx
+        .select()
+        .from(seat)
+        .where(and(eq(seat.id, input.seatId), eq(seat.campaignId, campaignId)));
+      if (!s) return fail("No such seat.");
+      const [{ n }] = await tx
+        .select({ n: sql<number>`coalesce(max(${deckVersion.number}), 0)::int` })
+        .from(deckVersion)
+        .where(eq(deckVersion.seatId, s.id));
+      const id = crypto.randomUUID();
+      await tx.insert(deckVersion).values({
+        id,
         seatId: s.id,
-        before: s.deckId,
-        after: id,
-        investigatorBefore: s.investigatorCode,
-        investigatorAfter: input.investigatorCode,
-        ...(input.target ? { targetBefore: s.target } : {}),
-      },
-      id,
-    );
-  });
+        number: n + 1,
+        name: input.name.slice(0, 200),
+        list: input.list,
+        source: input.source,
+        changeId,
+      });
+      await tx
+        .update(seat)
+        .set({ deckId: id, investigatorCode: input.investigatorCode, ...(input.target ? { target: input.target } : {}) })
+        .where(eq(seat.id, s.id));
+      return ok(
+        "deck",
+        `${s.name}: locked in ${input.name}${input.target ? `, building toward ${input.target.name}` : ""}`,
+        {
+          seatId: s.id,
+          before: s.deckId,
+          after: id,
+          investigatorBefore: s.investigatorCode,
+          investigatorAfter: input.investigatorCode,
+          ...(input.target ? { targetBefore: s.target } : {}),
+        },
+        id,
+      );
+    },
+    { proposalId: input.proposalId },
+  );
 }
 
 export type RecordInput = {
@@ -547,7 +572,7 @@ async function negateEntries(tx: Tx, changeId: string, revertId: string): Promis
 }
 
 /** Undoes a change with a change of its own, or says why it can't. */
-export async function revert(userId: string, campaignId: string, version: number, changeId: string) {
+export async function revert(userId: string, campaignId: string, version: number, changeId: string, proposalId?: string) {
   return change(
     userId,
     campaignId,
@@ -633,7 +658,7 @@ export async function revert(userId: string, campaignId: string, version: number
           return fail("That change can't be reverted.");
       }
     },
-    { revertOf: changeId },
+    { revertOf: changeId, proposalId },
   );
 }
 
