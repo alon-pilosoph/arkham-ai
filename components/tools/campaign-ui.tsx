@@ -4,6 +4,7 @@ import { type ToolCallMessagePartComponent, useAui } from "@assistant-ui/react";
 import { CheckIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
+import type { OpenCampaignInput, OpenCampaignResult } from "@/lib/tools/open-campaign";
 import type { ProposeCampaignInput, ProposeCampaignResult } from "@/lib/tools/propose-campaign";
 import { DONE, FailureRow, Pending, Tool, ToolBoundary } from "./parts";
 
@@ -116,6 +117,43 @@ export const ProposeCampaignUI: ToolCallMessagePartComponent<ProposeCampaignInpu
           ) : state === "creating" ? (
             <p className="text-muted-foreground">Creating…</p>
           ) : null}
+        </div>
+      </Tool>
+    </ToolBoundary>
+  );
+};
+
+/** Links to a campaign: its chats, its page, and for one campaign, the invite link. */
+export const OpenCampaignUI: ToolCallMessagePartComponent<OpenCampaignInput, OpenCampaignResult> = ({ result, status }) => {
+  if (!result) return <Pending status={status} label="Finding the campaign" />;
+  if (!result.ok) return <FailureRow failure={result} notFound="No such campaign" error="Couldn't find the campaign" />;
+  return (
+    <ToolBoundary label="Your campaign">
+      <Tool status={DONE} label={result.campaigns.length > 1 ? "Your campaigns" : result.campaigns[0].name} defaultOpen>
+        <div className="flex flex-col gap-3 text-sm">
+          {result.campaigns.map((c) => (
+            <div key={c.id} className="flex flex-col gap-2">
+              {result.campaigns.length > 1 ? <p className="font-medium">{c.name}</p> : null}
+              <div className="flex flex-wrap gap-2">
+                <a href={`/?campaign=${c.id}`} className={buttonVariants({ size: "sm" })}>
+                  New chat in it
+                </a>
+                <a href={`/campaigns/${c.id}`} className={buttonVariants({ size: "sm", variant: "outline" })}>
+                  Campaign page
+                </a>
+              </div>
+              {c.invite ? (
+                <label className="text-muted-foreground flex flex-col gap-1">
+                  Invite link
+                  <input
+                    readOnly
+                    value={`${window.location.origin}${c.invite}`}
+                    className="border-input bg-background h-9 rounded-md border px-2"
+                  />
+                </label>
+              ) : null}
+            </div>
+          ))}
         </div>
       </Tool>
     </ToolBoundary>

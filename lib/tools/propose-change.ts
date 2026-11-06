@@ -1,8 +1,19 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { type DeckSwap, MAX_DIRECTION, priceSwap, type RecordInput, type SeatView, STATUSES } from "../campaign/store";
+import {
+  type DeckSwap,
+  DIFFICULTIES,
+  type Difficulty,
+  MAX_DIRECTION,
+  priceSwap,
+  type RecordInput,
+  type SeatView,
+  STATUSES,
+} from "../campaign/store";
 import { getCards } from "../cards";
-import { type Failure, failureText, notFound, safely, toolError, toolText } from "../format";
+import { startingVersions } from "../deck-links";
+import { fetchDeck, parseRef } from "../decks";
+import { type Failure, failureText, notFound, safely, toolError, toolText, untrusted } from "../format";
 import { type CampaignContext, ToolContextSchema } from "../tool-context";
 
 /** A change ready for a player to apply: checked and priced against the campaign as it was when
@@ -16,9 +27,15 @@ export type Proposal = {
   change:
     | { kind: "scenario"; record: RecordInput }
     | { kind: "deck"; swap: DeckSwap; cost: number }
-    | { kind: "direction"; seatId: string; direction: string };
+    | { kind: "direction"; seatId: string; direction: string }
+    | { kind: "seat"; name: string; userId?: string }
+    | { kind: "lock"; seatId: string; deck: string; target?: string }
+    | { kind: "undo"; changeId: string }
+    | { kind: "settings"; settings: { name?: string; difficulty?: Difficulty; taboo?: boolean; nextScenario?: number } };
   /** What the card offers to ask next, once the change is applied. */
   followUp?: string;
+  /** For the model only: what to settle with the players before they apply it. */
+  notes?: string[];
 };
 
 export type ProposeResult = Proposal | Failure;
@@ -29,10 +46,11 @@ const Cards = z
 
 const inputSchema = z.object({
   kind: z
-    .enum(["scenario", "deck", "direction"])
+    .enum(["scenario", "deck", "direction", "seat", "lock", "undo", "settings"])
     .describe(
       '"scenario": what a scenario (or a correction) did to the seats; "deck": cards in or out of one seat\'s deck; ' +
-        '"direction": where the players want one seat\'s deck to go',
+        '"direction": where the players want one seat\'s deck to go; "seat": a new seat; "lock": lock in a deck for a seat; ' +
+        '"undo": take back an earlier change; "settings": the campaign\'s name, difficulty, taboo or next scenario',
     ),
   seats: z
     .array(
@@ -48,8 +66,18 @@ const inputSchema = z.object({
     .max(8)
     .optional()
     .describe('For "scenario"'),
-  nextScenario: z.string().optional().describe('For "scenario": the next scenario\'s name, or "finished"'),
-  seat: z.string().optional().describe('For "deck" and "direction": the seat\'s name'),
+  nextScenario: z.string().optional().describe('For "scenario" and "settings": the next scenario\'s name, or "finished"'),
+  seat: z.string().optional().describe('For "deck", "direction", "seat" and "lock": the seat\'s name'),
+  mine: z.boolean().optional().describe('For "seat": true if it is the seat of the player who is asking'),
+  deck: z.string().optional().describe('For "lock": an ArkhamDB deck link'),
+  target: z.string().optional().describe('For "lock": an ArkhamDB link to the finished deck this one is building toward'),
+  undo: z
+    .string()
+    .optional()
+    .describe('For "undo": words from the change as the newest message lists it; left out, the latest change'),
+  name: z.string().min(1).max(80).optional().describe('For "settings": a new name for the campaign'),
+  difficulty: z.enum(DIFFICULTIES).optional().describe('For "settings"'),
+  taboo: z.boolean().optional().describe('For "settings"'),
   direction: z
     .string()
     .max(MAX_DIRECTION)
@@ -73,6 +101,14 @@ function findSeat(c: CampaignContext, name: string): SeatView | undefined {
   return c.seats.find((s) => s.id === name || s.name.toLowerCase() === name.trim().toLowerCase());
 }
 
+function scenarioIndex(c: CampaignContext, name: string): number {
+  const wanted = name.trim().toLowerCase();
+  return wanted === "finished" ? c.scenarios.length : c.scenarios.findIndex((x) => x.toLowerCase() === wanted);
+}
+
+const noScenario = (c: CampaignContext, name: string) =>
+  notFound(`No scenario "${name}" in ${c.campaignName}. Its scenarios: ${c.scenarios.join(", ")}.`);
+
 export async function propose(input: ProposeInput, campaign: CampaignContext | null | undefined): Promise<ProposeResult> {
   if (!campaign)
     return toolError(
@@ -80,6 +116,72 @@ export async function propose(input: ProposeInput, campaign: CampaignContext | n
     );
   const store = await getCards();
   const base = { ok: true as const, proposalId: crypto.randomUUID(), campaignId: campaign.id, version: campaign.version };
+  if (input.kind === "seat") {
+    const name = input.seat?.trim();
+    if (!name) return toolError("Name the seat.");
+    if (findSeat(campaign, name)) return toolError(`There is already a seat named ${name}.`);
+    return {
+      ...base,
+      summary: [`Add ${name}'s seat`],
+      change: { kind: "seat", name, ...(input.mine ? { userId: campaign.askerId } : {}) },
+    };
+  }
+  if (input.kind === "lock") {
+    const s = input.seat ? findSeat(campaign, input.seat) : undefined;
+    if (!s) return notFound(`No seat named "${input.seat ?? ""}". The seats: ${campaign.seats.map((x) => x.name).join(", ")}.`);
+    const ref = parseRef(input.deck ?? "");
+    if (!ref) return toolError(`${input.deck ?? "That"} isn't an ArkhamDB deck link.`);
+    const read = await fetchDeck(ref);
+    if (!read.ok) return toolError(`Couldn't read that deck: ${read.message}`);
+    const { deck } = read.data;
+    const versions = input.target ? [] : await startingVersions(deck);
+    return {
+      ...base,
+      summary: [
+        `${s.name}: lock in ${deck.name || "an unnamed deck"} (${store.get(deck.investigator_code)?.name ?? "?"})`,
+        ...(input.target ? ["Keeping the finished deck as the target"] : []),
+      ],
+      change: { kind: "lock", seatId: s.id, deck: input.deck as string, ...(input.target ? { target: input.target } : {}) },
+      notes: versions.map(
+        (v) =>
+          `This deck links a version with less XP: ${untrusted("deck name", v.name)}, ${v.xp} XP, ${v.url}. Unless they've settled it, ask which they play from; to start from it, propose again with that as deck and this one as target.`,
+      ),
+    };
+  }
+  if (input.kind === "undo") {
+    const wanted = input.undo?.trim().toLowerCase();
+    const x = campaign.changes.find(
+      (c) => c.kind !== "revert" && !c.revertedBy && (!wanted || c.summary.toLowerCase().includes(wanted)),
+    );
+    if (!x) return notFound(wanted ? `No change matches "${input.undo}".` : "There is no change to undo.");
+    return { ...base, summary: [`Undo: ${x.summary}`], change: { kind: "undo", changeId: x.id } };
+  }
+  if (input.kind === "settings") {
+    const settings: Extract<Proposal["change"], { kind: "settings" }>["settings"] = {};
+    const summary: string[] = [];
+    if (input.name && input.name !== campaign.name) {
+      settings.name = input.name;
+      summary.push(`Rename the campaign to ${input.name}`);
+    }
+    if (input.difficulty && input.difficulty !== campaign.difficulty) {
+      settings.difficulty = input.difficulty;
+      summary.push(`Difficulty: ${input.difficulty}`);
+    }
+    if (input.taboo !== undefined && input.taboo !== campaign.taboo) {
+      settings.taboo = input.taboo;
+      summary.push(`Taboo list ${input.taboo ? "on" : "off"}`);
+    }
+    if (input.nextScenario) {
+      const i = scenarioIndex(campaign, input.nextScenario);
+      if (i < 0) return noScenario(campaign, input.nextScenario);
+      if (i !== campaign.nextScenario) {
+        settings.nextScenario = i;
+        summary.push(`Next scenario: ${campaign.scenarios[i] ?? "the campaign is finished"}`);
+      }
+    }
+    if (!summary.length) return toolError("Those are the settings already.");
+    return { ...base, summary, change: { kind: "settings", settings } };
+  }
   if (input.kind === "direction") {
     const s = input.seat ? findSeat(campaign, input.seat) : undefined;
     if (!s) return notFound(`No seat named "${input.seat ?? ""}". The seats: ${campaign.seats.map((x) => x.name).join(", ")}.`);
@@ -149,12 +251,8 @@ export async function propose(input: ProposeInput, campaign: CampaignContext | n
     if (parts.length) summary.push(`${s.name}: ${parts.join(", ")}`);
   }
   if (input.nextScenario) {
-    const wanted = input.nextScenario.trim().toLowerCase();
-    const i = wanted === "finished" ? campaign.scenarios.length : campaign.scenarios.findIndex((x) => x.toLowerCase() === wanted);
-    if (i < 0)
-      return notFound(
-        `No scenario "${input.nextScenario}" in ${campaign.campaignName}. Its scenarios: ${campaign.scenarios.join(", ")}.`,
-      );
+    const i = scenarioIndex(campaign, input.nextScenario);
+    if (i < 0) return noScenario(campaign, input.nextScenario);
     if (i !== campaign.nextScenario) {
       record.nextScenario = i;
       summary.push(`Next scenario: ${campaign.scenarios[i] ?? "the campaign is finished"}`);
@@ -171,6 +269,7 @@ export function proposeText(r: ProposeResult): string {
   return [
     "PROPOSED, NOT APPLIED. The players see this as a card with Apply and Discard; nothing changes until one of them applies it:",
     ...r.summary.map((l) => `- ${l}`),
+    ...(r.notes ?? []).map((n) => `NOTE: ${n}`),
   ].join("\n");
 }
 
@@ -179,7 +278,8 @@ export const proposeChangeTool = tool({
     "In a campaign's chat, propose a change to the campaign for the players to apply: what a scenario did (XP earned, " +
     "trauma, an investigator killed or driven insane, the next scenario), cards in and out of one seat's deck, priced " +
     "in XP by the Rules Reference and checked against the deck's rules and the seat's unspent XP, or where the players " +
-    "want a seat's deck to go, which every later chat then sees. Writes nothing: the " +
+    "want a seat's deck to go, which every later chat then sees. Also a new seat, a deck locked in for a seat, an undo of " +
+    "an earlier change, and the campaign's settings. Writes nothing: the " +
     "players apply it from a card. Use it once the players have said what happened or agreed on a swap, with card codes " +
     "from a tool, never from memory.",
   inputSchema,

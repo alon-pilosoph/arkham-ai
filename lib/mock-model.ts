@@ -32,6 +32,17 @@ export function route(q: string): { toolName: string; input: Record<string, unkn
       },
     };
   }
+  const newSeat = q.match(/^add a seat for (\w+)/i);
+  if (newSeat) return { toolName: "proposeChange", input: { kind: "seat", seat: newSeat[1] } };
+  const lock = q.match(/^lock (\d+) into seat:(\w+)/i);
+  if (lock)
+    return {
+      toolName: "proposeChange",
+      input: { kind: "lock", seat: lock[2], deck: `https://arkhamdb.com/decklist/view/${lock[1]}` },
+    };
+  if (/^undo that/i.test(q)) return { toolName: "proposeChange", input: { kind: "undo" } };
+  if (/^make it expert/i.test(q)) return { toolName: "proposeChange", input: { kind: "settings", difficulty: "expert" } };
+  if (/^open the campaign/i.test(q)) return { toolName: "openCampaign", input: {} };
   const swap = q.match(/^swap (\w+) for (\w+) in seat:(\w+)/i);
   if (swap)
     return {

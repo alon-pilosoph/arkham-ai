@@ -37,8 +37,8 @@ const CACHE_LONG = { anthropic: { cacheControl: { type: "ephemeral" as const, tt
 export const FINAL_NOTE =
   "[The tool budget for this answer is spent. Answer now from what the tools returned, and say plainly what you could not check.]";
 
-/** How many of a campaign's latest deck changes each turn carries. */
-const DECK_CHANGES_IN_NOTE = 15;
+/** How many of a campaign's latest changes each turn carries. */
+const CHANGES_IN_NOTE = 25;
 
 /** The campaign a chat belongs to, as of this turn: what its decks are built from. Names the
  *  players wrote are untrusted. */
@@ -56,16 +56,16 @@ export function campaignNote(c: CampaignContext, investigatorName: (code: string
     const status = s.status === "active" ? "" : `; ${s.status}`;
     return `seat ${untrusted("seat name", s.name)}${who}: ${inv ?? "no investigator yet"}, ${deck}${target}${direction}; ${s.xp.unspent} unspent XP (${s.xp.earned} earned, ${s.xp.spent} spent); trauma ${s.trauma.physical} physical, ${s.trauma.mental} mental${status}`;
   });
-  const upgrades = c.changes
-    .filter((x) => x.kind === "deck" && !x.revertedBy)
-    .slice(0, DECK_CHANGES_IN_NOTE)
+  const changes = c.changes
+    .filter((x) => x.kind !== "revert" && !x.revertedBy)
+    .slice(0, CHANGES_IN_NOTE)
     .reverse()
     .map((x) => x.summary);
   return [
     `This chat is in the campaign ${untrusted("campaign name", c.name)}: ${c.campaignName}, ${c.difficulty} difficulty, ${next ? `next scenario ${next} (${c.nextScenario + 1} of ${c.scenarios.length})${after ? `, then ${after}` : ""}` : "finished"}.`,
     seats.length ? `Seats: ${seats.join("; ")}.` : "It has no seats yet.",
-    upgrades.length ? `Deck changes so far, oldest first: ${untrusted("deck changes", upgrades.join("; "))}.` : "",
-    `A seat's deck is read with the deck ref "seat:<seat name>". Changes to XP, trauma, decks or the next scenario go through proposeChange, and a player applies them.`,
+    changes.length ? `Changes so far, oldest first: ${untrusted("campaign changes", changes.join("; "))}.` : "",
+    `A seat's deck is read with the deck ref "seat:<seat name>". Every change to the campaign goes through proposeChange, and a player applies it.`,
   ]
     .filter(Boolean)
     .join(" ");

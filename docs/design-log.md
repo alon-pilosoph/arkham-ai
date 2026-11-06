@@ -454,3 +454,12 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   so a link can't make someone send a message.
 - **A deck that links a starting version** is raised to the model as a note, to ask before the card
   is pressed.
+
+## Every campaign action from chat (November 6)
+
+- **Built.** `proposeChange` now also adds seats, locks in decks, undoes changes and edits
+  settings, all through the same card and apply route, and `openCampaign` is a card of links to a
+  campaign's chats, page and invite. Locking in a deck that links a starting version raises it to
+  the model to ask.
+- **The note now lists all recent changes,** not only deck changes, so "undo that" has something
+  to point at. The undo names a change by its words, so ids stay out of the model's hands.

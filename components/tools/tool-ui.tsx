@@ -2,7 +2,7 @@
 
 import { defineToolkit, Tools, useAui } from "@assistant-ui/react";
 import { CampaignPrepUI } from "./campaign-prep-ui";
-import { OfferCampaignSetupUI, ProposeCampaignUI } from "./campaign-ui";
+import { OfferCampaignSetupUI, OpenCampaignUI, ProposeCampaignUI } from "./campaign-ui";
 import { CardsUI } from "./cards-ui";
 import { DeckUI } from "./deck-ui";
 import { FindDeckUI } from "./find-deck-ui";
@@ -22,6 +22,7 @@ const arkhamToolkit = defineToolkit({
   proposeChange: { type: "backend", render: ProposeChangeUI },
   offerCampaignSetup: { type: "backend", render: OfferCampaignSetupUI },
   proposeCampaign: { type: "backend", render: ProposeCampaignUI },
+  openCampaign: { type: "backend", render: OpenCampaignUI },
 });
 
 export function useArkhamTools() {

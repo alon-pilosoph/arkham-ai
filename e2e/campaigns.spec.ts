@@ -92,6 +92,34 @@ test("a campaign joined partway through starts at its scenario and goes straight
   await expect(page.getByRole("combobox", { name: "Campaign" })).toHaveValue(/.+/);
 });
 
+test("the rest of a campaign from chat: a seat, a deck, an undo, and a card that goes there", async ({ page }, info) => {
+  await page.goto("/campaigns");
+  await page.getByLabel("Name").fill(`Cards ${info.project.name} ${Date.now() % 100000}`);
+  await page.getByRole("button", { name: "Start campaign" }).click();
+  const live = page.waitForResponse((r) => r.url().includes("/api/chats?campaign="));
+  await page.getByRole("link", { name: "Open the campaign's chats" }).click();
+  await live;
+  const box = page.getByRole("textbox", { name: "Message input" });
+  const say = async (text: string, shown: string) => {
+    await box.fill(text);
+    await box.press("Enter");
+    await expect(page.getByText(shown).last()).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("button", { name: "Send message" })).toBeVisible({ timeout: 15_000 });
+  };
+  await say("add a seat for Lily", "Add Lily's seat");
+  await page.getByRole("button", { name: "Apply" }).click();
+  await expect(page.getByText("Applied.")).toBeVisible();
+
+  await say("undo that", "Undo: Added Lily's seat");
+  await page.getByRole("button", { name: "Apply" }).click();
+  await expect(page.getByText("Applied.").last()).toBeVisible();
+
+  await say("open the campaign", "Invite link");
+  await expect(page.getByRole("link", { name: "New chat in it" })).toBeVisible();
+  await page.getByRole("link", { name: "Campaign page" }).last().click();
+  await expect(page.getByText("Reverted: Added Lily's seat")).toBeVisible();
+});
+
 test("an invite link lets someone new sign up and join", async ({ page, browser }, info) => {
   const name = `Invite ${info.project.name} ${Date.now() % 100000}`;
   await page.goto("/campaigns");
