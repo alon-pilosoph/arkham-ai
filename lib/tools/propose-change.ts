@@ -17,6 +17,8 @@ export type Proposal = {
     | { kind: "scenario"; record: RecordInput }
     | { kind: "deck"; swap: DeckSwap; cost: number }
     | { kind: "direction"; seatId: string; direction: string };
+  /** What the card offers to ask next, once the change is applied. */
+  followUp?: string;
 };
 
 export type ProposeResult = Proposal | Failure;
@@ -159,7 +161,9 @@ export async function propose(input: ProposeInput, campaign: CampaignContext | n
     }
   }
   if (!summary.length) return toolError("That changes nothing: name what each seat earned, lost or spent, or the next scenario.");
-  return { ...base, summary, change: { kind: "scenario", record } };
+  const earners = (input.seats ?? []).filter((row) => row.xpEarned).map((row) => findSeat(campaign, row.seat)?.name);
+  const followUp = earners.length ? `Let's look at upgrades for ${earners.join(" and ")}.` : undefined;
+  return { ...base, summary, change: { kind: "scenario", record }, ...(followUp ? { followUp } : {}) };
 }
 
 export function proposeText(r: ProposeResult): string {

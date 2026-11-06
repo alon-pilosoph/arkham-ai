@@ -48,6 +48,7 @@ const DECK_CHANGES_IN_NOTE = 15;
 
 export function campaignNote(c: CampaignContext, investigatorName: (code: string) => string | undefined): string {
   const next = c.scenarios[c.nextScenario];
+  const after = c.scenarios[c.nextScenario + 1];
   const seats = c.seats.map((s) => {
     const who = s.userId === c.askerId ? " (the asking player's)" : "";
     const inv = s.investigatorCode ? investigatorName(s.investigatorCode) : undefined;
@@ -65,7 +66,7 @@ export function campaignNote(c: CampaignContext, investigatorName: (code: string
     .reverse()
     .map((x) => x.summary);
   return [
-    `This chat is in the campaign ${untrusted("campaign name", c.name)}: ${c.campaignName}, ${c.difficulty} difficulty, ${next ? `next scenario ${next} (${c.nextScenario + 1} of ${c.scenarios.length})` : "finished"}.`,
+    `This chat is in the campaign ${untrusted("campaign name", c.name)}: ${c.campaignName}, ${c.difficulty} difficulty, ${next ? `next scenario ${next} (${c.nextScenario + 1} of ${c.scenarios.length})${after ? `, then ${after}` : ""}` : "finished"}.`,
     seats.length ? `Seats: ${seats.join("; ")}.` : "It has no seats yet.",
     upgrades.length ? `Deck changes so far, oldest first: ${untrusted("deck changes", upgrades.join("; "))}.` : "",
     `A seat's deck is read with the deck ref "seat:<seat name>". Changes to XP, trauma, decks or the next scenario go through proposeChange, and a player applies them.`,

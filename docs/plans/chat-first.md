@@ -1,6 +1,6 @@
 # Plan: chat first
 
-Status: **approved.** Steps 1 to 3 are done; step 4 is next. Asking about a linked version from the chat, rather than the campaign page, comes with the lock-in card in step 7.
+Status: **approved.** Steps 1 to 4 are done; step 5 is next. Asking about a linked version from the chat, rather than the campaign page, comes with the lock-in card in step 7.
 
 ## 1. The goal
 
