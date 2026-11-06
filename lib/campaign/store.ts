@@ -32,6 +32,9 @@ export type DeckListJson = {
   description_md?: string;
 };
 
+/** The finished deck a seat is building toward: a reference to ArkhamDB, not a version of its own. */
+export type SeatTarget = { name: string; source: string; xp: number };
+
 export type SeatView = {
   id: string;
   name: string;
@@ -46,6 +49,7 @@ export type SeatView = {
     campaignCards: Record<string, number>;
     source: string | null;
   } | null;
+  target: SeatTarget | null;
   /** Every version of the seat's deck, newest first, the current one included. */
   versions: DeckVersionView[];
   xp: { earned: number; spent: number; unspent: number };
@@ -210,6 +214,7 @@ export async function loadCampaign(userId: string, campaignId: string): Promise<
               source: d.source,
             }
           : null,
+        target: s.target as SeatTarget | null,
         versions: decks
           .filter((x) => x.seatId === s.id)
           .map((x) => ({
@@ -333,7 +338,15 @@ export async function lockDeck(
   userId: string,
   campaignId: string,
   version: number,
-  input: { seatId: string; name: string; list: DeckListJson; investigatorCode: string; source: string | null },
+  input: {
+    seatId: string;
+    name: string;
+    list: DeckListJson;
+    investigatorCode: string;
+    source: string | null;
+    /** Left out, the seat keeps the target it has. */
+    target?: SeatTarget;
+  },
 ) {
   return change<string>(userId, campaignId, version, async (tx, changeId) => {
     const [s] = await tx
@@ -355,16 +368,20 @@ export async function lockDeck(
       source: input.source,
       changeId,
     });
-    await tx.update(seat).set({ deckId: id, investigatorCode: input.investigatorCode }).where(eq(seat.id, s.id));
+    await tx
+      .update(seat)
+      .set({ deckId: id, investigatorCode: input.investigatorCode, ...(input.target ? { target: input.target } : {}) })
+      .where(eq(seat.id, s.id));
     return ok(
       "deck",
-      `${s.name}: locked in ${input.name}`,
+      `${s.name}: locked in ${input.name}${input.target ? `, building toward ${input.target.name}` : ""}`,
       {
         seatId: s.id,
         before: s.deckId,
         after: id,
         investigatorBefore: s.investigatorCode,
         investigatorAfter: input.investigatorCode,
+        ...(input.target ? { targetBefore: s.target } : {}),
       },
       id,
     );
@@ -529,12 +546,25 @@ export async function revert(userId: string, campaignId: string, version: number
           return ok("revert", undone, { of: changeId });
         }
         case "deck": {
-          const d = p as { seatId: string; before: string | null; after: string; investigatorBefore: string | null };
+          const d = p as {
+            seatId: string;
+            before: string | null;
+            after: string;
+            investigatorBefore: string | null;
+            targetBefore?: SeatTarget | null;
+          };
           const [s] = await tx.select().from(seat).where(eq(seat.id, d.seatId));
           if (!s || s.deckId !== d.after) return fail("A later change replaced this deck; revert it first.");
           const refunded = await negateEntries(tx, changeId, revertId);
           if (!refunded.ok) return refunded;
-          await tx.update(seat).set({ deckId: d.before, investigatorCode: d.investigatorBefore }).where(eq(seat.id, d.seatId));
+          await tx
+            .update(seat)
+            .set({
+              deckId: d.before,
+              investigatorCode: d.investigatorBefore,
+              ...(d.targetBefore !== undefined ? { target: d.targetBefore } : {}),
+            })
+            .where(eq(seat.id, d.seatId));
           return ok("revert", undone, { of: changeId });
         }
         case "record": {

@@ -23,6 +23,7 @@ import {
   updateSettings,
 } from "@/lib/campaign/store";
 import { getCards } from "@/lib/cards";
+import { deckXp, startingVersions } from "@/lib/deck-links";
 import { fetchDeck, parseRef } from "@/lib/decks";
 import { currentUser } from "@/lib/session";
 
@@ -87,11 +88,18 @@ export async function lockDeckAction(form: FormData) {
   const [store, fetched] = await Promise.all([getCards(), fetchDeck(ref)]);
   if (!fetched.ok) back(id, { ok: false, error: `Couldn't read that deck: ${fetched.message}` });
   const { deck, kind } = fetched.data;
+  const seatId = text(form, "seatId");
+  // the first time through, a deck that links a version to start from asks which to play
+  if (!form.has("decided") && (await startingVersions(deck)).length)
+    redirect(`/campaigns/${id}?choose=${encodeURIComponent(seatId)}&deck=${encodeURIComponent(text(form, "deck"))}#seats`);
+  const targetRef = parseRef(text(form, "target"));
+  const target = targetRef ? await fetchDeck(targetRef) : null;
+  if (target && !target.ok) back(id, { ok: false, error: `Couldn't read the target deck: ${target.message}` });
   const map = (x: unknown) => (x && !Array.isArray(x) ? (x as Record<string, number>) : undefined);
   back(
     id,
     await lockDeck(user.id, id, whole(form, "version"), {
-      seatId: text(form, "seatId"),
+      seatId,
       name: deck.name || "Unnamed deck",
       list: {
         investigator_code: deck.investigator_code,
@@ -104,6 +112,13 @@ export async function lockDeckAction(form: FormData) {
       },
       investigatorCode: store.canonical(deck.investigator_code),
       source: `${kind}:${deck.id}`,
+      target: target?.ok
+        ? {
+            name: target.data.deck.name || "Unnamed deck",
+            source: `${target.data.kind}:${target.data.deck.id}`,
+            xp: deckXp(store, target.data.deck),
+          }
+        : undefined,
     }),
   );
 }

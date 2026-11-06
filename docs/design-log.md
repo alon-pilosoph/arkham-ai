@@ -409,3 +409,13 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
 - **Built.** Deck versions keep the guide. Spending XP now starts from it: read the deck, follow
   the guide's path as far as the XP and the legal, owned cards allow, and offer alternatives.
 - **Direction.** The app becomes chat first: [plans/chat-first.md](plans/chat-first.md).
+
+## Starting decks and target decks (November 6)
+
+- **Built.** Locking in a deck whose guide links a lower-XP version of it asks which to start from.
+  Starting from the linked one keeps the finished deck as the seat's target, shown on its card and
+  in every chat, and upgrades head toward it. The deck tool also lists linked versions, so the
+  chat sees them whenever a deck comes up.
+- **Asked, not guessed.** A description can link several decks, so nothing switches on its own.
+- **Linked decks are matched by investigator and XP in code.** Only the same investigator counts:
+  guides also link partner decks.

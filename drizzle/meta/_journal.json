@@ -29,6 +29,13 @@
       "when": 1793166344017,
       "tag": "0003_campaign_chats",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793960676021,
+      "tag": "0004_seat_target",
+      "breakpoints": true
     }
   ]
 }
