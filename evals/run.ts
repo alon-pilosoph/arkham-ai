@@ -5,10 +5,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import { type LanguageModel, type LanguageModelMiddleware, type LanguageModelUsage, type UIMessage, wrapLanguageModel } from "ai";
-import { BUDGET, runAgent, toModelMessages } from "@/lib/agent";
+import { BUDGET, campaignNote, runAgent, toModelMessages } from "@/lib/agent";
+import { getCards } from "@/lib/cards";
 import { errorMessage } from "@/lib/format";
 import { languageModel, modelSpec } from "@/lib/model";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
+import { evalCampaign } from "./campaign";
 import { CASES } from "./cases";
 
 // USD per million tokens. cacheWrite is Anthropic's 1-hour write rate, and OpenAI's full input price.
@@ -135,14 +137,17 @@ async function main(): Promise<number> {
       console.log(`budget reached ($${spent.toFixed(3)}), stopping before ${c.id}`);
       break;
     }
-    const settings = { ...DEFAULT_SETTINGS, ...c.settings };
+    const campaign = c.campaign ? evalCampaign() : null;
+    const settings = { ...DEFAULT_SETTINGS, ...c.settings, campaign };
+    const store = await getCards();
+    const note = campaign ? campaignNote(campaign, (code) => store.get(code)?.name) : undefined;
     const started = Date.now();
     const history: UIMessage[] = [];
     const turns = [];
     let usd = 0;
     for (const [i, question] of [c.question, ...(c.followUps ?? [])].entries()) {
       history.push({ id: `u${i}`, role: "user", parts: [{ type: "text", text: question }] });
-      const messages = await toModelMessages(history, settings);
+      const messages = await toModelMessages(history, settings, undefined, note);
       let timedOut = false;
       const result = runAgent({
         model: llm,

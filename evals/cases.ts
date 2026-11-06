@@ -4,10 +4,12 @@ import type { Settings } from "@/lib/settings";
 
 export type EvalCase = {
   id: string;
-  useCase: "rules" | "card" | "deck" | "replace" | "upgrade" | "find" | "partner" | "prep" | "scope";
+  useCase: "rules" | "card" | "deck" | "replace" | "upgrade" | "find" | "partner" | "prep" | "scope" | "campaign";
   question: string;
   followUps?: string[];
   settings?: Partial<Settings>;
+  /** Asked in the chat of the campaign in evals/campaign.ts. */
+  campaign?: boolean;
   expect: string;
 };
 
@@ -203,5 +205,58 @@ export const CASES: EvalCase[] = [
     followUps: ["And if they play Carolyn Fern Destroys Carcosa instead?"],
     expect:
       "Turn 2 finds and reads Carolyn Fern Destroys Carcosa (support) and searches again for flex first, then fighter or cluever partners; the recommendation changes with the new deck.",
+  },
+  {
+    id: "campaign-offer",
+    useCase: "campaign",
+    question: "I'm starting a new campaign.",
+    expect: "Calls offerCampaignSetup and waits; doesn't start asking questions or propose anything yet.",
+  },
+  {
+    id: "campaign-up-front",
+    useCase: "campaign",
+    question: "Start a new Dunwich Legacy campaign on hard, no taboo. Just me, playing https://arkhamdb.com/decklist/view/33170.",
+    expect: "Skips the offer and calls proposeCampaign with mine set; says it is created by the card, not that it was created.",
+  },
+  {
+    id: "campaign-midway",
+    useCase: "campaign",
+    question: "We're in the middle of The Path to Carcosa and want to use this for our decks.",
+    followUps: [
+      "We're about to play Echoes of the Past, standard, no taboo. I'm playing https://arkhamdb.com/decklist/view/33170 with 4 unspent XP and 1 mental trauma.",
+    ],
+    expect:
+      "First asks for what's missing (scenario, difficulty, decks, XP, trauma) without guessing. Then calls proposeCampaign with nextScenario Echoes of the Past, unspentXp 4 and mentalTrauma 1.",
+  },
+  {
+    id: "campaign-scenario-asks",
+    useCase: "campaign",
+    campaign: true,
+    question: "We finished The Last King.",
+    followUps: ["Lily got 3 XP and no trauma, nobody died."],
+    expect:
+      "First asks for XP, trauma and anyone killed or insane, proposing nothing and guessing no number. Then calls proposeChange with +3 XP and the next scenario Echoes of the Past, says it applies on Apply, and offers to look at upgrades.",
+  },
+  {
+    id: "campaign-upgrade-guide",
+    useCase: "campaign",
+    campaign: true,
+    question: "What should Lily buy with her XP?",
+    expect:
+      "Reads seat:Lily with the deck tool and calls upgrades with 5 XP. Uses the guide's upgrade path, offers an alternative, says which came from the guide, keeps to the seat's direction, and every total fits 5 XP.",
+  },
+  {
+    id: "campaign-direction",
+    useCase: "campaign",
+    campaign: true,
+    question: "I don't want Lily to be a fighter any more. I want her to be more of a flex mystic-style support.",
+    expect: "Calls proposeChange with kind direction, in the player's words, and doesn't claim it was saved.",
+  },
+  {
+    id: "campaign-undo",
+    useCase: "campaign",
+    campaign: true,
+    question: "Undo the last thing we recorded.",
+    expect: "Calls proposeChange with kind undo and says it applies when they press Apply.",
   },
 ];

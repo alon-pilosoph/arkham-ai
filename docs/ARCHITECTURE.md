@@ -80,7 +80,7 @@ original card is therefore computed by the same function in the app and in the p
    `lib/agent.ts`). It never goes into the system
    prompt, whose bytes are identical on every request.
 
-5. **The agent loop** is one `streamText` call with eight tools. The players' settings reach each
+5. **The agent loop** is one `streamText` call with eleven tools. The players' settings reach each
    tool through the AI SDK's per-tool context (`toolsContext`), not through the prompt. Before
    each step, `prepareStep` checks the budgets and moves the cache breakpoint (see below).
 
@@ -244,7 +244,7 @@ still running when time is up is aborted and reports `ERROR`.
 | `proposeCampaign` | The campaign table, ArkhamDB for each seat's deck | A campaign ready to create, from its first scenario or partway through, shown on a card. Writes nothing. |
 | `proposeChange` | The campaign the chat is in, the card store, the legality check, XP pricing (`lib/xp.ts`) | In a campaign's chat only: a change for the players to apply, either what a scenario did (XP, trauma, killed or insane, the next scenario) or cards in and out of one seat's deck, priced and checked against the deck's rules and the seat's unspent XP. It writes nothing; its card has Apply and Discard. |
 
-All eight tools follow the same contracts:
+All eleven tools follow the same contracts:
 
 - **An error is never shown as absence.** ArkhamDB calls return a `Fetched<T>`
   (`lib/arkhamdb.ts`): the data, `not_found` or `error`. The model sees `ERROR: ...` or
