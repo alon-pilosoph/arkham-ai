@@ -121,7 +121,7 @@ export async function listCampaigns(userId: string) {
 
 export async function createCampaign(
   userId: string,
-  input: { name: string; code: string; difficulty: Difficulty; taboo: boolean },
+  input: { name: string; code: string; difficulty: Difficulty; taboo: boolean; proposalId?: string },
 ): Promise<Result<string>> {
   if (!CAMPAIGNS.some((c) => c.code === input.code)) return fail("That isn't a Chapter 1 campaign.");
   const name = input.name.trim().slice(0, 80);
@@ -129,9 +129,15 @@ export async function createCampaign(
   const db = await getDb();
   const id = crypto.randomUUID();
   await db.transaction(async (tx) => {
-    await tx
-      .insert(campaign)
-      .values({ id, name, code: input.code, difficulty: input.difficulty, taboo: input.taboo, ownerId: userId });
+    await tx.insert(campaign).values({
+      id,
+      name,
+      code: input.code,
+      difficulty: input.difficulty,
+      taboo: input.taboo,
+      ownerId: userId,
+      proposalId: input.proposalId ?? null,
+    });
     await tx.insert(campaignMember).values({ campaignId: id, userId, role: "owner" });
   });
   return { ok: true, value: id };

@@ -2,6 +2,7 @@ import { campaignPrepTool } from "./campaign-prep";
 import { cardsTool } from "./cards";
 import { deckTool } from "./deck";
 import { findDeckTool } from "./find-deck";
+import { offerCampaignSetupTool, proposeCampaignTool } from "./propose-campaign";
 import { proposeChangeTool } from "./propose-change";
 import { recommendDecksTool } from "./recommend-decks";
 import { replaceCardTool } from "./replace-card";
@@ -17,6 +18,8 @@ export const tools = {
   upgrades: upgradesTool,
   campaignPrep: campaignPrepTool,
   proposeChange: proposeChangeTool,
+  offerCampaignSetup: offerCampaignSetupTool,
+  proposeCampaign: proposeCampaignTool,
 };
 
 export type ToolName = keyof typeof tools;

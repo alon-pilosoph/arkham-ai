@@ -143,6 +143,8 @@ export const campaign = pgTable("campaign", {
     .notNull()
     .references(() => user.id),
   nextScenario: integer("next_scenario").notNull().default(0),
+  /** The chat proposal it was created from, so a card can't create it twice. */
+  proposalId: text("proposal_id").unique(),
   version: integer("version").notNull().default(0),
   createdAt: timestamp("created_at").notNull().$defaultFn(now),
   updatedAt: timestamp("updated_at").notNull().$defaultFn(now),

@@ -16,6 +16,22 @@ export function route(q: string): { toolName: string; input: Record<string, unkn
   if (direction) return { toolName: "proposeChange", input: { kind: "direction", seat: direction[1], direction: direction[2] } };
   const upgradesFor = q.match(/look at upgrades for (\w+)/i);
   if (upgradesFor) return { toolName: "upgrades", input: { deck: `seat:${upgradesFor[1]}`, xp: 3 } };
+  if (/^i'?m starting a new campaign/i.test(q)) return { toolName: "offerCampaignSetup", input: {} };
+  const setUp = q.match(/^set up carcosa with (\w+)(?: at (.+))?/i);
+  if (setUp) {
+    const underWay = setUp[2] ? { unspentXp: 3, mentalTrauma: 1 } : {};
+    return {
+      toolName: "proposeCampaign",
+      input: {
+        name: "Carcosa",
+        campaign: "The Path to Carcosa",
+        difficulty: "hard",
+        taboo: false,
+        ...(setUp[2] ? { nextScenario: setUp[2] } : {}),
+        seats: [{ name: setUp[1], mine: true, deck: "https://arkhamdb.com/decklist/view/33170", ...underWay }],
+      },
+    };
+  }
   const swap = q.match(/^swap (\w+) for (\w+) in seat:(\w+)/i);
   if (swap)
     return {

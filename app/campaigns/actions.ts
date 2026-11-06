@@ -7,6 +7,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { join, replaceInvite } from "@/lib/campaign/invites";
+import { lockable, targetOf } from "@/lib/campaign/lock";
 import {
   addSeat,
   createCampaign,
@@ -24,7 +25,7 @@ import {
   updateSettings,
 } from "@/lib/campaign/store";
 import { getCards } from "@/lib/cards";
-import { deckXp, startingVersions } from "@/lib/deck-links";
+import { startingVersions } from "@/lib/deck-links";
 import { fetchDeck, parseRef } from "@/lib/decks";
 import { currentUser } from "@/lib/session";
 
@@ -96,30 +97,12 @@ export async function lockDeckAction(form: FormData) {
   const targetRef = parseRef(text(form, "target"));
   const target = targetRef ? await fetchDeck(targetRef) : null;
   if (target && !target.ok) back(id, { ok: false, error: `Couldn't read the target deck: ${target.message}` });
-  const map = (x: unknown) => (x && !Array.isArray(x) ? (x as Record<string, number>) : undefined);
   back(
     id,
     await lockDeck(user.id, id, whole(form, "version"), {
       seatId,
-      name: deck.name || "Unnamed deck",
-      list: {
-        investigator_code: deck.investigator_code,
-        slots: deck.slots,
-        sideSlots: map(deck.sideSlots),
-        ignoreDeckLimitSlots: map(deck.ignoreDeckLimitSlots),
-        meta: typeof deck.meta === "string" ? deck.meta : deck.meta ? JSON.stringify(deck.meta) : undefined,
-        taboo_id: deck.taboo_id ?? null,
-        description_md: deck.description_md,
-      },
-      investigatorCode: store.canonical(deck.investigator_code),
-      source: `${kind}:${deck.id}`,
-      target: target?.ok
-        ? {
-            name: target.data.deck.name || "Unnamed deck",
-            source: `${target.data.kind}:${target.data.deck.id}`,
-            xp: deckXp(store, target.data.deck),
-          }
-        : undefined,
+      ...lockable(store, deck, kind),
+      target: target?.ok ? targetOf(store, target.data.deck, target.data.kind) : undefined,
     }),
   );
 }

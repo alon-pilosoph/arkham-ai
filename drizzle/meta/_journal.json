@@ -43,6 +43,13 @@
       "when": 1793961738298,
       "tag": "0005_seat_direction",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793964360994,
+      "tag": "0006_campaign_proposal",
+      "breakpoints": true
     }
   ]
 }

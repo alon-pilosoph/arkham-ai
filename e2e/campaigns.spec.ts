@@ -61,6 +61,37 @@ test("a deck that links a starting version asks which to play, and keeps the fin
   await expect(page.getByRole("link", { name: "Lily - Finished" })).toBeVisible();
 });
 
+test("starting a campaign in chat: a card with two ways, then a campaign that opens its own chat", async ({ page }) => {
+  await page.goto("/");
+  const box = page.getByRole("textbox", { name: "Message input" });
+  await box.fill("I'm starting a new campaign");
+  await box.press("Enter");
+  await expect(page.getByRole("link", { name: "Set it up myself" })).toHaveAttribute("href", "/campaigns");
+  await page.getByRole("button", { name: "Set it up in chat" }).click();
+  await expect(page.getByText("Let's set it up here in the chat.").last()).toBeVisible();
+  // the next message can't send until this answer is finished
+  await expect(page.getByRole("button", { name: "Send message" })).toBeVisible({ timeout: 15_000 });
+
+  await box.fill("set up carcosa with Lily");
+  await box.press("Enter");
+  await expect(page.getByText("Starting at Curtain Call")).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("button", { name: "Create campaign" }).click();
+  await expect(page.getByRole("heading", { name: "Carcosa" })).toBeVisible();
+  await expect(page.getByText("Next up: Curtain Call.")).toBeVisible();
+  await expect(page.getByLabel("Invite link")).toHaveValue(/\/invite\//);
+});
+
+test("a campaign joined partway through starts at its scenario and goes straight to advice", async ({ page }) => {
+  await page.goto("/");
+  const box = page.getByRole("textbox", { name: "Message input" });
+  await box.fill("set up carcosa with Lily at The Last King");
+  await box.press("Enter");
+  await expect(page.getByText("Starting at The Last King")).toBeVisible({ timeout: 15_000 });
+  await page.getByRole("button", { name: "Create campaign" }).click();
+  await expect(page.getByText("We're about to play The Last King.").last()).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole("combobox", { name: "Campaign" })).toHaveValue(/.+/);
+});
+
 test("an invite link lets someone new sign up and join", async ({ page, browser }, info) => {
   const name = `Invite ${info.project.name} ${Date.now() % 100000}`;
   await page.goto("/campaigns");
