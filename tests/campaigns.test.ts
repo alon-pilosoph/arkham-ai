@@ -5,6 +5,7 @@ import { mayJoin } from "@/lib/access";
 import { campaignNote } from "@/lib/agent";
 import { arkhamDbText, exportFileName } from "@/lib/campaign/export";
 import { currentInvite, findInvite, join, rememberInvitedEmail, replaceInvite } from "@/lib/campaign/invites";
+import { campaignFromProposal, startCampaign } from "@/lib/campaign/start";
 import {
   addSeat,
   type CampaignView,
@@ -26,10 +27,12 @@ import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { linkedVersions, startingVersions } from "@/lib/deck-links";
 import { fetchDeck } from "@/lib/decks";
+import { failureText } from "@/lib/format";
 import { currentUser } from "@/lib/session";
 import { DEFAULT_SETTINGS } from "@/lib/settings";
 import type { CampaignContext } from "@/lib/tool-context";
 import { readDeck } from "@/lib/tools/deck";
+import { type ProposeCampaignInput, proposeCampaign } from "@/lib/tools/propose-campaign";
 import { propose } from "@/lib/tools/propose-change";
 
 const OWNER = { id: "owner", email: "owner@example.com", name: "Alon" };
@@ -350,6 +353,86 @@ describe("what a campaign remembers about its decks", () => {
     expect(note).toContain("next scenario Curtain Call (1 of 8), then The Last King");
     expect(note).toMatch(/locked in Agnes; Roland: out Shrivelling; in Shrivelling \(3 XP\)/);
     expect(note).not.toContain("out Scrying");
+  });
+});
+
+describe("starting a campaign from chat", () => {
+  const LILY = "https://arkhamdb.com/decklist/view/33170";
+  const base = { name: "Our Carcosa", campaign: "The Path to Carcosa", difficulty: "hard" as const, taboo: false };
+  const proposed = async (input: ProposeCampaignInput) => {
+    const r = await proposeCampaign(input);
+    if (!r.ok) throw new Error(failureText(r));
+    return r;
+  };
+
+  beforeAll(() => vi.stubEnv("ARKHAM_DECKS_DIR", "tests/fixtures"));
+
+  test("from the start: a proposal writes nothing, and its card creates the campaign once", async () => {
+    const p = await proposed({ ...base, seats: [{ name: "Lily", mine: true, deck: LILY }] });
+    expect(p.summary).toEqual([
+      "Our Carcosa: The Path to Carcosa, hard, taboo list off",
+      "Starting at Curtain Call",
+      "Lily: Lily Chen, Lily - Boom Chakra Lacka (Deck Guide)",
+    ]);
+    expect(p.ask).toBeUndefined();
+    expect(await campaignFromProposal(OWNER.id, p.start.proposalId)).toBeNull();
+
+    const id = value(await startCampaign(OWNER.id, p.start));
+    expect(value(await startCampaign(OWNER.id, p.start))).toBe(id);
+    expect(await campaignFromProposal(OWNER.id, p.start.proposalId)).toBe(id);
+    expect(await campaignFromProposal(FRIEND.id, p.start.proposalId)).toBeNull();
+    const view = await loadCampaign(OWNER.id, id);
+    expect(view).toMatchObject({ difficulty: "hard", nextScenario: 0 });
+    expect(view?.seats[0]).toMatchObject({ name: "Lily", userId: OWNER.id, deck: { number: 1 } });
+    expect(view?.seats[0].deck?.list.description_md).toBeTruthy();
+  });
+
+  test("partway through: starts at the scenario, with reversible opening numbers, and asks for advice", async () => {
+    const p = await proposed({
+      ...base,
+      nextScenario: "the last king",
+      seats: [
+        { name: "Lily", deck: LILY, unspentXp: 5, mentalTrauma: 1, direction: "a flex guardian" },
+        { name: "Ari", status: "insane" },
+      ],
+    });
+    expect(p.ask).toBe("We're about to play The Last King. How should we upgrade our decks for it?");
+    const id = value(await startCampaign(OWNER.id, p.start));
+    let view = await loadCampaign(OWNER.id, id);
+    expect(view?.nextScenario).toBe(1);
+    expect(view?.seats[0]).toMatchObject({
+      direction: "a flex guardian",
+      xp: { unspent: 5 },
+      trauma: { physical: 0, mental: 1 },
+    });
+    expect(view?.seats[1].status).toBe("insane");
+    value(await revert(OWNER.id, id, view?.version ?? -1, view?.changes[0].id ?? ""));
+    view = await loadCampaign(OWNER.id, id);
+    expect(view).toMatchObject({ nextScenario: 0 });
+    expect(view?.seats[0].xp.unspent).toBe(0);
+  });
+
+  test("a deck that links a starting version is raised, unless a target settles it", async () => {
+    const finished = "https://arkhamdb.com/decklist/view/900001";
+    const asks = await proposed({ ...base, seats: [{ name: "Lily", deck: finished }] });
+    expect(asks.notes[0]).toContain("https://arkhamdb.com/decklist/view/900002");
+    const settled = await proposed({
+      ...base,
+      seats: [{ name: "Lily", deck: "https://arkhamdb.com/decklist/view/900002", target: finished }],
+    });
+    expect(settled.notes).toEqual([]);
+    const id = value(await startCampaign(OWNER.id, settled.start));
+    expect((await loadCampaign(OWNER.id, id))?.seats[0].target).toMatchObject({ source: "decklist:900001" });
+  });
+
+  test("refuses an unknown campaign, an unknown scenario and an unreadable deck; a deck gone at create time leaves nothing", async () => {
+    expect(await proposeCampaign({ ...base, campaign: "Carcosa Two", seats: [] })).toMatchObject({ ok: false });
+    expect(await proposeCampaign({ ...base, nextScenario: "Nope", seats: [] })).toMatchObject({ ok: false });
+    expect(await proposeCampaign({ ...base, seats: [{ name: "Lily", deck: "my lily deck" }] })).toMatchObject({ ok: false });
+    const p = await proposed({ ...base, seats: [{ name: "Lily", deck: LILY }] });
+    const gone = { ...p.start, seats: [{ name: "Lily", deck: "https://arkhamdb.com/decklist/view/99999999" }] };
+    expect((await startCampaign(OWNER.id, gone)).ok).toBe(false);
+    expect(await campaignFromProposal(OWNER.id, p.start.proposalId)).toBeNull();
   });
 });
 

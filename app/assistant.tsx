@@ -1,14 +1,15 @@
 "use client";
 
 import { AssistantChatTransport } from "@assistant-ui/ai-sdk";
-import { AssistantRuntimeProvider, ThreadListPrimitive, ThreadPrimitive } from "@assistant-ui/react";
+import { AssistantRuntimeProvider, ThreadListPrimitive, ThreadPrimitive, useAui, useAuiState } from "@assistant-ui/react";
 import { SquarePenIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Thread } from "@/components/assistant-ui/elements/thread.aui";
 import { ThreadListSidebar } from "@/components/assistant-ui/elements/threadlist-sidebar.aui";
 import { TooltipIconButton } from "@/components/assistant-ui/elements/tooltip-icon-button";
 import { CardDialogProvider } from "@/components/cards/card-dialog";
 import { TabooSwitch } from "@/components/settings/taboo-switch";
+import { firstQuestionKey } from "@/components/tools/campaign-ui";
 import { useArkhamTools } from "@/components/tools/tool-ui";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
@@ -33,34 +34,80 @@ const EXAMPLES: { title: string; prompt: string }[] = [
 // Disables attachments: overrides the AI SDK's default adapter.
 const ADAPTERS = { attachments: undefined };
 
+const Suggestions = ({ examples }: { examples: { title: string; prompt: string }[] }) => (
+  <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
+    {examples.map((e, i) => (
+      <ThreadPrimitive.Suggestion
+        key={e.title}
+        prompt={e.prompt}
+        send
+        render={
+          <button
+            type="button"
+            className={`bg-muted/50 hover:bg-muted focus-visible:ring-ring/50 flex cursor-pointer flex-col gap-1 rounded-xl p-4 text-start text-sm transition-colors outline-none focus-visible:ring-[3px] ${i >= 4 ? "max-sm:hidden" : ""}`}
+          />
+        }
+      >
+        <span className="font-medium">{e.title}</span>
+        <span className="text-muted-foreground line-clamp-2">{e.prompt}</span>
+      </ThreadPrimitive.Suggestion>
+    ))}
+  </div>
+);
+
 const Welcome = () => (
   <div className="mb-6 flex min-w-0 flex-col">
     <h1 className="text-2xl font-medium tracking-tight text-balance">What are you playing tonight?</h1>
     <p className="text-muted-foreground mt-1">
-      Ask about a rule, a card or a deck. Answers come from the Rules Reference and ArkhamDB.
+      Ask about a rule, a card or a deck, or say you're starting a campaign. Answers come from the Rules Reference and ArkhamDB.
     </p>
-    <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-      {EXAMPLES.map((e, i) => (
-        <ThreadPrimitive.Suggestion
-          key={e.title}
-          prompt={e.prompt}
-          send
-          render={
-            <button
-              type="button"
-              className={`bg-muted/50 hover:bg-muted focus-visible:ring-ring/50 flex cursor-pointer flex-col gap-1 rounded-xl p-4 text-start text-sm transition-colors outline-none focus-visible:ring-[3px] ${i >= 4 ? "max-sm:hidden" : ""}`}
-            />
-          }
-        >
-          <span className="font-medium">{e.title}</span>
-          <span className="text-muted-foreground line-clamp-2">{e.prompt}</span>
-        </ThreadPrimitive.Suggestion>
-      ))}
-    </div>
+    <Suggestions examples={EXAMPLES} />
   </div>
 );
 
+const CampaignWelcome = ({ campaign }: { campaign: OpenCampaign }) => (
+  <div className="mb-6 flex min-w-0 flex-col">
+    <h1 className="text-2xl font-medium tracking-tight text-balance">{campaign.name}</h1>
+    <p className="text-muted-foreground mt-1">
+      {campaign.next ? `Next up: ${campaign.next}. ` : ""}Tell me how a scenario went, or ask about your decks.
+    </p>
+    <Suggestions
+      examples={[
+        { title: "After a scenario", prompt: "We finished a scenario." },
+        { title: "Spend XP", prompt: "What should we buy with our XP?" },
+        ...(campaign.next ? [{ title: "Get ready", prompt: `How should we prepare for ${campaign.next}?` }] : []),
+      ]}
+    />
+    <label className="text-muted-foreground mt-4 flex flex-col gap-1 text-sm">
+      Invite the people you play with:
+      <input
+        readOnly
+        value={campaign.invite}
+        aria-label="Invite link"
+        className="border-input bg-background h-9 rounded-md border px-2"
+      />
+    </label>
+  </div>
+);
+
+/** Asks the question a card left for this campaign's first chat, once. */
+const FirstQuestion = ({ campaignId }: { campaignId: string }) => {
+  const aui = useAui();
+  // until the list of chats has loaded there is only a placeholder thread, which can't be sent to
+  const ready = useAuiState((s) => !s.threads.isLoading && !s.thread.isLoading);
+  useEffect(() => {
+    if (!ready) return;
+    const key = firstQuestionKey(campaignId);
+    const question = sessionStorage.getItem(key);
+    if (!question) return;
+    sessionStorage.removeItem(key);
+    aui.thread().append(question);
+  }, [aui, campaignId, ready]);
+  return null;
+};
+
 type CampaignRef = { id: string; name: string };
+type OpenCampaign = CampaignRef & { next: string | null; invite: string };
 
 /** Which chats the page shows: personal ones, or a campaign's. Switching reloads the page there. */
 const CampaignSwitcher = ({ campaign, campaigns }: { campaign: CampaignRef | null; campaigns: CampaignRef[] }) => {
@@ -125,7 +172,7 @@ const Header = ({
   );
 };
 
-export const Assistant = ({ campaign, campaigns }: { campaign: CampaignRef | null; campaigns: CampaignRef[] }) => {
+export const Assistant = ({ campaign, campaigns }: { campaign: OpenCampaign | null; campaigns: CampaignRef[] }) => {
   const { settings, update } = useSettings();
   const [transport] = useState(
     () =>
@@ -151,7 +198,8 @@ export const Assistant = ({ campaign, campaigns }: { campaign: CampaignRef | nul
             <SidebarInset>
               <Header taboo={settings.taboo} onTaboo={(taboo) => update({ taboo })} campaign={campaign} campaigns={campaigns} />
               <div className="flex-1 overflow-hidden">
-                <Thread welcome={<Welcome />} autoFocus={autoFocus} />
+                <Thread welcome={campaign ? <CampaignWelcome campaign={campaign} /> : <Welcome />} autoFocus={autoFocus} />
+                {campaign ? <FirstQuestion campaignId={campaign.id} /> : null}
               </div>
             </SidebarInset>
           </div>

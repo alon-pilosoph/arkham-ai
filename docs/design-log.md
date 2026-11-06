@@ -441,3 +441,16 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
 - **Removed.** The "your deck" and "your partner's deck" slots, their API route and the saved decks
   in the turn note. Personal chats are plain questions now, with a deck pasted or named. Decks that
   are kept belong to campaigns, which take any number of seats.
+
+## Starting a campaign in chat (November 6)
+
+- **Built.** "I'm starting a new campaign" gets a card with two ways to do it. In chat, the
+  assistant asks for what it needs and a card creates the campaign, seats and decks in one click,
+  then opens a chat inside it. A new chat in a campaign greets you with its next scenario,
+  suggestions and the invite link.
+- **Partway through.** Unspent XP, trauma and statuses go in as one opening change that can be
+  reverted, and the campaign starts at the scenario they are about to play. A question is left for
+  the new chat, so it goes straight to advice. It is left in `sessionStorage` rather than the URL,
+  so a link can't make someone send a message.
+- **A deck that links a starting version** is raised to the model as a note, to ask before the card
+  is pressed.

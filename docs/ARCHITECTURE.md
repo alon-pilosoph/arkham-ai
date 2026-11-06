@@ -161,6 +161,15 @@ restored. Any version downloads as a text file ArkhamDB imports (`lib/campaign/e
 decks → Import Deck → File): the investigator's name, then `2x Name: Subtitle [level]` per card,
 the campaign's cards included, since ArkhamDB matches each line by name, subtitle and level.
 
+A campaign can also start from a chat, in any chat. `proposeCampaign` checks the names and reads
+the decks, and a card holds the result; `startCampaign` (`lib/campaign/start.ts`) reads the decks
+again, all of them before creating anything, then makes the campaign through the same changes the
+page uses. A campaign joined partway through puts its unspent XP, trauma and statuses in as one
+opening `record`, so they show in the history and can be reverted, which is also why "earned"
+counts only from there. `proposal_id` is unique on `campaign`, so a card can't create it twice. The
+card then opens the campaign's chat, leaving a first question in `sessionStorage` for a campaign
+under way, so the chat goes straight to advice.
+
 A campaign's chats (`/?campaign=<id>`, from the switcher in the chat header) are shared by its
 members. The chat route loads the campaign for a member only, never from the client, and the
 newest message carries its state (`campaignNote`, `lib/agent.ts`): each seat's investigator,
@@ -230,6 +239,8 @@ still running when time is up is aborted and reports `ERROR`.
 | `upgrades` | The deck, the card store, the legality check, play rates, and the taboo list when it is on | What an XP budget buys for the deck, each owned and legal: higher levels of cards it runs (the difference in level, at least 1, for every copy), unmarked customization boxes (1 XP each, at most 10 a sheet), new cards of level 1 and up, and the level 0 cards this investigator's liked decks play most. Prices follow the Rules Reference: exceptional doubles, myriad pays once, the taboo surcharge only when the list is on; cards bought only at deck creation are left out. The model picks the set and names what each new card replaces. |
 | `campaignPrep` | The card store's encounter cards, and the campaign table in `lib/campaigns.ts` | What a Chapter 1 campaign or standalone scenario asks of the investigators, computed from its encounter cards as counts and averages: the skills its treacheries test, how often they deal horror, damage or doom, its enemies' fight, evade, health, attacks and keywords, its locations' shroud, and frost, bless or curse tokens. Also by scenario, in play order, with the sets several scenarios share counted apart. No card is named, so it spoils nothing; a note per campaign says what its mechanics ask of a deck, which the counts can't show. Used only when the players ask. |
 | `replaceCard` | The deck, the card store, the legality check, play rates | Legal, owned candidates to replace one card in one deck, for a goal: cheaper, the same job, a different job, or an owned stand-in for an unowned card |
+| `offerCampaignSetup` | Nothing | A card with the two ways to start a campaign: in this chat, or by hand on the campaigns page. |
+| `proposeCampaign` | The campaign table, ArkhamDB for each seat's deck | A campaign ready to create, from its first scenario or partway through, shown on a card. Writes nothing. |
 | `proposeChange` | The campaign the chat is in, the card store, the legality check, XP pricing (`lib/xp.ts`) | In a campaign's chat only: a change for the players to apply, either what a scenario did (XP, trauma, killed or insane, the next scenario) or cards in and out of one seat's deck, priced and checked against the deck's rules and the seat's unspent XP. It writes nothing; its card has Apply and Discard. |
 
 All eight tools follow the same contracts:

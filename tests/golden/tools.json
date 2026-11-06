@@ -434,5 +434,118 @@
       ],
       "additionalProperties": false
     }
+  },
+  "offerCampaignSetup": {
+    "description": "When the players say they are starting a campaign and haven't said much else, show a card offering two ways to do it: set it up here in the chat, or by hand on the campaigns page. Takes nothing and writes nothing.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    }
+  },
+  "proposeCampaign": {
+    "description": "Propose creating a campaign, from its first scenario or partway through, once the players have said what it needs: which campaign, the difficulty, taboo, and each seat with its deck link, plus for a campaign under way the scenario they are about to play and each seat's unspent XP, trauma and status. Reads the decks and checks the names. Writes nothing: a player creates it from a card, which opens a chat inside the new campaign.",
+    "inputSchema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "What the players call this campaign; the campaign's own name if they gave none"
+        },
+        "campaign": {
+          "type": "string",
+          "description": "Which Chapter 1 campaign, by its name"
+        },
+        "difficulty": {
+          "type": "string",
+          "enum": [
+            "easy",
+            "standard",
+            "hard",
+            "expert"
+          ]
+        },
+        "taboo": {
+          "type": "boolean",
+          "description": "Whether they play with the taboo list"
+        },
+        "nextScenario": {
+          "description": "Only for a campaign already under way: the name of the scenario they are about to play",
+          "type": "string"
+        },
+        "seats": {
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60,
+                "description": "The player's or investigator's name"
+              },
+              "mine": {
+                "description": "True for the seat of the player who is asking",
+                "type": "boolean"
+              },
+              "deck": {
+                "description": "An ArkhamDB deck link: the deck as it stands now",
+                "type": "string"
+              },
+              "target": {
+                "description": "An ArkhamDB link to the finished deck this one is building toward",
+                "type": "string"
+              },
+              "unspentXp": {
+                "description": "Already under way: the seat's unspent XP",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "physicalTrauma": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "mentalTrauma": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "active",
+                  "killed",
+                  "insane"
+                ]
+              },
+              "direction": {
+                "description": "Where the players want this deck to go, if they said",
+                "type": "string",
+                "maxLength": 300
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "name",
+        "campaign",
+        "difficulty",
+        "taboo",
+        "seats"
+      ],
+      "additionalProperties": false
+    }
   }
 }

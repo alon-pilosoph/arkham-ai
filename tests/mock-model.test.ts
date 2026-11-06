@@ -8,6 +8,7 @@ test.each([
   ["How do I play deck 33170?", "deck", { ref: "33170" }],
   ["Who partners deck 33170?", "recommendDecks", { pairWith: "33170" }],
   ["Deck 33170: replace Azure Flame?", "replaceCard", { deck: "33170", card: "Azure Flame", goal: "same_job" }],
+  ["I'm starting a new campaign", "offerCampaignSetup", {}],
   ["Suggest a mystic cluever deck.", "recommendDecks", { class: "mystic", role: "cluever" }],
 ])("the scripted model routes %j to the %s tool", (question, toolName, input) => {
   expect(Object.keys(tools)).toContain(toolName);

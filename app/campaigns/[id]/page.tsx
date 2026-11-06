@@ -185,21 +185,27 @@ function SeatCard({
           </ul>
         </details>
       ) : null}
-      <form action={directionAction} className="flex gap-2">
-        <input type="hidden" name="campaignId" value={campaignId} />
-        <input type="hidden" name="version" value={version} />
-        <input type="hidden" name="seatId" value={s.id} />
-        <input
-          name="direction"
-          defaultValue={s.direction ?? ""}
-          maxLength={MAX_DIRECTION}
-          placeholder="Where this deck is going, such as a flex mystic"
-          aria-label={`Where ${s.name}'s deck is going`}
-          className={`${field} min-w-0 flex-1`}
-        />
-        <Button type="submit" variant="outline">
-          Save
-        </Button>
+      <form action={directionAction} className="flex flex-col gap-1">
+        <label htmlFor={`direction-${s.id}`} className="text-muted-foreground text-xs">
+          Deck direction
+        </label>
+        <div className="flex gap-2">
+          <input type="hidden" name="campaignId" value={campaignId} />
+          <input type="hidden" name="version" value={version} />
+          <input type="hidden" name="seatId" value={s.id} />
+          <input
+            id={`direction-${s.id}`}
+            name="direction"
+            defaultValue={s.direction ?? ""}
+            maxLength={MAX_DIRECTION}
+            placeholder="Such as a flex mystic, not a battle mage"
+            aria-label={`Where ${s.name}'s deck is going`}
+            className={`${field} min-w-0 flex-1`}
+          />
+          <Button type="submit" variant="outline">
+            Save
+          </Button>
+        </div>
       </form>
       <form action={lockDeckAction} className="flex gap-2">
         <input type="hidden" name="campaignId" value={campaignId} />
