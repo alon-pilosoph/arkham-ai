@@ -8,7 +8,6 @@ import { Thread } from "@/components/assistant-ui/elements/thread.aui";
 import { ThreadListSidebar } from "@/components/assistant-ui/elements/threadlist-sidebar.aui";
 import { TooltipIconButton } from "@/components/assistant-ui/elements/tooltip-icon-button";
 import { CardDialogProvider } from "@/components/cards/card-dialog";
-import { DeckSlots } from "@/components/settings/deck-slots";
 import { TabooSwitch } from "@/components/settings/taboo-switch";
 import { useArkhamTools } from "@/components/tools/tool-ui";
 import { Separator } from "@/components/ui/separator";
@@ -119,10 +118,7 @@ const Header = ({
             Campaign page
           </a>
         ) : (
-          <>
-            <DeckSlots />
-            <TabooSwitch on={taboo} onChange={onTaboo} />
-          </>
+          <TabooSwitch on={taboo} onChange={onTaboo} />
         )}
       </div>
     </header>

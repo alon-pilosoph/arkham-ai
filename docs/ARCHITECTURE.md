@@ -76,8 +76,7 @@ original card is therefore computed by the same function in the app and in the p
    starts on a user message: an answer whose question fell out of the window is dropped with it.
 
 4. **A per-turn note** is prepended to the newest user message: today's date, whether the
-   taboo list is on, and the decks the players saved as their own and their partner's, if any,
-   by link, investigator and name, the name wrapped as untrusted (`turnNote` and `anchorTurn`,
+   taboo list is on, and in a campaign's chat, the campaign's state (`turnNote` and `anchorTurn`,
    `lib/agent.ts`). It never goes into the system
    prompt, whose bytes are identical on every request.
 
@@ -239,7 +238,7 @@ All eight tools follow the same contracts:
   (`lib/arkhamdb.ts`): the data, `not_found` or `error`. The model sees `ERROR: ...` or
   `NOT FOUND: ...`, never an empty result, and the prompt tells it never to report a failed
   lookup as "there are none".
-- **Untrusted text is wrapped.** Deck names (in tool results and in the saved decks of the
+- **Untrusted text is wrapped.** Deck names (in tool results and in the campaign state of the
   per-turn note), guides and free-text customization choices (a
   trait or skill the author typed) pass through `untrusted()`
   (`lib/format.ts`), which wraps them in `<untrusted_data>` tags and replaces every `<` inside
@@ -306,16 +305,6 @@ The store's behavior:
   reprint carries its original's taboo change.
 - **Ownership is by pack.** `lib/collection.json` lists the owned packs. A card is owned when any
   of its printings is in one of them, and only owned printings are named to the players.
-
-## Saved decks
-
-The **Decks** button in the header (`components/settings/deck-slots.tsx`) keeps two decks in the
-browser's settings: the player's own and their partner's. A pasted ArkhamDB link is read by
-`GET /api/deck?ref=` (`app/api/deck/route.ts`), through the same `fetchDeck` as the tools, into
-the deck's id, kind, name and investigator. Saved decks travel with every request as settings
-and reach the model in the per-turn note, so "my deck" and "my partner's deck" need no link.
-Tool rows name a saved deck by whose it is and any other as "the deck", never by its number
-(`components/tools/deck-label.ts`).
 
 ## The card dialog
 
@@ -451,7 +440,7 @@ answer.
 | `golden.test.ts` | The guidance and tool definitions byte for byte, and the whole system prompt by hash; a missing pin file fails |
 | `e2e/campaigns.spec.ts` | Playwright: a campaign started, a seat added, a deck locked in from a link, a scenario recorded and reverted; an invite link letting someone new sign up by email and join; in the campaign's chat, a proposed change applied from its card and a seat's deck read |
 | `e2e/accounts.spec.ts` | Playwright: a visitor sent to sign in, the privacy page, a stranger told a link is coming and kept out, the invite-only message, signing out. `e2e/sign-in.setup.ts` signs the owner in through an emailed link once, and the other tests reuse that session |
-| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: a chat kept across a reload and listed under its first question, a deleted chat gone, the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, a deck slot refusing what isn't a link, campaign prep, the taboo switch surviving a reload |
+| `e2e/smoke.spec.ts` | Playwright, on desktop and phone viewports: a chat kept across a reload and listed under its first question, a deleted chat gone, the welcome screen, a card lookup, a card link opening the card dialog, a deck shortlist, a deck found by name, campaign prep, the taboo switch surviving a reload |
 
 The unit tests never touch the network. Every test runs signed in with questions to spare
 (`tests/setup.ts` mocks `currentUser` and `takeQuestion`); `accounts.test.ts` tests the real ones,

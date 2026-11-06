@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "@/components/ui/item";
 import type { Purchase, Upgrade, UpgradesInput, UpgradesResult } from "@/lib/tools/upgrades";
 import { cardUrl } from "@/lib/urls";
-import { useDeckLabel } from "./deck-label";
 import {
   CardMeta,
   capital,
@@ -115,7 +114,7 @@ const Result: FC<{ r: Extract<UpgradesResult, { ok: true }> }> = ({ r }) => {
 };
 
 export const UpgradesUI: ToolCallMessagePartComponent<Partial<UpgradesInput>, UpgradesResult> = ({ args, result, status }) => {
-  const deck = useDeckLabel(args.deck);
+  const deck = "the deck";
   const label = `Pricing ${args.xp ?? ""} XP of upgrades for ${deck}`;
   if (!result) return <Pending status={status} label={label} />;
   if (result.ok !== true)
