@@ -22,6 +22,8 @@ import { getCards } from "@/lib/cards";
 import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { currentUser } from "@/lib/session";
+import { DEFAULT_SETTINGS } from "@/lib/settings";
+import { readDeck } from "@/lib/tools/deck";
 import { propose } from "@/lib/tools/propose-change";
 
 const OWNER = { id: "owner", email: "owner@example.com", name: "Alon" };
@@ -342,6 +344,36 @@ describe("proposeChange", () => {
       ctx,
     );
     expect(two).toMatchObject({ ok: false, message: "That costs 6 XP, and Roland has 4 unspent." });
+  });
+
+  test("a seat's deck keeps its guide through a change, and an older version finds it at its source", async () => {
+    const { id, v, seatId } = await setUp();
+    const guided = { ...LIST, description_md: "Buy Lightning Gun first." };
+    value(
+      await lockDeck(OWNER.id, id, await v(), { seatId, name: "Roland", list: guided, investigatorCode: "01001", source: null }),
+    );
+    value(await changeDeck(OWNER.id, id, await v(), { seatId, add: {}, remove: { "01006": 1 } }));
+    const seen = async () => {
+      const campaign = await loadCampaign(OWNER.id, id);
+      return readDeck("seat:Roland", 0, {
+        ...DEFAULT_SETTINGS,
+        campaign: campaign && { ...campaign, askerId: OWNER.id },
+      } as never);
+    };
+    expect(await seen()).toMatchObject({ guide: expect.stringContaining("Buy Lightning Gun first") });
+
+    vi.stubEnv("ARKHAM_DECKS_DIR", "tests/fixtures");
+    const older = { ...LIST };
+    value(
+      await lockDeck(OWNER.id, id, await v(), {
+        seatId,
+        name: "Lily",
+        list: older,
+        investigatorCode: "01001",
+        source: "decklist:33170",
+      }),
+    );
+    expect(await seen()).toMatchObject({ guide: expect.stringMatching(/\S/) });
   });
 
   test("names the seats when one isn't found, and needs a campaign", async () => {

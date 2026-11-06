@@ -251,6 +251,15 @@ export type OpenDeck = {
 /** A campaign seat's deck, by the seat's name (or id): "seat:Alon". */
 const SEAT_REF = /^seat:\s*(.+)$/i;
 
+/** A seat deck's guide. A version locked in before guides were kept reads it from its source. */
+async function seatGuide(deck: NonNullable<CampaignContext["seats"][number]["deck"]>): Promise<string | undefined> {
+  if (deck.list.description_md) return deck.list.description_md;
+  const source = deck.source?.match(/^(decklist|deck):(\d+)$/);
+  if (!source) return undefined;
+  const fetched = await fetchDeck({ id: Number(source[2]), kind: source[1] as DeckKind });
+  return fetched.ok ? fetched.data.deck.description_md : undefined;
+}
+
 async function openSeatDeck(name: string, ctx: Settings & { campaign?: CampaignContext | null }): Promise<OpenDeck | Failure> {
   const c = ctx.campaign;
   if (!c) return notFound(`"seat:${name}" names a campaign seat, and this chat is not in a campaign.`);
@@ -267,6 +276,7 @@ async function openSeatDeck(name: string, ctx: Settings & { campaign?: CampaignC
     ignoreDeckLimitSlots: list.ignoreDeckLimitSlots,
     meta: list.meta,
     taboo_id: list.taboo_id ?? null,
+    description_md: await seatGuide(seat.deck),
   };
   return opened(deck, "seat", ctx, `/campaigns/${c.id}`);
 }

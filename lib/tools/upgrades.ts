@@ -208,7 +208,8 @@ export const upgradesTool = tool({
     "Plan how to spend experience on an ArkhamDB deck between scenarios. Lists what the XP can buy that is owned and " +
     "legal for the deck: higher levels of cards it runs (paying the difference), unmarked customization checkboxes, " +
     "and new cards ranked by how often this investigator's liked decks play them, each with its exact XP price " +
-    "under the taboo setting. Choose the purchases yourself, and say what each new card replaces.",
+    "under the taboo setting. It doesn't read the deck's guide: read that with the deck tool first. Choose the purchases " +
+    "yourself, and say what each new card replaces.",
   inputSchema,
   contextSchema: ToolContextSchema,
   execute: (input, { context }): Promise<UpgradesResult> => safely(() => upgrades(input, context)),
