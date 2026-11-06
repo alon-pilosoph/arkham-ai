@@ -140,7 +140,9 @@ reads it from its ArkhamDB source. A published deck is often the finished one, a
 the version to start from: `lib/deck-links.ts` finds linked decks for the same investigator with
 less XP, and the player chooses. Starting from one keeps the finished deck as the seat's `target`,
 a reference to ArkhamDB rather than a version, which the chat reads to set the direction of
-upgrades. XP (earned positive,
+upgrades. A seat also holds a `direction`, in the players' words ("a flex mystic, not a battle
+mage"), set from a chat proposal or the seat's card; it and the latest deck changes go into the
+note on every turn, so every chat in the campaign builds on them. XP (earned positive,
 spent negative) and trauma are ledgers of entries, so every total is a sum and every entry names
 the change that made it.
 

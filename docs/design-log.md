@@ -419,3 +419,11 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
 - **Asked, not guessed.** A description can link several decks, so nothing switches on its own.
 - **Linked decks are matched by investigator and XP in code.** Only the same investigator counts:
   guides also link partner decks.
+
+## What a campaign remembers about its decks (November 6)
+
+- **Built.** Each turn now carries a campaign's latest deck changes, so advice builds on earlier
+  upgrades. A seat has a direction in the players' words, proposed from chat with a card or typed
+  on the seat's card, and the chat doesn't suggest against it without saying so.
+- **Deliberately narrow.** It is one short sentence per seat, not a general memory of past chats:
+  it stays visible, editable and revertable like everything else in a campaign.

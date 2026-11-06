@@ -43,6 +43,9 @@ function savedDeck(whose: string, d: SavedDeck): string {
 
 /** The campaign a chat belongs to, as of this turn: what its decks are built from. Names the
  *  players wrote are untrusted. */
+/** How many of a campaign's latest deck changes each turn carries. */
+const DECK_CHANGES_IN_NOTE = 15;
+
 export function campaignNote(c: CampaignContext, investigatorName: (code: string) => string | undefined): string {
   const next = c.scenarios[c.nextScenario];
   const seats = c.seats.map((s) => {
@@ -52,14 +55,23 @@ export function campaignNote(c: CampaignContext, investigatorName: (code: string
     const target = s.target
       ? `, building toward ${untrusted("deck name", s.target.name)} (${s.target.xp} XP, ${sourceUrl(s.target.source)})`
       : "";
+    const direction = s.direction ? `, heading for ${untrusted("deck direction", s.direction)}` : "";
     const status = s.status === "active" ? "" : `; ${s.status}`;
-    return `seat ${untrusted("seat name", s.name)}${who}: ${inv ?? "no investigator yet"}, ${deck}${target}; ${s.xp.unspent} unspent XP (${s.xp.earned} earned, ${s.xp.spent} spent); trauma ${s.trauma.physical} physical, ${s.trauma.mental} mental${status}`;
+    return `seat ${untrusted("seat name", s.name)}${who}: ${inv ?? "no investigator yet"}, ${deck}${target}${direction}; ${s.xp.unspent} unspent XP (${s.xp.earned} earned, ${s.xp.spent} spent); trauma ${s.trauma.physical} physical, ${s.trauma.mental} mental${status}`;
   });
+  const upgrades = c.changes
+    .filter((x) => x.kind === "deck" && !x.revertedBy)
+    .slice(0, DECK_CHANGES_IN_NOTE)
+    .reverse()
+    .map((x) => x.summary);
   return [
     `This chat is in the campaign ${untrusted("campaign name", c.name)}: ${c.campaignName}, ${c.difficulty} difficulty, ${next ? `next scenario ${next} (${c.nextScenario + 1} of ${c.scenarios.length})` : "finished"}.`,
     seats.length ? `Seats: ${seats.join("; ")}.` : "It has no seats yet.",
+    upgrades.length ? `Deck changes so far, oldest first: ${untrusted("deck changes", upgrades.join("; "))}.` : "",
     `A seat's deck is read with the deck ref "seat:<seat name>". Changes to XP, trauma, decks or the next scenario go through proposeChange, and a player applies them.`,
-  ].join(" ");
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 export function turnNote(today: string, settings: Settings, campaign?: string): string {

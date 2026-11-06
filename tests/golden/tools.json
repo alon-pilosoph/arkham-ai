@@ -256,7 +256,7 @@
     }
   },
   "proposeChange": {
-    "description": "In a campaign's chat, propose a change to the campaign for the players to apply: what a scenario did (XP earned, trauma, an investigator killed or driven insane, the next scenario), or cards in and out of one seat's deck, priced in XP by the Rules Reference and checked against the deck's rules and the seat's unspent XP. Writes nothing: the players apply it from a card. Use it once the players have said what happened or agreed on a swap, with card codes from a tool, never from memory.",
+    "description": "In a campaign's chat, propose a change to the campaign for the players to apply: what a scenario did (XP earned, trauma, an investigator killed or driven insane, the next scenario), cards in and out of one seat's deck, priced in XP by the Rules Reference and checked against the deck's rules and the seat's unspent XP, or where the players want a seat's deck to go, which every later chat then sees. Writes nothing: the players apply it from a card. Use it once the players have said what happened or agreed on a swap, with card codes from a tool, never from memory.",
     "inputSchema": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "object",
@@ -265,9 +265,10 @@
           "type": "string",
           "enum": [
             "scenario",
-            "deck"
+            "deck",
+            "direction"
           ],
-          "description": "\"scenario\": what a scenario (or a correction) did to the seats; \"deck\": cards in or out of one seat's deck"
+          "description": "\"scenario\": what a scenario (or a correction) did to the seats; \"deck\": cards in or out of one seat's deck; \"direction\": where the players want one seat's deck to go"
         },
         "seats": {
           "description": "For \"scenario\"",
@@ -323,8 +324,13 @@
           "type": "string"
         },
         "seat": {
-          "description": "For \"deck\": the seat's name",
+          "description": "For \"deck\" and \"direction\": the seat's name",
           "type": "string"
+        },
+        "direction": {
+          "description": "For \"direction\": what they said, kept short, such as \"a flex mystic, not a battle mage\". Empty clears it.",
+          "type": "string",
+          "maxLength": 300
         },
         "add": {
           "description": "For \"deck\": cards bought or upgraded into, paid for with XP",

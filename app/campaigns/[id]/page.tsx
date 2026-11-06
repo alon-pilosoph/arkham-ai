@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { currentInvite } from "@/lib/campaign/invites";
-import { DIFFICULTIES, loadCampaign, priceSwap, restoreSwap, type SeatView, STATUSES } from "@/lib/campaign/store";
+import { DIFFICULTIES, loadCampaign, MAX_DIRECTION, priceSwap, restoreSwap, type SeatView, STATUSES } from "@/lib/campaign/store";
 import { type CardStore, getCards } from "@/lib/cards";
 import { type LinkedDeck, startingVersions } from "@/lib/deck-links";
 import { deckCards, deckMeta, fetchDeck, parseRef, xpInList } from "@/lib/decks";
@@ -11,6 +11,7 @@ import { currentUser } from "@/lib/session";
 import { sourceUrl } from "@/lib/urls";
 import {
   addSeatAction,
+  directionAction,
   lockDeckAction,
   recordAction,
   replaceInviteAction,
@@ -184,6 +185,22 @@ function SeatCard({
           </ul>
         </details>
       ) : null}
+      <form action={directionAction} className="flex gap-2">
+        <input type="hidden" name="campaignId" value={campaignId} />
+        <input type="hidden" name="version" value={version} />
+        <input type="hidden" name="seatId" value={s.id} />
+        <input
+          name="direction"
+          defaultValue={s.direction ?? ""}
+          maxLength={MAX_DIRECTION}
+          placeholder="Where this deck is going, such as a flex mystic"
+          aria-label={`Where ${s.name}'s deck is going`}
+          className={`${field} min-w-0 flex-1`}
+        />
+        <Button type="submit" variant="outline">
+          Save
+        </Button>
+      </form>
       <form action={lockDeckAction} className="flex gap-2">
         <input type="hidden" name="campaignId" value={campaignId} />
         <input type="hidden" name="version" value={version} />

@@ -36,6 +36,13 @@
       "when": 1793960676021,
       "tag": "0004_seat_target",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793961738298,
+      "tag": "0005_seat_direction",
+      "breakpoints": true
     }
   ]
 }

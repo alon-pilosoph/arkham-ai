@@ -50,6 +50,7 @@ export type SeatView = {
     source: string | null;
   } | null;
   target: SeatTarget | null;
+  direction: string | null;
   /** Every version of the seat's deck, newest first, the current one included. */
   versions: DeckVersionView[];
   xp: { earned: number; spent: number; unspent: number };
@@ -215,6 +216,7 @@ export async function loadCampaign(userId: string, campaignId: string): Promise<
             }
           : null,
         target: s.target as SeatTarget | null,
+        direction: s.direction,
         versions: decks
           .filter((x) => x.seatId === s.id)
           .map((x) => ({
@@ -330,6 +332,33 @@ export async function addSeat(
     const id = crypto.randomUUID();
     await tx.insert(seat).values({ id, campaignId, name, userId: input.userId ?? null, position: n });
     return ok("seat", `Added ${name}'s seat`, { seatId: id, changeId }, id);
+  });
+}
+
+export const MAX_DIRECTION = 300;
+
+/** Where the players want a seat's deck to go; empty clears it. */
+export async function setDirection(
+  userId: string,
+  campaignId: string,
+  version: number,
+  input: { seatId: string; direction: string; proposalId?: string },
+) {
+  return change(userId, campaignId, version, async (tx) => {
+    const [s] = await tx
+      .select()
+      .from(seat)
+      .where(and(eq(seat.id, input.seatId), eq(seat.campaignId, campaignId)));
+    if (!s) return fail("No such seat.");
+    const after = input.direction.trim().slice(0, MAX_DIRECTION) || null;
+    if (after === s.direction) return fail("Nothing changed.");
+    await tx.update(seat).set({ direction: after }).where(eq(seat.id, s.id));
+    return ok("direction", after ? `${s.name}'s deck: ${after}` : `${s.name}'s deck: direction cleared`, {
+      seatId: s.id,
+      before: s.direction,
+      after,
+      proposalId: input.proposalId,
+    });
   });
 }
 
@@ -534,6 +563,13 @@ export async function revert(userId: string, campaignId: string, version: number
           for (const [k, v] of Object.entries(after))
             if (c[k as keyof Settings] !== v) return fail("A later change replaced these settings; revert it first.");
           await tx.update(campaign).set(before).where(eq(campaign.id, campaignId));
+          return ok("revert", undone, { of: changeId });
+        }
+        case "direction": {
+          const d = p as { seatId: string; before: string | null; after: string | null };
+          const [s] = await tx.select().from(seat).where(eq(seat.id, d.seatId));
+          if (!s || s.direction !== d.after) return fail("A later change replaced this direction; revert it first.");
+          await tx.update(seat).set({ direction: d.before }).where(eq(seat.id, d.seatId));
           return ok("revert", undone, { of: changeId });
         }
         case "seat": {
