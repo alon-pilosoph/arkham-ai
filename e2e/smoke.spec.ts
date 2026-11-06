@@ -58,29 +58,12 @@ test("a deck named instead of linked is looked up by name", async ({ page }) => 
   await expect(page.getByText("Lily - Boom Chakra Lacka (Deck Guide)")).toBeVisible();
 });
 
-test("a deck slot says so when what was pasted isn't a deck link", async ({ page }) => {
-  await page.getByRole("button", { name: "Your decks" }).click();
-  await page.getByLabel("Your deck", { exact: true }).fill("my lily deck");
-  await page.getByRole("button", { name: "Save" }).first().click();
-  await expect(page.getByText("That isn't an ArkhamDB deck link.")).toBeVisible();
-});
-
 test("campaign prep sizes up a campaign without naming its cards", async ({ page }) => {
   await ask(page, "How should we prepare for The Path to Carcosa?");
   const prep = page.locator("[data-slot=tool-fallback-trigger]").filter({ hasText: "What The Path to Carcosa asks of you" });
   await expect(prep).toContainText("Spoiler-light");
   await prep.click();
   await expect(page.getByText("By scenario")).toBeVisible();
-});
-
-test("a deck saved in a slot shows by investigator and name, and is remembered", async ({ page }) => {
-  await page.getByRole("button", { name: "Your decks" }).click();
-  await page.getByLabel("Your deck", { exact: true }).fill("https://arkhamdb.com/decklist/view/33170/lily");
-  await page.getByRole("button", { name: "Save" }).first().click();
-  await expect(page.getByText("Lily - Boom Chakra Lacka (Deck Guide)")).toBeVisible();
-  await page.reload();
-  await page.getByRole("button", { name: "Your decks" }).click();
-  await expect(page.getByText("Lily - Boom Chakra Lacka (Deck Guide)")).toBeVisible();
 });
 
 test("the XP advisor prices what a deck can buy", async ({ page }) => {

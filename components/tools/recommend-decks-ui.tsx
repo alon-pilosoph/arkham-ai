@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/components/ui/item";
 import { roleText } from "@/lib/index/schema";
 import type { Filter, RecommendInput, RecommendResult, Shortlisted } from "@/lib/tools/recommend-decks";
-import { useDeckLabel } from "./deck-label";
 import { capital, DONE, Dots, FailureRow, Info, ListItem, NotFound, Pending, Tool, ToolBoundary } from "./parts";
 
 function filterLabel(f: Exclude<Filter, { kind: "partner" }>): string {
@@ -93,7 +92,7 @@ const RecommendResultUI: FC<{ result: Extract<RecommendResult, { kind: "shortlis
 
 export const RecommendUI: ToolCallMessagePartComponent<Partial<RecommendInput>, RecommendResult> = ({ args, result, status }) => {
   const partnerOf = args.pairWith;
-  const deck = useDeckLabel(partnerOf);
+  const deck = "the deck";
   if (!result) return <Pending status={status} label={partnerOf ? `Finding partners for ${deck}` : "Searching the deck index"} />;
   if (result.ok !== true)
     return (

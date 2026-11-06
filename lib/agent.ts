@@ -13,10 +13,10 @@ import { toolError, untrusted } from "./format";
 import { trimHistory } from "./history";
 import { repairLinks } from "./link-repair";
 import { SYSTEM_PROMPT } from "./prompt";
-import { DEFAULT_SETTINGS, type SavedDeck, type Settings } from "./settings";
+import { DEFAULT_SETTINGS, type Settings } from "./settings";
 import { type CampaignContext, DEFAULT_CONTEXT, type ToolContext } from "./tool-context";
 import { type ToolName, tools } from "./tools";
-import { deckUrl, sourceUrl } from "./urls";
+import { sourceUrl } from "./urls";
 
 export const BUDGET = {
   maxSteps: 10,
@@ -37,15 +37,11 @@ const CACHE_LONG = { anthropic: { cacheControl: { type: "ephemeral" as const, tt
 export const FINAL_NOTE =
   "[The tool budget for this answer is spent. Answer now from what the tools returned, and say plainly what you could not check.]";
 
-function savedDeck(whose: string, d: SavedDeck): string {
-  return `${whose} is ${untrusted("deck name", d.name || "(untitled)")}, ${d.investigator} (${deckUrl(d.id, d.kind)})`;
-}
-
-/** The campaign a chat belongs to, as of this turn: what its decks are built from. Names the
- *  players wrote are untrusted. */
 /** How many of a campaign's latest deck changes each turn carries. */
 const DECK_CHANGES_IN_NOTE = 15;
 
+/** The campaign a chat belongs to, as of this turn: what its decks are built from. Names the
+ *  players wrote are untrusted. */
 export function campaignNote(c: CampaignContext, investigatorName: (code: string) => string | undefined): string {
   const next = c.scenarios[c.nextScenario];
   const after = c.scenarios[c.nextScenario + 1];
@@ -76,13 +72,7 @@ export function campaignNote(c: CampaignContext, investigatorName: (code: string
 }
 
 export function turnNote(today: string, settings: Settings, campaign?: string): string {
-  const decks = campaign
-    ? []
-    : [
-        settings.myDeck ? savedDeck("The asking player's own deck", settings.myDeck) : "",
-        settings.partnerDeck ? savedDeck("Their partner's deck", settings.partnerDeck) : "",
-      ].filter(Boolean);
-  return `(Today is ${today}. Taboo list: ${settings.taboo ? "on, the current list" : "off"}.${decks.map((d) => ` ${d}.`).join("")}${campaign ? ` ${campaign}` : ""})`;
+  return `(Today is ${today}. Taboo list: ${settings.taboo ? "on, the current list" : "off"}.${campaign ? ` ${campaign}` : ""})`;
 }
 
 export function anchorTurn(messages: ModelMessage[], note: string): ModelMessage[] {

@@ -1,8 +1,7 @@
-import { afterEach, describe, expect, test, vi } from "vitest";
-import { GET } from "@/app/api/deck/route";
+import { describe, expect, test } from "vitest";
 import { DECK_INDEX } from "@/lib/index/decks";
 import { findDecks, findDeckText } from "@/lib/tools/find-deck";
-import { DECK, MISSING_DECK, mockArkhamDB } from "./helpers";
+import { DECK } from "./helpers";
 
 const ok = (q: string) => {
   const r = findDecks(q);
@@ -46,23 +45,5 @@ describe("findDeck", () => {
     const text = findDeckText(r);
     expect(text).toContain('<untrusted_data source="deck name">');
     expect(text).not.toContain("Boom</untrusted_data>");
-  });
-});
-
-describe("GET /api/deck", () => {
-  afterEach(() => vi.unstubAllGlobals());
-  const get = (ref: string) => GET(new Request(`http://localhost/api/deck?ref=${encodeURIComponent(ref)}`));
-
-  test("reads a pasted link into the deck a slot saves", async () => {
-    mockArkhamDB();
-    const res = await get(`https://arkhamdb.com/decklist/view/${DECK.lilyChen}/lily-boom`);
-    expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ id: 33170, kind: "decklist", investigator: "Lily Chen" });
-  });
-
-  test("400s something that isn't a deck link and 404s a deck ArkhamDB doesn't have", async () => {
-    mockArkhamDB();
-    expect((await get("my lily deck")).status).toBe(400);
-    expect((await get(`https://arkhamdb.com/decklist/view/${MISSING_DECK}`)).status).toBe(404);
   });
 });

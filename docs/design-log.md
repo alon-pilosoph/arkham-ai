@@ -435,3 +435,9 @@ added for comparison. [evals.md](evals.md) has the numbers; the findings:
   upgrades, in words and with a button on the card once it is applied.
 - **The button is made by the tool, not the model.** It appears only when the applied change gave
   someone XP, and only straight after applying, so an old card read back doesn't offer it again.
+
+## No more deck slots (November 6)
+
+- **Removed.** The "your deck" and "your partner's deck" slots, their API route and the saved decks
+  in the turn note. Personal chats are plain questions now, with a deck pasted or named. Decks that
+  are kept belong to campaigns, which take any number of seats.

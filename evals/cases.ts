@@ -63,8 +63,7 @@ export const CASES: EvalCase[] = [
   {
     id: "replace-missing",
     useCase: "replace",
-    question: "In my deck, what should I play instead of Old Book of Lore?",
-    settings: { myDeck: { id: 45147, kind: "decklist", name: "Carolyn Fern destroys Carcosa", investigator: "Carolyn Fern" } },
+    question: "In https://arkhamdb.com/decklist/view/45147, what should I play instead of Old Book of Lore?",
     expect: "Says Old Book of Lore is not in the deck (reads the list) instead of inventing replacements.",
   },
   {
@@ -104,12 +103,9 @@ export const CASES: EvalCase[] = [
   {
     id: "upgrade-xp",
     useCase: "upgrade",
-    question: "My partner's deck just earned 5 XP. What should they buy?",
-    settings: {
-      partnerDeck: { id: 33170, kind: "decklist", name: "Lily - Boom Chakra Lacka (Deck Guide)", investigator: "Lily Chen" },
-    },
+    question: "My partner's deck, https://arkhamdb.com/decklist/view/33170, just earned 5 XP. What should they buy?",
     expect:
-      "Calls upgrades with the saved partner deck and 5 XP. Lily Chen: Guardian 1-5, Neutral 0-5, Mystic level 0 only, no Firearms. Every suggestion is legal and owned, the total is at most 5 XP, and no Mystic upgrade (Shrivelling (3), Ward of Protection (2)) is offered. Says what each new card replaces.",
+      "Calls upgrades with the linked deck and 5 XP. Lily Chen: Guardian 1-5, Neutral 0-5, Mystic level 0 only, no Firearms. Every suggestion is legal and owned, the total is at most 5 XP, and no Mystic upgrade (Shrivelling (3), Ward of Protection (2)) is offered. Says what each new card replaces.",
   },
   {
     id: "rules-card-aoo",

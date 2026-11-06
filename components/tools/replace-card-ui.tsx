@@ -6,7 +6,6 @@ import { useCardClick } from "@/components/cards/card-link";
 import { Item, ItemContent, ItemGroup, ItemTitle } from "@/components/ui/item";
 import type { Candidate, Goal, ReplaceInput, ReplaceResult } from "@/lib/tools/replace-card";
 import { cardUrl } from "@/lib/urls";
-import { useDeckLabel } from "./deck-label";
 import {
   CardMeta,
   capital,
@@ -77,7 +76,7 @@ const ReplaceResultUI: FC<{ result: Extract<ReplaceResult, { kind: "replacements
 
 export const ReplaceUI: ToolCallMessagePartComponent<Partial<ReplaceInput>, ReplaceResult> = ({ args, result, status }) => {
   const card = args.card ?? "the card";
-  const deck = useDeckLabel(args.deck);
+  const deck = "the deck";
   if (!result) return <Pending status={status} label={`Finding replacements for ${card}`} />;
   if (result.ok !== true) {
     if (result.deckList)
